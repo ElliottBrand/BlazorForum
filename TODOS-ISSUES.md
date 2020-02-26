@@ -1,3 +1,7 @@
+## PROJECT OPEN DISCUSSIONS
+
+* Open discussions about the following issues, TODOs, etc. can be found here: https://blazorforums.net/category/11/BlazorForum-Development
+
 ## KNOWN ISSUES
 
 * The fields aren't validating properly (showing validation errors) when updating user info in the Membership area.
