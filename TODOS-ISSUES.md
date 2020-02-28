@@ -2,13 +2,6 @@
 
 * Open discussions about the following issues, TODOs, etc. can be found here: https://blazorforums.net/category/11/BlazorForum-Development
 
-## KNOWN ISSUES
-
-* The fields aren't validating properly (showing validation errors) when updating user info in the Membership area.
-
-* Admin/Frontend themes still aren't flipping back and forth quite right when you navigate between them. If 
-	you refresh it loads fine.
-
 ## TODO
 
 * ** TESTS need written **
