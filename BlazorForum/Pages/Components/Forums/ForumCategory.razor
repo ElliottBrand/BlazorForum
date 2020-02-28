@@ -7,6 +7,15 @@
 @inject AuthenticationStateProvider authStateProvider
 @inject IJSRuntime JSRuntime
 
+<ul class="breadcrumb blazorforum-breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="/forums/">Forums</a>
+    </li>
+    <li class="breadcrumb-item">
+        @(_category != null && _category.Title != null ? _category.Title : "")
+    </li>
+</ul>
+
 @if (_category == null)
 {
     <div class="mb-2 loading-div">

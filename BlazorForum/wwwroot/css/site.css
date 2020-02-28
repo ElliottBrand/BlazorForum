@@ -37,6 +37,11 @@ app {
         top: 0.5rem;
     }
 
+.blazorforum-breadcrumb {
+    background-color: #e7e4f7;
+    color: #72778a;
+}
+
 .blazorforum-footer {
     text-align: center;
     background-color: #e4e4e4;
