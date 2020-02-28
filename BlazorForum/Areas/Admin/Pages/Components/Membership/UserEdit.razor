@@ -1,13 +1,10 @@
 ﻿@page "/admin/membership/{id}/edit"
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<ApplicationUser> userManager
 @inject NavigationManager navManager
 @inject RoleManager<IdentityRole>  roleManager
 @inject IJSRuntime jsRuntime
 
 <h3>Edit User</h3>
-@*////////////////////////////////////////////////////////////////////////////////////*@
-@*///// There's a problem here with the form not displaying validation errors ////////*@
-@*////////////////////////////////////////////////////////////////////////////////////*@
 <section class="content-container">
     @if (_user == null)
     {
@@ -92,14 +89,23 @@
     </div>
 </EditForm>
     }
+
+    @if(_error == true)
+    {
+        <div class="alert alert-danger mt-2 mb-0">
+            <div class="danger-text">@_errorMsg</div>
+        </div>
+    }
 </section>
 
 @code {
     [Parameter] public string id { get; set; }
-    private IdentityUser _user = new IdentityUser();
+    private ApplicationUser _user = new ApplicationUser();
     private List<IdentityRole> _roles = new List<IdentityRole>();
     private List<SelectListItem> _options = new List<SelectListItem>();
     private SelectListItem _selectedItem = new SelectListItem();
+    private bool _error;
+    private string _errorMsg;
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,7 +115,10 @@
         foreach (var role in _roles)
         {
             if(await userManager.IsInRoleAsync(_user, role.Name))
+            {
                 _options.Add(new SelectListItem(role.Name, role.Id, true));
+                _selectedItem.Value = role.Id;
+            }
             else
                 _options.Add(new SelectListItem(role.Name, role.Id, false));
         }
@@ -124,23 +133,31 @@
 
     private async Task UpdateUser()
     {
-        var update = await userManager.UpdateAsync(_user);
-        if (update.Succeeded)
+        try
         {
-            var currentRoles = await userManager.GetRolesAsync(_user);
-            var selectedRole = _roles.Where(p => p.Id == _selectedItem.Value).FirstOrDefault();
-            var inRole = await userManager.IsInRoleAsync(_user, selectedRole.Name);
-            if(selectedRole != null  && !inRole)
+            var update = await userManager.UpdateAsync(_user);
+            if (update.Succeeded)
             {
-                // Remove user from roles before adding them, so they aren't in multiple roles
-                // This may change later if it's determined that users should be in multiple roles.
-                if(currentRoles.Count > 0)
-                    await userManager.RemoveFromRolesAsync(_user, currentRoles);
+                var currentRoles = await userManager.GetRolesAsync(_user);
+                var selectedRole = _roles.Where(p => p.Id == _selectedItem.Value).FirstOrDefault();
+                var inRole = await userManager.IsInRoleAsync(_user, selectedRole.Name);
+                if(selectedRole != null  && !inRole)
+                {
+                    // Remove user from roles before adding them, so they aren't in multiple roles
+                    // This may change later if it's determined that users should be in multiple roles.
+                    if(currentRoles.Count > 0)
+                        await userManager.RemoveFromRolesAsync(_user, currentRoles);
 
-                await userManager.AddToRoleAsync(_user, selectedRole.Name);
+                    await userManager.AddToRoleAsync(_user, selectedRole.Name);
+                }
+
+                navManager.NavigateTo("/admin/membership/");
             }
-
-            navManager.NavigateTo("/admin/membership/");
+        }
+        catch(Exception ex)
+        {
+            _error = true;
+            _errorMsg = ex.Message;
         }
     }
 }
