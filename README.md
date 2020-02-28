@@ -1,8 +1,8 @@
 # BlazorForum
 BlazorForum is an open source forum application that's built in <a href="https://docs.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-3.1" target="_blank">Blazor</a>. BlazorForum has been put together to begin to show some of the cool functionality available in Blazor and hopefully it will gain support and involvement from the C# developer community and grow. Please download BlazorForum, try it out, and contribute to the project. There hasn't been a release created yet, since there's still some work to do.
 
-## Known Issues and TODOs
-Some known issues and TODOs can be found [Here](TODOS-ISSUES.md)
+## TODOs
+Some TODOs can be found [Here](TODOS-ISSUES.md)
 
 ## A Few Features
 * To make setup a little easier, two roles will automatically be added when the first user registers (Administrator & Contributor).
