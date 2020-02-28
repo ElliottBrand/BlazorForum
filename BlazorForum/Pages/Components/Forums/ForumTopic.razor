@@ -3,11 +3,29 @@
 @using System.Collections.Generic
 
 @inject NavigationManager navManager
+@inject Domain.Interfaces.IManageForumCategories manageForumCategories
 @inject Domain.Interfaces.IManageForumTopics manageForumTopics
 @inject Domain.Interfaces.IManageForumPosts  manageForumPosts
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
 @inject IJSRuntime JSRuntime
+
+    <ul class="breadcrumb blazorforum-breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/forums/">Forums</a>
+        </li>
+        <li class="breadcrumb-item">
+            @{
+                var bc = _category != null && _category.Title != null ?
+                String.Format("<a href=\"/category/{0}/{1}\">{2}</a>", _category.ForumCategoryId,
+                Domain.Utilities.Formatting.UrlFormatting.PrepareUrlText(_category.Title), _category.Title) : "";
+                @((MarkupString)bc)
+            }
+        </li>
+        <li class="breadcrumb-item">
+            @(_topic != null && _topic.Title != null ? _topic.Title : "")
+        </li>
+    </ul>
 
 @if (_topic == null)
 {
@@ -125,6 +143,7 @@ else
     [Parameter] public int id { get; set; }
     [Parameter] public string slug { get; set; }
     [Parameter] public string CurrentUserId { get; set; }
+    private Models.ForumCategory _category;
     private Models.ForumTopic _topic;
     private List<Models.ForumPost> _posts;
     private int _maxCount = 10;
@@ -137,6 +156,7 @@ else
         await LoadTopicAsync();
 
         _posts = await manageForumPosts.GetApprovedForumPostsAsync(id);
+        _category = await manageForumCategories.GetForumCategoryAsync(_topic.ForumCategoryId);
 
         if (_maxCount >= _posts.Count)
             loadMoreVisibility = "d-none";
