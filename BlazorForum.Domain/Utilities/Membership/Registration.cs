@@ -5,16 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BlazorForum.Models;
 
 namespace BlazorForum.Domain.Utilities.Membership
 {
     public class Registration
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<Registration> _logger;
 
-        public Registration(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<Registration> logger)
+        public Registration(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<Registration> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -50,7 +51,7 @@ namespace BlazorForum.Domain.Utilities.Membership
         /// </summary>
         /// <returns></returns>
 
-        public async Task AddDefaultUserRole(IdentityUser user)
+        public async Task AddDefaultUserRole(ApplicationUser user)
         {
             try
             {

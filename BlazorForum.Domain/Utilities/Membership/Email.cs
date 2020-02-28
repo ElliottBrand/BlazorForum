@@ -9,16 +9,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using BlazorForum.Models;
 
 namespace BlazorForum.Domain.Utilities.Membership
 {
     public class Email
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IManageConfiguration _config;
 
-        public Email(UserManager<IdentityUser> userManager, IEmailSender emailSender, IManageConfiguration config)
+        public Email(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IManageConfiguration config)
         {
             _userManager = userManager;
             _emailSender = emailSender;
@@ -33,7 +34,7 @@ namespace BlazorForum.Domain.Utilities.Membership
         /// <param name="pageModel"></param>
         /// <returns></returns>
 
-        public async Task BuildSendRegistrationConfirmation(string emailAddress, IdentityUser user, PageModel pageModel)
+        public async Task BuildSendRegistrationConfirmation(string emailAddress, ApplicationUser user, PageModel pageModel)
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

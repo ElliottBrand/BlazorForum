@@ -8,17 +8,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using BlazorForum.Domain.Interfaces;
 using System;
+using BlazorForum.Models;
 
 namespace BlazorForum.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _sender;
         private readonly IManageConfiguration _config;
 
-        public RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender sender, IManageConfiguration config)
+        public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender sender, IManageConfiguration config)
         {
             _userManager = userManager;
             _sender = sender;

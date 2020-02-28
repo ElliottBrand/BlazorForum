@@ -1,7 +1,7 @@
 ﻿@page "/admin/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}"
 @inject IManageForumTopics manageTopics
 @inject IManageForumPosts managePosts
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<ApplicationUser> userManager
 @inject IBlazorModal blazorModal
 @inject NavigationManager navManager
 @inject IJSRuntime jsRuntime

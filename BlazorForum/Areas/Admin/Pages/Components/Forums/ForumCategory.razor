@@ -1,7 +1,7 @@
 ﻿@page "/admin/forums/{forumId:int}/categories/{id:int}"
 @inject IManageForumCategories manageCategories
 @inject IManageForumTopics manageTopics
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<ApplicationUser> userManager
 @inject IBlazorModal blazorModal
 
 <section class="mb-3">
@@ -32,8 +32,7 @@
             @foreach (var topic in _topics)
             {
                 <li>
-                    @* // TODO - Add Edit/Delete functionality, display post flag count, mark as approved..etc. *@
-                    @* //      - Also build topic component *@
+                    @* // TODO - display post flag count, mark as approved..etc. *@
                     @topic.Title
                     <div class="list-item-details">
                         Posted @DateTimeFormatting.RelativeDateAgo(topic.PostedDate)

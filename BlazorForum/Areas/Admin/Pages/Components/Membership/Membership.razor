@@ -1,5 +1,5 @@
 ﻿@page "/admin/membership"
-@inject UserManager<IdentityUser> userManager
+@inject UserManager<ApplicationUser> userManager
 @inject RoleManager<IdentityRole> roleManager
 @inject IJSRuntime jsRuntime
 
@@ -34,7 +34,7 @@
 </ul>
 
 @code {
-    private IList<IdentityUser> _users;
+    private IList<ApplicationUser> _users;
     private IList<IdentityRole> _roles;
 
     protected override async Task OnInitializedAsync()
