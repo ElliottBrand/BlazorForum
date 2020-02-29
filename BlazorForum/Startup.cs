@@ -38,7 +38,7 @@ namespace BlazorForum
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddRoleManager<RoleManager<IdentityRole>>()
@@ -81,13 +81,14 @@ namespace BlazorForum
                 options.SlidingExpiration = true;
             });
 
-            services.AddScoped<IManageForums, ManageForums>();
-            services.AddScoped<IManageForumCategories, ManageForumCategories>();
-            services.AddScoped<IManageForumTopics, ManageForumTopics>();
-            services.AddScoped<IManageForumPosts, ManageForumPosts>();
-            services.AddScoped<IManageThemes, ManageThemes>();
-            services.AddScoped<IManageConfiguration, ManageConfiguration>();
-            services.AddScoped<IManagePages, ManagePages>();
+            services.AddTransient<IManageForums, ManageForums>();
+            services.AddTransient<IManageForumCategories, ManageForumCategories>();
+            services.AddTransient<IManageForumTopics, ManageForumTopics>();
+            services.AddTransient<IManageForumPosts, ManageForumPosts>();
+            services.AddTransient<IManageThemes, ManageThemes>();
+            services.AddTransient<IManageConfiguration, ManageConfiguration>();
+            services.AddTransient<IManagePages, ManagePages>();
+            services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
             services.AddBlazorModal();
 
             services.AddServerSideBlazor();

@@ -1,0 +1,51 @@
+﻿@using BlazorForum.Pages.Components.UpDownVote
+
+@if (!_isEditorVisible)
+{
+    <UpDownVote PostId="@ThisPost.ForumPostId" UniqueIdentifier="ForumPost" PosterId="@ThisPost.UserId" VoterId="@CurrentUserId"></UpDownVote>
+}
+
+<div class="forum-post-content @(_isEditorVisible ? "w-100" : "")">
+    @if (_isEditorVisible == false)
+        @((MarkupString)ThisPost.PostText)
+
+    @if (ThisPost.UserId == CurrentUserId)
+    {
+        if (_isEditorVisible == true)
+        {
+            <PostForm OnPostUpdated="@(() => HideThisEditor())" CurrentUserId="@CurrentUserId" PostToEdit="@ThisPost" OnCancel="@(() => HideThisEditor())"></PostForm>
+        }
+        else
+        {
+            <div>
+                <button class="btn btn-sm btn-blazorforum mb-2" type="button" @onclick="@(() => _isEditorVisible = true)">Edit</button>
+            </div>
+        }
+    }
+
+    @if (_isEditorVisible == false)
+    {
+        <div class="forum-post-time d-inline-block">
+            Posted @DateTimeFormatting.RelativeDateAgo(ThisPost.PostedDate)
+            by @ThisPost.UserName
+        </div>
+        @if (ThisPost.EditedDate != null)
+        {
+            <div class="forum-post-time ml-3 d-inline-block">
+                Edited @DateTimeFormatting.RelativeDateAgo(Convert.ToDateTime(ThisPost.EditedDate))
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string CurrentUserId { get; set; }
+    [Parameter] public ForumPost ThisPost { get; set; }
+    private bool _isEditorVisible = false;
+
+    private void HideThisEditor()
+    {
+        _isEditorVisible = false;
+        StateHasChanged();
+    }
+}

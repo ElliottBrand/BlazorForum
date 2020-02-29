@@ -11,6 +11,8 @@
     <Compile Remove="Migrations\20200215190756_Add Themes Table.Designer.cs" />
     <Compile Remove="Migrations\20200223012941_Add Configuration Table.cs" />
     <Compile Remove="Migrations\20200223012941_Add Configuration Table.Designer.cs" />
+    <Compile Remove="Migrations\20200229025736_Add UpDownVotes Table to DB.cs" />
+    <Compile Remove="Migrations\20200229025736_Add UpDownVotes Table to DB.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

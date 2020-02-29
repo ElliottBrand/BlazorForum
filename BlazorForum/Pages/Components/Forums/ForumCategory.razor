@@ -42,10 +42,9 @@ else
                     <a href="@String.Format("/topic/{0}/{1}",
                         topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">
                         @topic.Title</a> 
-                        @* // This isn't quite working right. Prevents editor from posting *@
-                        @*( 
+                        ( 
                             @(_postCountList != null ? _postCountList.Where(p => p.ParentItemId == topic.ForumTopicId)
-                            .FirstOrDefault().ChildCount : 0 ) )*@
+                            .FirstOrDefault().ChildCount : 0 ) )
                     <div class="topic-blazifier">
                         Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
                         by @topic.UserName
@@ -98,7 +97,7 @@ else
         CurrentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
         await AddUserToTopicAsync();
 
-        //await SetTopicsCount();
+        await SetTopicsCount();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

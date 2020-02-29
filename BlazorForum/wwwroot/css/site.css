@@ -91,6 +91,7 @@ app {
         border-top: none;
         padding: 0.5em;
         background-color: #e0dcf8;
+        word-break: break-word;
     }
 
         .forum-ul li:last-child {
@@ -114,6 +115,7 @@ app {
         border-top: none;
         padding: 0.5em;
         background-color: #e0dcf8;
+        word-break:break-word;
     }
 
         .forum-post-ul li:nth-child(1) {
@@ -138,8 +140,12 @@ app {
     padding: 1em;
     color: #fff;
 }
+.forum-topic-content, .forum-post-content{
+    display: inline-block;
+    vertical-align: top;
+}
 
-.forum-topic-text-div {
+.forum-topic-text-section {
     background-color: #e0dcf8;
     border-bottom-left-radius: 0.25em;
     border-bottom-right-radius: 0.25em;
@@ -265,6 +271,50 @@ pre {
     font-size: 0.8em;
     color: #6e6986;
 }
+
+.up-down-vote-count{
+    text-align:center;
+    font-size:x-large;
+}
+
+.up-down-vote-container{
+    display:inline-block;
+    margin-right:0.5em;
+    background-color:#e7e4f7;
+    padding:0.25em;
+    border-radius:0.25em;
+}
+
+.up-down-vote-btn {
+    border: none;
+    color: rgb(5, 39, 103);
+    background-color: rgba(255,255,255,0);
+    font-size:large;
+}
+
+.up-down-vote-btn.oi{
+    position:inherit;
+}
+
+.up-down-vote-btn.disabled{
+    color:#777;
+}
+
+.up-down-vote-btn.up-vote.disabled:hover, .up-down-vote-btn.down-vote.disabled:hover{
+    color:#777;
+}
+
+.up-down-vote-btn:focus{
+    outline:0;
+}
+
+    .up-down-vote-btn.up-vote:hover {
+        color: #6dbe2e;
+    }
+
+    .up-down-vote-btn.down-vote:hover {
+        color: #dc3131;
+    }
 
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
