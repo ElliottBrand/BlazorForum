@@ -140,8 +140,12 @@ app {
     padding: 1em;
     color: #fff;
 }
+
+.forum-post-container, .forum-topic-container{
+    display:flex;
+}
+
 .forum-topic-content, .forum-post-content{
-    display: inline-block;
     vertical-align: top;
 }
 
@@ -278,11 +282,11 @@ pre {
 }
 
 .up-down-vote-container{
-    display:inline-block;
     margin-right:0.5em;
     background-color:#e7e4f7;
     padding:0.25em;
     border-radius:0.25em;
+    float:left;
 }
 
 .up-down-vote-btn {
