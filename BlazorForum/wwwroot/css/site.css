@@ -74,7 +74,7 @@ app {
 }
 
 .clear-validation.modified.valid {
-    outline: none;
+    outline: none !important;
 }
 
 .content {

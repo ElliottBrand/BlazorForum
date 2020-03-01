@@ -16,6 +16,8 @@ namespace BlazorForum.Models
         [MaxLength(255)]
         public string Description { get; set; }
 
+        public bool EnableUpDownVotes { get; set; }
+
         public virtual ICollection<ForumCategory> ForumCategories { get; set; }
     }
 }

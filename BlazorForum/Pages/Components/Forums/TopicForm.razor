@@ -87,11 +87,12 @@
                 _submitVisibility = "d-none";
                 _forumTopic.Title = string.Empty;
                 _forumTopic.TopicText = string.Empty;
-                await jsRuntime.InvokeVoidAsync("methods.clearTargetedEditor", "TopicText-" + _forumTopic.ForumTopicId);
-
                 _titleClass = "form-control clear-validation";
                 _textAreaClass = "mt-2 form-control clear-validation";
+                await jsRuntime.InvokeVoidAsync("methods.clearTargetedEditor", "TopicText-" + _forumTopic.ForumTopicId);
+                
                 StateHasChanged();
+                OnTopicAdded?.Invoke();
             }
         }
 
@@ -113,8 +114,6 @@
             //UserIP = httpContext.HttpContext.Connection.RemoteIpAddress.ToString() // Was failing on server - fine locally
         };
         var posted = await manageForumTopics.PostNewTopicAsync(newTopic);
-
-        OnTopicAdded?.Invoke();
     }
 
     private async Task UpdateTopic()

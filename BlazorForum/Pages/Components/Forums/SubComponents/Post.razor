@@ -1,7 +1,8 @@
 ﻿@using BlazorForum.Pages.Components.UpDownVote
+@inject IManageForums manageForums
 
 <div class="forum-post-container">
-    @if (!_isEditorVisible)
+    @if (!_isEditorVisible && _allowUpDownVoting)
     {
         <UpDownVote PostId="@ThisPost.ForumPostId" UniqueIdentifier="ForumPost" PosterId="@ThisPost.UserId" VoterId="@CurrentUserId"></UpDownVote>
     }
@@ -43,7 +44,15 @@
 @code {
     [Parameter] public string CurrentUserId { get; set; }
     [Parameter] public ForumPost ThisPost { get; set; }
+    [Parameter] public int ForumId { get; set; }
     private bool _isEditorVisible = false;
+    private bool _allowUpDownVoting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var forum = await manageForums.GetForumAsync(ForumId);
+        _allowUpDownVoting = forum.EnableUpDownVotes;
+    }
 
     private void HideThisEditor()
     {
