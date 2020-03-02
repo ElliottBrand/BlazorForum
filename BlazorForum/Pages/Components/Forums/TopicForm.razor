@@ -37,7 +37,7 @@
     [Parameter] public Action OnTopicAdded { get; set; }
     [Parameter] public Action OnTopicUpdated { get; set; }
     [Parameter] public Action OnCancel { get; set; }
-    [Parameter] public int ForumId { get; set; }
+    [Parameter] public int ForumCatId { get; set; }
     [Parameter] public string CurrentUserId { get; set; }
     [Parameter] public Models.ForumTopic ForumTopicToEdit { get; set; }
     private EditContext _editContext;
@@ -106,7 +106,7 @@
             TopicText = _forumTopic.TopicText,
             UserId = CurrentUserId,
             PostedDate = DateTime.Now.ToUniversalTime(),
-            ForumCategoryId = ForumId,
+            ForumCategoryId = ForumCatId,
             Flags = 0,
             IsModeratorChanged = false,
             IsDeleted = false,

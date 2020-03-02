@@ -7,6 +7,7 @@
 @inject Domain.Interfaces.IManageForumCategories manageForumCategories
 @inject Domain.Interfaces.IManageForumTopics manageForumTopics
 @inject Domain.Interfaces.IManageForumPosts  manageForumPosts
+@inject Domain.Interfaces.IManageForums manageForums
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
 @inject IJSRuntime JSRuntime
@@ -40,7 +41,7 @@ else
         <h3>@_topic.Title</h3>
     </header>
     <section class="forum-topic-text-section">
-        <Topic ThisTopic="@_topic" CurrentUserId="@CurrentUserId"></Topic>
+        <Topic ThisTopic="@_topic" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" CurrentUserId="@CurrentUserId"></Topic>
     </section>
 
     if (_posts != null && _posts.Count > 0)
@@ -50,7 +51,7 @@ else
         {
             var i = index;
             <li>
-                <Post CurrentUserId="@CurrentUserId" ThisPost="@_posts[i]" ForumId="_category.ForumCategoryId"></Post>
+                <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" ThisPost="@_posts[i]" ForumId="_category.ForumCategoryId"></Post>
             </li>
          }
     </ul>
@@ -85,6 +86,7 @@ else
     private List<Models.ForumPost> _posts;
     private int _maxCount = 10;
     private string loadMoreVisibility;
+    private bool _forumUpDownVoteEnabled;
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,6 +94,8 @@ else
 
         _posts = await manageForumPosts.GetApprovedForumPostsAsync(id);
         _category = await manageForumCategories.GetForumCategoryAsync(_topic.ForumCategoryId);
+        var forum = await manageForums.GetForumAsync(_category.ForumId);
+        _forumUpDownVoteEnabled = forum.EnableUpDownVotes;
 
         if (_maxCount >= _posts.Count)
             loadMoreVisibility = "d-none";

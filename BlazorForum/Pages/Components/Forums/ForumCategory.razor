@@ -63,7 +63,7 @@ else
         <h4>@GeneralResources.CreateNewTopic</h4>
         <AuthorizeView>
             <Authorized>
-                <TopicForm OnTopicAdded="UpdateTopicsAsync" ForumId="@id" CurrentUserId="@CurrentUserId"></TopicForm>
+                <TopicForm OnTopicAdded="UpdateTopicsAsync" ForumCatId="@id" CurrentUserId="@CurrentUserId"></TopicForm>
             </Authorized>
             <NotAuthorized>
                 <div class="alert alert-secondary">

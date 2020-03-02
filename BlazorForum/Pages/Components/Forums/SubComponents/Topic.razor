@@ -2,7 +2,7 @@
 @inject IManageForums manageForums
 
 <div class="forum-topic-container">
-    @if (!_isEditorVisible && _allowUpDownVoting)
+    @if (!_isEditorVisible && ForumUpDownVoteEnabled)
     {
         <UpDownVote PostId="@ThisTopic.ForumTopicId" UniqueIdentifier="ForumTopic" PosterId="@ThisTopic.UserId" VoterId="@CurrentUserId"></UpDownVote>
     }
@@ -45,16 +45,14 @@
 
 
 @code {
-    [Parameter] public ForumTopic ThisTopic { get; set; }
+    [Parameter] public Models.ForumTopic ThisTopic { get; set; }
+    [Parameter] public bool ForumUpDownVoteEnabled { get; set; }
     [Parameter] public string CurrentUserId { get; set; }
     private bool _isEditorVisible = false;
-    private bool _allowUpDownVoting = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var forum = await manageForums.GetForumAsync(ThisTopic.ForumCategoryId);
-        if(forum != null)
-            _allowUpDownVoting = forum.EnableUpDownVotes;
+        
     }
 
     private void RefreshTopic()
