@@ -15,6 +15,7 @@ namespace BlazorForum.Domain.Interfaces
         Task<ForumCategory> GetForumCategoryAsync(int categoryId);
         Task<bool> CreateCategoryAsync(ForumCategory newCategory);
         Task<bool> UpdateCategoryAsync(ForumCategory editedCategory);
+        Task<bool> DeleteCategoryAsync(int categoryId);
     }
 
     public class ManageForumCategories : IManageForumCategories
@@ -40,5 +41,8 @@ namespace BlazorForum.Domain.Interfaces
 
         public async Task<bool> UpdateCategoryAsync(ForumCategory editedCategory) =>
             await new Data.Repository.ForumCategories(_context).UpdateCategoryAsync(editedCategory);
+
+        public async Task<bool> DeleteCategoryAsync(int categoryId) =>
+            await new Data.Repository.ForumCategories(_context).DeleteCategoryAsync(categoryId);
     }
 }

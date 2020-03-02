@@ -51,7 +51,8 @@
     protected override async Task OnInitializedAsync()
     {
         var forum = await manageForums.GetForumAsync(ForumId);
-        _allowUpDownVoting = forum.EnableUpDownVotes;
+        if(forum != null)
+            _allowUpDownVoting = forum.EnableUpDownVotes;
     }
 
     private void HideThisEditor()

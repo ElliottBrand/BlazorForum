@@ -53,7 +53,8 @@
     protected override async Task OnInitializedAsync()
     {
         var forum = await manageForums.GetForumAsync(ThisTopic.ForumCategoryId);
-        _allowUpDownVoting = forum.EnableUpDownVotes;
+        if(forum != null)
+            _allowUpDownVoting = forum.EnableUpDownVotes;
     }
 
     private void RefreshTopic()

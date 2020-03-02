@@ -3,10 +3,12 @@
 @inject IManageForumTopics manageTopics
 @inject UserManager<ApplicationUser> userManager
 @inject IBlazorModal blazorModal
+@inject NavigationManager navManager
 
 <section class="mb-3">
     <a href="@String.Format("/admin/forums/{0}/categories/{1}/edit", forumId, id)"
        class="btn btn-blazorforum">Edit Details</a>
+    <button class="btn btn-danger float-right" type="button" @onclick="@(() => DeleteCategoryClicked())">Delete Category</button>
 </section>
 <section>
     <header>
@@ -42,7 +44,7 @@
                                class="btn btn-sm btn-blazorforum mt-1 mr-2">
                                 Edit
                             </a>
-                            <button class="btn btn-sm btn-blazorforum mt-1" @onclick="@(() => DeleteClicked(topic.ForumTopicId))">
+                            <button class="btn btn-sm btn-blazorforum mt-1" @onclick="@(() => DeleteTopicClicked(topic.ForumTopicId))">
                                 Delete
                             </button>
                         </div>
@@ -62,14 +64,17 @@
 
     public void Dispose()
     {
-        blazorModal.OnConfirmYes -= YesConfirmed;
+        blazorModal.OnConfirmDeleteForumCategory -= CategoryDeleteConfirmed;
+        blazorModal.OnConfirmDeleteForumTopicItem -= TopicDeleteConfirmed;
     }
 
     protected override async Task OnInitializedAsync()
     {
         _category = await manageCategories.GetForumCategoryAsync(id);
         await LoadTopicsAsync();
-        blazorModal.OnConfirmYes += YesConfirmed;
+
+        blazorModal.OnConfirmDeleteForumCategory += CategoryDeleteConfirmed;
+        blazorModal.OnConfirmDeleteForumTopicItem += TopicDeleteConfirmed;
     }
 
     private async Task LoadTopicsAsync()
@@ -88,22 +93,41 @@
         }
     }
 
-    private void DeleteClicked(int id)
+    private void DeleteTopicClicked(int topicId)
     {
-        _itemIdToDelete = id;
-        blazorModal.Show<ConfirmModal>("Delete Modal", BlazorModalParameter.Get("ModalText", "Are you sure you want to delete this topic and all related posts?"));
+        _itemIdToDelete = topicId;
+        string modalMessage = "Are you sure you want to delete this topic and all related posts?";
+        if (_itemIdToDelete != -1)
+            blazorModal.Show<ConfirmModal>("Delete",
+                BlazorModalParameter.Get("ModalText", modalMessage),
+                BlazorModalParameter.Get("ItemToDelete", "topic-item"));
     }
 
-    public async void YesConfirmed()
+    private void DeleteCategoryClicked()
+    {
+        var modalMessage = "Are you sure you want to delete this category and all related topics and posts?";
+        blazorModal.Show<ConfirmModal>("Delete Category",
+            BlazorModalParameter.Get("ModalText", modalMessage),
+            BlazorModalParameter.Get("ItemToDelete", "category"));
+    }
+
+    public async void CategoryDeleteConfirmed()
     {
         blazorModal.Close();
-        if(_itemIdToDelete != -1)
-        {
-            var deleted = await manageTopics.DeleteForumTopicAsync(_itemIdToDelete);
-            if (deleted)
-                await LoadTopicsAsync();
-            _itemIdToDelete = -1;
-            StateHasChanged();
-        }
+
+        var deleted = await manageCategories.DeleteCategoryAsync(id);
+        if (deleted)
+            navManager.NavigateTo("/admin/forums/" + forumId);
+    }
+
+    public async void TopicDeleteConfirmed()
+    {
+        blazorModal.Close();
+
+        var deleted = await manageTopics.DeleteForumTopicAsync(_itemIdToDelete);
+        if (deleted)
+            await LoadTopicsAsync();
+        _itemIdToDelete = -1;
+        StateHasChanged();
     }
 }
