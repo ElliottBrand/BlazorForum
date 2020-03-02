@@ -9,6 +9,7 @@ Some TODOs can be found [Here](TODOS-ISSUES.md)
 * Since it makes sense the first registered user would be a site owner, the first registered user is automatically assigned to the Administrator role. This makes it easier to gain access to the administration area, without needing to manually add entries into the database. All other newly registered users will be automatically assigned to the Contributor role.
 * You can add a customized theme (styles) by adding a new theme folder to the wwwroot/custom-themes/ folder, then selecting it on the settings page in the administration area. The theme name (mentioned it the top of the styles.css file) should match the folder name. For additional requirements, read the [guidelines for adding themes](BlazorForum/wwwroot/custom-themes/ReadMe.txt). A very basic theme called 'Red Theme' has been added to show you how a theme should be structured.
 * BlazorForum is using CKEditor, which gives the ability to stylize topics/posts and insert code blocks.
+* You can up/down vote posts and topics to say whether it was helpful and respectful or unhelpful and/or disrespectful.
 
 ## Database Setup Notes
 * To create the database for this project, open it in Visual Studio 2019 and set the **BlazorForum.Data** project as the default project in **Package Manager Console**. Then enter `Update-Database` after **PM>**  This should create and setup your database for the project.
