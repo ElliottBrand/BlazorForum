@@ -42,13 +42,30 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> UpdateCategoryAsync(ForumCategory editedCategory)
         {
-            var category = _context.ForumCategories.Where(p => p.ForumCategoryId == editedCategory.ForumCategoryId).FirstOrDefault();
-            category.Title = editedCategory.Title;
-            category.Description = editedCategory.Description;
-            category.ForumId = editedCategory.ForumId;
-            category.Rank = editedCategory.Rank;
-            await _context.SaveChangesAsync();
-            return true;
+            var category = await _context.ForumCategories.Where(p => p.ForumCategoryId == editedCategory.ForumCategoryId).FirstOrDefaultAsync();
+            if(category != null)
+            {
+                category.Title = editedCategory.Title;
+                category.Description = editedCategory.Description;
+                category.ForumId = editedCategory.ForumId;
+                category.Rank = editedCategory.Rank;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int categoryId)
+        {
+            var categories = _context.ForumCategories;
+            var category = await categories.Where(p => p.ForumCategoryId == categoryId).FirstOrDefaultAsync();
+            if(category != null)
+            {
+                categories.Remove(category);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

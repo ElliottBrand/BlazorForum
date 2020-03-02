@@ -1,6 +1,7 @@
 ﻿@page "/topic/{id:int}/{slug}"
 @using Microsoft.AspNetCore.Identity
 @using System.Collections.Generic
+@using BlazorForum.Pages.Components.Forums.SubComponents
 
 @inject NavigationManager navManager
 @inject Domain.Interfaces.IManageForumCategories manageForumCategories
@@ -38,41 +39,9 @@ else
     <header class="forum-topic-header">
         <h3>@_topic.Title</h3>
     </header>
-    <div class="forum-topic-text-div">
-        <div class="">
-            @if (_isEditorVisible != true)
-                @((MarkupString)_topic.TopicText)
-
-            @if (_topic.UserId == CurrentUserId)
-            {
-                @if (_isEditorVisible)
-                {
-                    <TopicForm OnTopicUpdated="@RefreshTopic" CurrentUserId="@CurrentUserId" ForumTopicToEdit="@_topic" OnCancel="@RefreshTopic"></TopicForm>
-                }
-                else
-                {
-                    <div>
-                        <button class="btn btn-sm btn-blazorforum mb-2" type="button" @onclick="@(() => _isEditorVisible = true)">Edit</button>
-                    </div>
-                }
-            }
-
-            @if (_isEditorVisible != true)
-            {
-                <div class="forum-post-time d-inline-block">
-                    Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(_topic.PostedDate)
-                    by @_topic.UserName
-                </div>
-
-                @if (_topic.EditedDate != null)
-                {
-                    <div class="forum-post-time ml-3 d-inline-block">
-                        Edited @DateTimeFormatting.RelativeDateAgo(Convert.ToDateTime(_topic.EditedDate))
-                    </div>
-                }
-            }
-        </div>
-    </div>
+    <section class="forum-topic-text-section">
+        <Topic ThisTopic="@_topic" CurrentUserId="@CurrentUserId"></Topic>
+    </section>
 
     if (_posts != null && _posts.Count > 0)
     {
@@ -80,40 +49,8 @@ else
         @for(var index = 0; index < (_posts.Count); index++)
         {
             var i = index;
-            _isPostEditorVisible.Add(false);
             <li>
-                @if (_isPostEditorVisible[i] == false)
-                    @((MarkupString)_posts[i].PostText)
-
-                @if (_posts[i].UserId == CurrentUserId)
-                {
-                    if (_isPostEditorVisible[i] == true)
-                    {
-                        <PostForm OnPostUpdated="@(() => RefreshPost(i))" CurrentUserId="@CurrentUserId" PostToEdit="@_posts[i]" OnCancel="@(() => RefreshPost(i))"></PostForm>
-                    }
-                    else
-                    {
-                        <div>
-                            <button class="btn btn-sm btn-blazorforum mb-2" type="button"
-                                    @onclick="@(() => _isPostEditorVisible[i] = true)">
-                                Edit
-                            </button>
-                        </div>
-                    }
-                }
-                @if (_isPostEditorVisible[i] == false)
-                {
-                    <div class="forum-post-time d-inline-block">
-                        Posted @DateTimeFormatting.RelativeDateAgo(_posts[i].PostedDate)
-                        by @_posts[i].UserName
-                    </div>
-                    @if (_posts[i].EditedDate != null)
-                    {
-                        <div class="forum-post-time ml-3 d-inline-block">
-                            Edited @DateTimeFormatting.RelativeDateAgo(Convert.ToDateTime(_posts[i].EditedDate))
-                        </div>
-                    }
-                }
+                <Post CurrentUserId="@CurrentUserId" ThisPost="@_posts[i]" ForumId="_category.ForumCategoryId"></Post>
             </li>
          }
     </ul>
@@ -148,8 +85,6 @@ else
     private List<Models.ForumPost> _posts;
     private int _maxCount = 10;
     private string loadMoreVisibility;
-    private bool _isEditorVisible = false;
-    private List<bool> _isPostEditorVisible = new List<bool>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -222,17 +157,5 @@ else
             var user = await userManager.FindByIdAsync(post.UserId);
             post.UserName = user.UserName;
         }
-    }
-
-    private void RefreshTopic()
-    {
-        _isEditorVisible = false;
-        StateHasChanged();
-    }
-
-    private void RefreshPost(int i)
-    {
-        _isPostEditorVisible[i] = false;
-        StateHasChanged();
     }
 }

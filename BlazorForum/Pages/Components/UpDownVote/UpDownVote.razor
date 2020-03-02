@@ -1,0 +1,69 @@
+﻿@inject IManageUpDownVotes manageUpDownVotes
+@inject Data.ApplicationDbContext context
+
+<section class="up-down-vote-container">
+    <button class="oi oi-arrow-circle-top up-vote up-down-vote-btn @disabledClass" disabled="@disabled" @onclick="(() => OnClickIncrement(1))" title="This post is helpful and respectful"></button>
+    <section class="up-down-vote-count">
+        @totalCount
+    </section>
+    <button class="oi oi-arrow-circle-bottom down-vote up-down-vote-btn @disabledClass" disabled="@disabled" @onclick="(() => OnClickIncrement(-1))" title="This post is unhelpful and/or disrespectful"></button>
+</section>
+
+@code {
+    /// <summary>
+    /// The UniqueIdentifier is what keeps the results assigned properly and prevents PostId conflicts. 
+    /// NEVER change this after it has been used and logged into storage.
+    /// </summary>
+    [Parameter] public string UniqueIdentifier { get; set; }
+    [Parameter] public int PostId { get; set; }
+    [Parameter] public string PosterId { get; set; }
+    [Parameter] public string VoterId { get; set; }
+    public int totalCount = 0;
+    private bool disabled = true;
+    private string disabledClass;
+
+    protected override async Task OnInitializedAsync()
+    {
+        totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId);
+
+        await SetUpDownVoteVisibility();
+    }
+
+    private async Task OnClickIncrement(int voteIncrement)
+    {
+        if(VoterId != null)
+        {
+            var added = await manageUpDownVotes.AddPostUpDownVoteAsync(BuildNewPostVote(voteIncrement));
+            if (added)
+            {
+                totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId);
+                await SetUpDownVoteVisibility();
+            }
+        }
+    }
+
+    private Models.UpDownVote BuildNewPostVote(int voteIncrement)
+    {
+        var newUpDownVote = new Models.UpDownVote
+        {
+            PostId = PostId,
+            PosterId = PosterId,
+            VoterId = VoterId,
+            UniqueIdentifier = UniqueIdentifier,
+            DateVoted = DateTime.Now.ToUniversalTime(),
+            VoteIncrement = voteIncrement
+        };
+        return newUpDownVote;
+    }
+
+    private async Task SetUpDownVoteVisibility()
+    {
+        if (VoterId != null && PosterId != VoterId && await manageUpDownVotes.VoterHasVoted(VoterId, PostId) == false)
+            disabled = false;
+        else
+        {
+            disabled = true;
+            disabledClass = "disabled";
+        }
+    }
+}

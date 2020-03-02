@@ -27,5 +27,7 @@ namespace BlazorForum.Data
         public DbSet<Configuration> Configuration { get; set; }
 
         public DbSet<SitePage> Pages { get; set; }
+
+        public DbSet<UpDownVote> UpDownVotes { get; set; }
     }
 }

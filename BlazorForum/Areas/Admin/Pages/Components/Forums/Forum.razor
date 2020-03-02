@@ -1,9 +1,12 @@
 ﻿@page "/admin/forums/{id:int}"
 @inject IManageForums manageForums
 @inject IManageForumCategories manageCategories
+@inject IBlazorModal blazorModal
+@inject NavigationManager navManager
 
 <section class="mb-3">
     <a href="@String.Format("/admin/forums/{0}/edit", id)" class="btn btn-blazorforum">Edit Details</a>
+    <button class="btn btn-danger float-right" @onclick="@(() => DeleteClicked())">Delete Forum</button>
 </section>
 <section>
     <header>
@@ -52,11 +55,33 @@
     {
         forum = await manageForums.GetForumAsync(id);
         categories = await manageCategories.GetForumCategoriesAsync(id);
+
+        blazorModal.OnConfirmDeleteForum += DeleteForumConfirmed;
+    }
+
+    public void Dispose()
+    {
+        blazorModal.OnConfirmDeleteForum -= DeleteForumConfirmed;
     }
 
     public async void UpdateCategories()
     {
-        categories = await manageCategories.GetForumCategoriesAsync();
+        categories = await manageCategories.GetForumCategoriesAsync(id);
         StateHasChanged();
+    }
+
+    private void DeleteClicked()
+    {
+        var modalMessage = "Are you sure you want to delete this forum? It will also delete all related categories, topics, and posts!";
+        blazorModal.Show<ConfirmModal>("Delete Forum", BlazorModalParameter.Get("ModalText", modalMessage), 
+            BlazorModalParameter.Get("ItemToDelete", "forum"));
+    }
+
+    public async void DeleteForumConfirmed()
+    {
+        blazorModal.Close();
+        var deleted = await manageForums.DeleteForumAsync(id);
+        if (deleted)
+            navManager.NavigateTo("/admin/forums");
     }
 }

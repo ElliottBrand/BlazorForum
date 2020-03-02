@@ -41,7 +41,7 @@
                            class="btn btn-sm btn-blazorforum mt-1 mr-2">
                             Edit
                         </a>
-                        <button class="btn btn-sm btn-blazorforum-danger mt-1" @onclick="@(() => DeleteClicked(post.ForumPostId))">
+                        <button class="btn btn-sm btn-blazorforum-danger mt-1" @onclick="@(() => DeletePostClicked(post.ForumPostId))">
                             Delete
                         </button>
                     </div>
@@ -58,18 +58,20 @@
     private Models.ForumTopic _topic = new Models.ForumTopic();
     private List<Models.ForumPost> _posts = new List<Models.ForumPost>();
     private int _postIdToDelete = -1;
-    private bool _isDeletingTopic;
 
     public void Dispose()
     {
-        blazorModal.OnConfirmYes -= YesConfirmed;
+        blazorModal.OnConfirmDeleteForumTopic -= DeleteTopicConfirmedAsync;
+        blazorModal.OnConfirmDeleteForumPostItem -= DeletePostConfirmedAsync;
     }
 
     protected override async Task OnInitializedAsync()
     {
         _topic = await manageTopics.GetForumTopicAsync(topicId);
         await LoadPostsAsync();
-        blazorModal.OnConfirmYes += YesConfirmed;
+
+        blazorModal.OnConfirmDeleteForumTopic += DeleteTopicConfirmedAsync;
+        blazorModal.OnConfirmDeleteForumPostItem += DeletePostConfirmedAsync;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -98,32 +100,41 @@
 
     private void DeleteTopicClicked()
     {
-        _isDeletingTopic = true;
-        blazorModal.Show<ConfirmModal>("Delete Modal", BlazorModalParameter.Get("ModalText", "Are you sure you want to delete this topic and all related posts?"));
+        var modalMessage = "Are you sure you want to delete this topic and all related posts?";
+        blazorModal.Show<ConfirmModal>("Delete Topic",
+            BlazorModalParameter.Get("ModalText", modalMessage),
+            BlazorModalParameter.Get("ItemToDelete", "topic"));
     }
 
-    private void DeleteClicked(int id)
+    private void DeletePostClicked(int id)
     {
         _postIdToDelete = id;
-        blazorModal.Show<ConfirmModal>("Delete Modal", BlazorModalParameter.Get("ModalText", "Are you sure you want to delete this post?"));
+        var modalMessage = "Are you sure you want to delete this post?";
+        blazorModal.Show<ConfirmModal>("Delete Post",
+            BlazorModalParameter.Get("ModalText", modalMessage),
+            BlazorModalParameter.Get("ItemToDelete", "post-item"));
     }
 
-    public async void YesConfirmed()
+    public async void DeleteTopicConfirmedAsync()
     {
         blazorModal.Close();
+
+        var deletedTopic = await manageTopics.DeleteForumTopicAsync(topicId);
+        if (deletedTopic)
+            navManager.NavigateTo(String.Format("/admin/forums/{0}/categories/{1}", forumId, categoryId));
+    }
+
+    public async void DeletePostConfirmedAsync()
+    {
         if(_postIdToDelete != -1)
         {
+            blazorModal.Close();
+
             var deleted = await managePosts.DeletePostAsync(_postIdToDelete);
             if (deleted)
                 await LoadPostsAsync();
             _postIdToDelete = -1;
             StateHasChanged();
-        }
-        else if(_isDeletingTopic == true)
-        {
-            var deletedTopic = await manageTopics.DeleteForumTopicAsync(topicId);
-            if (deletedTopic)
-                navManager.NavigateTo(String.Format("/admin/forums/{0}/categories/{1}", forumId, categoryId));
         }
     }
 }

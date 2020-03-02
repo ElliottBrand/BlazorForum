@@ -2,22 +2,31 @@
 @inject IManageForums manageForums
 @inject IJSRuntime jsRuntime
 
+@if (_pageError)
+{
+    <div class="alert alert-danger">
+        <span class="text-danger">
+            @_pageErrorMsg
+        </span>
+    </div>
+}
+
 <header>
     <h3>Forums</h3>
 </header>
 <section>
-    @if (_forums == null)
-    {
-        <div>Loading Forums...</div>
-    }
-    else if (_forums.Count == 0)
-    {
-        <div>No Forums Found.</div>
-    }
-    else
-    {
-        <ul class="forum-ul">
-            @foreach (var forum in _forums)
+    <ul class="forum-ul">
+        @if (_forums == null)
+        {
+            <li>Loading Forums...</li>
+        }
+        else if (_forums.Count == 0)
+        {
+            <li>No Forums Found</li>
+        }
+        else
+        {
+            foreach (var forum in _forums)
             {
                 <li>
                     <a href="@String.Format("/admin/forums/{0}", forum.ForumId)">
@@ -25,8 +34,8 @@
                     </a>
                 </li>
             }
-        </ul>
-    }
+        }
+    </ul>
 </section>
 <section>
     <AddNewForumForm OnForumCreated="UpdateForums"></AddNewForumForm>
@@ -34,6 +43,8 @@
 
 @code {
     private List<Models.Forum> _forums;
+    private bool _pageError = false;
+    private string _pageErrorMsg;
 
     protected override async Task OnInitializedAsync()
     {

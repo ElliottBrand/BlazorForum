@@ -14,6 +14,15 @@
         </div>
         <ValidationMessage For="@(() => forum.Title)" />
 
+        <div class="input-group mt-2">
+            <div class="input-group-prepend">
+                <label class="input-group-text">Enable Up/Down Votes</label>
+            </div>
+            <div class="form-control">
+                <InputCheckbox @bind-Value="forum.EnableUpDownVotes" />
+            </div>
+        </div>
+
         <InputTextArea id="Description" @bind-Value="forum.Description" rows="3" class="@textAreaClass" />
         <ValidationMessage For="@(() => forum.Description)" />
         <button class="btn btn-blazorforum mt-2 @btnVisibility" type="submit">Add Forum</button>
@@ -37,6 +46,7 @@
         var newForum = new Models.Forum()
         {
             Title = forum.Title,
+            EnableUpDownVotes = forum.EnableUpDownVotes,
             Description = forum.Description
         };
         var added = await manageForums.CreateForumAsync(newForum);
