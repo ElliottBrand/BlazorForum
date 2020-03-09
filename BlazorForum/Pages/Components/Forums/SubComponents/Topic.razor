@@ -24,21 +24,6 @@
                 </div>
             }
         }
-
-        @if (_isEditorVisible != true)
-        {
-            <div class="forum-post-time d-inline-block">
-                Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(ThisTopic.PostedDate)
-                by @ThisTopic.UserName
-            </div>
-
-            @if (ThisTopic.EditedDate != null)
-            {
-                <div class="forum-post-time ml-3 d-inline-block">
-                    Edited @DateTimeFormatting.RelativeDateAgo(Convert.ToDateTime(ThisTopic.EditedDate))
-                </div>
-            }
-        }
     </div>
 </div>
 
@@ -49,11 +34,6 @@
     [Parameter] public bool ForumUpDownVoteEnabled { get; set; }
     [Parameter] public string CurrentUserId { get; set; }
     private bool _isEditorVisible = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        
-    }
 
     private void RefreshTopic()
     {

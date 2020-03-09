@@ -81,23 +81,17 @@ app {
     padding-top: 1.1rem;
 }
 
-.forum-ul {
-    list-style: none;
-    padding-left: 0px;
+.forum-description, .forum-category-description, forum-topic-description {
+    color: #ccc;
 }
 
-    .forum-ul li {
-        border: 1px solid #8070a6;
-        border-top: none;
-        padding: 0.5em;
-        background-color: #e0dcf8;
-        word-break: break-word;
-    }
-
-        .forum-ul li:last-child {
-            border-bottom-right-radius: 0.25em;
-            border-bottom-left-radius: 0.25em;
-        }
+.forum-header, .forum-category-header, .forum-topic-header {
+    background-image: linear-gradient(90deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    border-top-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+    padding: 1em;
+    color: #fff;
+}
 
 .forum-post-time {
     font-size: 0.8em;
@@ -129,17 +123,23 @@ app {
             border-bottom-right-radius: 0.25em;
         }
 
-.forum-description, .forum-category-description, forum-topic-description {
-    color: #ccc;
+.forum-ul {
+    list-style: none;
+    padding-left: 0px;
 }
 
-.forum-header, .forum-category-header, .forum-topic-header {
-    background-image: linear-gradient(90deg, rgb(5, 39, 103) 0%, #3a0647 70%);
-    border-top-left-radius: 0.25em;
-    border-top-right-radius: 0.25em;
-    padding: 1em;
-    color: #fff;
-}
+    .forum-ul li {
+        border: 1px solid #8070a6;
+        border-top: none;
+        padding: 0.5em;
+        background-color: #e0dcf8;
+        word-break: break-word;
+    }
+
+        .forum-ul li:last-child {
+            border-bottom-right-radius: 0.25em;
+            border-bottom-left-radius: 0.25em;
+        }
 
 .forum-post-container, .forum-topic-container{
     display:flex;
@@ -147,6 +147,10 @@ app {
 
 .forum-topic-content, .forum-post-content{
     vertical-align: top;
+}
+
+.forum-topic-header .forum-post-time{
+    color:#9382bd;
 }
 
 .forum-topic-text-section {
@@ -189,6 +193,10 @@ app {
 .main .top-row a:first-child {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.nav-item-blazorforum a.nav-link.active {
+    background-color: #3a0647;
 }
 
 .navbar-toggler {

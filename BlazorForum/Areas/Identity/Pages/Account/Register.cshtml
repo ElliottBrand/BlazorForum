@@ -7,7 +7,7 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-12 col-lg-6 col-xl-4">
         <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h5>Create a new account.</h5>
             <hr />
@@ -32,7 +32,7 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-blazorforum">Register</button>
         </form>
     </div>
     @* // Disabled this for now. Could be built in later. *@

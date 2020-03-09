@@ -27,7 +27,7 @@ namespace BlazorForum.Domain.Services
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress(_configData.EmailAddress, _configData.SendGridUser),
+                From = new EmailAddress(_configData.EmailAddress, _configData.EmailSenderName),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message

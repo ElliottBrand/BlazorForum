@@ -4,10 +4,11 @@
 @using BlazorForum.Pages.Components.Forums.SubComponents
 
 @inject NavigationManager navManager
-@inject Domain.Interfaces.IManageForumCategories manageForumCategories
-@inject Domain.Interfaces.IManageForumTopics manageForumTopics
-@inject Domain.Interfaces.IManageForumPosts  manageForumPosts
-@inject Domain.Interfaces.IManageForums manageForums
+@inject IManageForumCategories manageForumCategories
+@inject IManageForumTopics manageForumTopics
+@inject IManageForumPosts  manageForumPosts
+@inject IManageForums manageForums
+@inject IManageTopicSubscriptions manageTopicSubscriptions
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
 @inject IJSRuntime JSRuntime
@@ -37,8 +38,31 @@
 }
 else
 {
+<div class="text-right">
+    @if (CurrentUserId != null)
+    {
+        if (_userIsSubscribedToTopic)
+        {
+            <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => UnsubscribeUserFromTopic())" title="Unsubscribe from this topic">Unsubscribe</button>
+        }
+        else
+        {
+            <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => SubscribeUserToTopic())" title="Subscribe to this topic">Subscribe</button>
+        }
+    }
+</div>
     <header class="forum-topic-header">
         <h3>@_topic.Title</h3>
+        <div class="forum-post-time d-inline-block">
+            Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(_topic.PostedDate)
+            by @_topic.UserName
+        </div>
+        @if (_topic.EditedDate != null)
+        {
+            <div class="forum-post-time ml-3 d-inline-block">
+                Edited @DateTimeFormatting.RelativeDateAgo(Convert.ToDateTime(_topic.EditedDate))
+            </div>
+        }
     </header>
     <section class="forum-topic-text-section">
         <Topic ThisTopic="@_topic" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" CurrentUserId="@CurrentUserId"></Topic>
@@ -66,7 +90,7 @@ else
     <h4>@GeneralResources.PostReply</h4>
     <AuthorizeView>
         <Authorized>
-            <PostForm OnPostAdded="UpdatePostsAsync" TopicId="@id" CurrentUserId="@CurrentUserId"></PostForm>
+            <PostForm OnPostAdded="UpdatePostsAsync" TopicId="@id" CurrentUserId="@CurrentUserId" TopicSlug="@slug"></PostForm>
         </Authorized>
         <NotAuthorized>
             <div class="alert alert-secondary">
@@ -87,6 +111,7 @@ else
     private int _maxCount = 10;
     private string loadMoreVisibility;
     private bool _forumUpDownVoteEnabled;
+    private bool _userIsSubscribedToTopic;
 
     protected override async Task OnInitializedAsync()
     {
@@ -103,6 +128,8 @@ else
         _posts = _posts.Take(_maxCount).ToList();
         CurrentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
         await AddUserToPostAsync();
+
+        await CheckIfUserIsSubscribed();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -116,7 +143,7 @@ else
     private async Task LoadTopicAsync()
     {
         _topic = await manageForumTopics.GetForumTopicAsync(id);
-        if(_topic == null || _topic.IsApproved != true)
+        if(_topic == null || _topic.IsApproved != true || _topic.IsDeleted == true)
             navManager.NavigateTo("/");
 
         var user = await userManager.FindByIdAsync(_topic.UserId);
@@ -135,6 +162,10 @@ else
         _posts = _posts.Take(_maxCount).ToList();
 
         await AddUserToPostAsync();
+
+        // Update the subscription button in upper right, since they are subscribed after adding a new post.
+        await CheckIfUserIsSubscribed();
+
         StateHasChanged();
     }
 
@@ -161,5 +192,27 @@ else
             var user = await userManager.FindByIdAsync(post.UserId);
             post.UserName = user.UserName;
         }
+    }
+
+    private async Task CheckIfUserIsSubscribed()
+    {
+        _userIsSubscribedToTopic = await new Domain.Helpers.Forum.ForumTopicHelpers(manageTopicSubscriptions)
+            .CurrentUserIsSubscribedToTopic(CurrentUserId, id);
+    }
+
+    private async Task UnsubscribeUserFromTopic()
+    {
+        await manageTopicSubscriptions.RemoveSubscriptionFromTopicAsync(id, CurrentUserId);
+        await CheckIfUserIsSubscribed();
+    }
+
+    private async Task SubscribeUserToTopic()
+    {
+        var newSubscription = new TopicSubscription {
+            Id = CurrentUserId,
+            ForumTopicId = id
+        };
+        await manageTopicSubscriptions.AddSubscriptionToTopicAsync(newSubscription);
+        await CheckIfUserIsSubscribed();
     }
 }

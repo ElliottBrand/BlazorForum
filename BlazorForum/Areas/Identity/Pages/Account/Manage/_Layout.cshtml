@@ -1,17 +1,17 @@
 ﻿@{
-    Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
 <h1>Manage your account</h1>
 
-<div>
+<div class="container">
     <h4>Change your account settings</h4>
     <hr />
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4 col-lg-3">
             <partial name="_ManageNav" />
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8 col-lg-9">
             @RenderBody()
         </div>
     </div>

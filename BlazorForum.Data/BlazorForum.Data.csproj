@@ -15,6 +15,26 @@
     <Compile Remove="Migrations\20200229025736_Add UpDownVotes Table to DB.Designer.cs" />
     <Compile Remove="Migrations\20200301211001_Change ForumPosts property in ForumTopics.cs" />
     <Compile Remove="Migrations\20200301211001_Change ForumPosts property in ForumTopics.Designer.cs" />
+    <Compile Remove="Migrations\20200307221120_testmigration.cs" />
+    <Compile Remove="Migrations\20200307221120_testmigration.Designer.cs" />
+    <Compile Remove="Migrations\20200308210122_Revise TopicSubscriptions Table.cs" />
+    <Compile Remove="Migrations\20200308210122_Revise TopicSubscriptions Table.Designer.cs" />
+    <Compile Remove="Migrations\20200308211038_test-migration.cs" />
+    <Compile Remove="Migrations\20200308211038_test-migration.Designer.cs" />
+    <Compile Remove="Migrations\20200308212915_Add Cascading Deletes To ApplicationUser.cs" />
+    <Compile Remove="Migrations\20200308212915_Add Cascading Deletes To ApplicationUser.Designer.cs" />
+    <Compile Remove="Migrations\20200308213348_test migration.cs" />
+    <Compile Remove="Migrations\20200308213348_test migration.Designer.cs" />
+    <Compile Remove="Migrations\20200308224303_test.cs" />
+    <Compile Remove="Migrations\20200308224303_test.Designer.cs" />
+    <Compile Remove="Migrations\20200308231348_test.cs" />
+    <Compile Remove="Migrations\20200308231348_test.Designer.cs" />
+    <Compile Remove="Migrations\20200308232855_test.cs" />
+    <Compile Remove="Migrations\20200308232855_test.Designer.cs" />
+    <Compile Remove="Migrations\20200308235200_test.cs" />
+    <Compile Remove="Migrations\20200308235200_test.Designer.cs" />
+    <Compile Remove="Migrations\20200309000247_AddTopicSubscriptionsTable.cs" />
+    <Compile Remove="Migrations\20200309000247_AddTopicSubscriptionsTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

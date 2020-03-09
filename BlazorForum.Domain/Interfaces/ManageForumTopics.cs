@@ -12,8 +12,9 @@ namespace BlazorForum.Domain.Interfaces
         Task<List<ForumTopic>> GetForumTopicsAsync(int categoryId);
         Task<List<ForumTopic>> GetApprovedForumTopicsAsync(int categoryId);
         Task<ForumTopic> GetForumTopicAsync(int topicId);
-        Task<bool> PostNewTopicAsync(ForumTopic newTopic);
+        Task<int> PostNewTopicAsync(ForumTopic newTopic);
         Task<bool> DeleteForumTopicAsync(int id);
+        Task<bool> MarkUserTopicsAsDeletedAsync(string userId);
         Task<bool> UpdateTopicAsync(ForumTopic editedTopic);
     }
 
@@ -35,11 +36,14 @@ namespace BlazorForum.Domain.Interfaces
         public async Task<ForumTopic> GetForumTopicAsync(int topicId) => 
             await new Data.Repository.ForumTopics(_context).GetForumTopic(topicId);
 
-        public async Task<bool> PostNewTopicAsync(ForumTopic newTopic) => 
+        public async Task<int> PostNewTopicAsync(ForumTopic newTopic) => 
             await new Data.Repository.ForumTopics(_context).PostNewTopicAsync(newTopic);
 
         public async Task<bool> DeleteForumTopicAsync(int id) =>
             await new Data.Repository.ForumTopics(_context).DeleteTopicAsync(id);
+
+        public async Task<bool> MarkUserTopicsAsDeletedAsync(string userId) =>
+            await new Data.Repository.ForumTopics(_context).MarkUserTopicsAsDeletedAsync(userId);
 
         public async Task<bool> UpdateTopicAsync(ForumTopic editedTopic) =>
             await new Data.Repository.ForumTopics(_context).UpdateTopicAsync(editedTopic);

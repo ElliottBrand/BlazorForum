@@ -1,7 +1,11 @@
 ﻿@inject IManageForumPosts manageForumPosts
 @inject NavigationManager navManager
 @inject IJSRuntime jsRuntime
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContext
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@inject IManageForumTopics manageForumTopics
+@inject UserManager<ApplicationUser> userManager
+@inject Microsoft.AspNetCore.Identity.UI.Services.IEmailSender emailSender
+@inject IManageTopicSubscriptions manageTopicSubscriptions
 @implements IDisposable
 
     <EditForm EditContext="@_editContext" OnSubmit="AddNewPost">
@@ -35,6 +39,7 @@
     [Parameter] public Action OnCancel { get; set; }
     [Parameter] public Models.ForumPost PostToEdit { get; set; }
     [Parameter] public int TopicId { get; set; }
+    [Parameter] public string TopicSlug { get; set; }
     private EditContext _editContext;
     private Models.ForumPost _forumPost = new Models.ForumPost() { UserId = "placeholder" };
     private string _btnVisibility = "d-block";
@@ -102,7 +107,13 @@
 
         var posted = await manageForumPosts.AddNewPostAsync(newPost);
 
-        OnPostAdded?.Invoke();
+        if (posted)
+        {
+            await new Domain.Helpers.Forum.AddPostHelpers(manageTopicSubscriptions, manageForumTopics, httpContextAccessor, userManager, emailSender)
+                .AddSubscriptionAndSendEmailToSubscribers(TopicId, CurrentUserId, TopicSlug);
+
+            OnPostAdded?.Invoke();
+        }
     }
 
     private async Task UpdatePost()

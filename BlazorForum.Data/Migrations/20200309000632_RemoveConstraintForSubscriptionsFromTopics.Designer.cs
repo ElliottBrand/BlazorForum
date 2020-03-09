@@ -4,14 +4,16 @@ using BlazorForum.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BlazorForum.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200309000632_RemoveConstraintForSubscriptionsFromTopics")]
+    partial class RemoveConstraintForSubscriptionsFromTopics
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -348,6 +350,9 @@ namespace BlazorForum.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("ForumTopicId")
                         .HasColumnType("int");
 
@@ -356,6 +361,8 @@ namespace BlazorForum.Data.Migrations
                         .HasMaxLength(256);
 
                     b.HasKey("TopicSubscriptionsId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("TopicSubscriptions");
                 });
@@ -556,6 +563,13 @@ namespace BlazorForum.Data.Migrations
                         .HasForeignKey("ForumCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BlazorForum.Models.TopicSubscription", b =>
+                {
+                    b.HasOne("BlazorForum.Models.ApplicationUser", null)
+                        .WithMany("TopicSubscriptions")
+                        .HasForeignKey("ApplicationUserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

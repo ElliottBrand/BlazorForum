@@ -13,6 +13,7 @@ namespace BlazorForum.Domain.Interfaces
         Task<List<ForumPost>> GetApprovedForumPostsAsync(int topicId);
         Task<bool> AddNewPostAsync(ForumPost newPost);
         Task<bool> DeletePostAsync(int postId);
+        Task<bool> MarkUserPostsAsDeletedAsync(string userId);
         Task<ForumPost> GetForumPostAsync(int postId);
         Task<bool> UpdatePostAsync(ForumPost editedPost);
     }
@@ -37,6 +38,9 @@ namespace BlazorForum.Domain.Interfaces
 
         public async Task<bool> DeletePostAsync(int postId) =>
             await new Data.Repository.ForumPosts(_context).DeletePostAsync(postId);
+
+        public async Task<bool> MarkUserPostsAsDeletedAsync(string userId) =>
+            await new Data.Repository.ForumPosts(_context).MarkUserPostsAsDeletedAsync(userId);
 
         public async Task<ForumPost> GetForumPostAsync(int postId) =>
             await new Data.Repository.ForumPosts(_context).GetForumPostAsync(postId);
