@@ -4,14 +4,16 @@ using BlazorForum.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BlazorForum.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200307212426_Change SendGridUser To EmailSenderName")]
+    partial class ChangeSendGridUserToEmailSenderName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,25 +341,6 @@ namespace BlazorForum.Data.Migrations
                     b.HasKey("ThemeId");
 
                     b.ToTable("Themes");
-                });
-
-            modelBuilder.Entity("BlazorForum.Models.TopicSubscription", b =>
-                {
-                    b.Property<int>("TopicSubscriptionsId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ForumTopicId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.HasKey("TopicSubscriptionsId");
-
-                    b.ToTable("TopicSubscriptions");
                 });
 
             modelBuilder.Entity("BlazorForum.Models.UpDownVote", b =>

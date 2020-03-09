@@ -1,4 +1,5 @@
 ﻿@inject IManageForumTopics manageForumTopics
+@inject IManageTopicSubscriptions manageTopicSubscriptions
 @inject NavigationManager navManager
 @inject IJSRuntime jsRuntime
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContext
@@ -90,7 +91,7 @@
                 _titleClass = "form-control clear-validation";
                 _textAreaClass = "mt-2 form-control clear-validation";
                 await jsRuntime.InvokeVoidAsync("methods.clearTargetedEditor", "TopicText-" + _forumTopic.ForumTopicId);
-                
+
                 StateHasChanged();
                 OnTopicAdded?.Invoke();
             }
@@ -113,7 +114,13 @@
             IsApproved = true,
             //UserIP = httpContext.HttpContext.Connection.RemoteIpAddress.ToString() // Was failing on server - fine locally
         };
-        var posted = await manageForumTopics.PostNewTopicAsync(newTopic);
+        var postedId = await manageForumTopics.PostNewTopicAsync(newTopic);
+
+        if (postedId != 0)
+        {
+            var newTopicSubscription = new TopicSubscription { ForumTopicId = postedId, Id = CurrentUserId };
+            var subscriptionAdded = await manageTopicSubscriptions.AddSubscriptionToTopicAsync(newTopicSubscription);
+        }
     }
 
     private async Task UpdateTopic()

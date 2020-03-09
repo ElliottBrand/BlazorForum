@@ -24,7 +24,7 @@ namespace BlazorForum.Data.Repository
 
         public async Task<List<ForumTopic>> GetApprovedForumTopicsAsync(int catId)
         {
-            return await _context.ForumTopics.Where(p => p.ForumCategoryId == catId && p.IsApproved == true).ToListAsync();
+            return await _context.ForumTopics.Where(p => p.ForumCategoryId == catId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
         }
 
         public async Task<ForumTopic> GetForumTopic(int topicId)
@@ -32,12 +32,12 @@ namespace BlazorForum.Data.Repository
             return await _context.ForumTopics.Where(p => p.ForumTopicId == topicId).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> PostNewTopicAsync(ForumTopic newTopic)
+        public async Task<int> PostNewTopicAsync(ForumTopic newTopic)
         {
             var topics = _context.ForumTopics;
             await topics.AddAsync(newTopic);
             await _context.SaveChangesAsync();
-            return true;
+            return newTopic.ForumTopicId;
         }
 
         public async Task<bool> UpdateTopicAsync(ForumTopic editedTopic)
@@ -64,6 +64,18 @@ namespace BlazorForum.Data.Repository
             var topics = _context.ForumTopics;
             var topic = await topics.Where(p => p.ForumTopicId == id).FirstOrDefaultAsync();
             var removed = topics.Remove(topic);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> MarkUserTopicsAsDeletedAsync(string userId)
+        {
+            var topics = _context.ForumTopics;
+            foreach (var topic in await topics.Where(p => p.UserId == userId).ToListAsync())
+            {
+                topic.DeleteReason = "Automated on User Delete";
+                topic.IsDeleted = true;
+            }
             await _context.SaveChangesAsync();
             return true;
         }

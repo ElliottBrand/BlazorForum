@@ -53,5 +53,27 @@ namespace BlazorForum.Data.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DeleteUpDownVotesByUserAsync(string userId)
+        {
+            var votes = _context.UpDownVotes;
+            foreach (var vote in await votes.Where(p => p.VoterId == userId).ToListAsync())
+            {
+                votes.Remove(vote);
+            }
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteUpDownVotesForUserAsync(string userId)
+        {
+            var votes = _context.UpDownVotes;
+            foreach (var vote in await votes.Where(p => p.PosterId == userId).ToListAsync())
+            {
+                votes.Remove(vote);
+            }
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace BlazorForum.Data.Repository
 
         public async Task<List<ForumPost>> GetApprovedForumPostsAsync(int topicId)
         {
-            return await _context.ForumPosts.Where(p => p.ForumTopicId == topicId && p.IsApproved == true).ToListAsync();
+            return await _context.ForumPosts.Where(p => p.ForumTopicId == topicId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
         }
 
         public async Task<ForumPost> GetForumPostAsync(int postId)
@@ -64,6 +64,18 @@ namespace BlazorForum.Data.Repository
             var posts = _context.ForumPosts;
             var post = await posts.Where(p => p.ForumPostId == postId).FirstOrDefaultAsync();
             posts.Remove(post);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> MarkUserPostsAsDeletedAsync(string userId)
+        {
+            var posts = _context.ForumPosts;
+            foreach (var post in await posts.Where(p => p.UserId == userId).ToListAsync())
+            {
+                post.DeleteReason = "Automated on User Delete";
+                post.IsDeleted = true;
+            }
             await _context.SaveChangesAsync();
             return true;
         }

@@ -20,6 +20,7 @@ using BlazorForum.Domain.Interfaces;
 using BlazorForum.Pages.Components.BlazorModal;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BlazorForum.Domain.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace BlazorForum
 {
@@ -46,7 +47,6 @@ namespace BlazorForum
 
             // Added for sending email through SendGrid
             services.AddTransient<IEmailSender, EmailSender>();
-
             services.AddRazorPages();
 
             services.Configure<IdentityOptions>(options =>
@@ -81,6 +81,7 @@ namespace BlazorForum
                 options.SlidingExpiration = true;
             });
 
+            services.AddHttpContextAccessor();
             services.AddTransient<IManageForums, ManageForums>();
             services.AddTransient<IManageForumCategories, ManageForumCategories>();
             services.AddTransient<IManageForumTopics, ManageForumTopics>();
@@ -89,6 +90,7 @@ namespace BlazorForum
             services.AddTransient<IManageConfiguration, ManageConfiguration>();
             services.AddTransient<IManagePages, ManagePages>();
             services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
+            services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
             services.AddBlazorModal();
 
             services.AddServerSideBlazor();

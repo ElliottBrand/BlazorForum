@@ -16,7 +16,7 @@ namespace BlazorForum.Models
         public string EmailAddress { get; set; }
 
         [MaxLength(100)]
-        public string SendGridUser { get; set; }
+        public string EmailSenderName { get; set; }
 
         [MaxLength(255)]
         public string SendGridKey { get; set; }

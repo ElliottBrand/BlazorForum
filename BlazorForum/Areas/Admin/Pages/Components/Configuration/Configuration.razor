@@ -9,6 +9,7 @@
         <EditForm Model="_config" OnValidSubmit="UpdateConfigAsync">
             <DataAnnotationsValidator />
 
+            <h4>Email</h4>
             <div class="input-group mt-2">
                 <div class="input-group-prepend">
                     <label class="input-group-text">Email Address</label>
@@ -19,11 +20,11 @@
 
             <div class="input-group mt-2">
                 <div class="input-group-prepend">
-                    <label class="input-group-text">SendGrid User</label>
+                    <label class="input-group-text">From Name</label>
                 </div>
-                <InputText @bind-Value="_config.SendGridUser" class="form-control"></InputText>
+                <InputText @bind-Value="_config.EmailSenderName" class="form-control"></InputText>
             </div>
-            <ValidationMessage For="@(() => _config.SendGridUser)" class="text-danger" />
+            <ValidationMessage For="@(() => _config.EmailSenderName)" class="text-danger" />
 
             <div class="input-group mt-2">
                 <div class="input-group-prepend">

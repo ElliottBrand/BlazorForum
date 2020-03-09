@@ -29,5 +29,7 @@ namespace BlazorForum.Data
         public DbSet<SitePage> Pages { get; set; }
 
         public DbSet<UpDownVote> UpDownVotes { get; set; }
+
+        public DbSet<TopicSubscription> TopicSubscriptions { get; set; }
     }
 }

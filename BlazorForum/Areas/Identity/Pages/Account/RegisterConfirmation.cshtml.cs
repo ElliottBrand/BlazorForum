@@ -48,7 +48,7 @@ namespace BlazorForum.Areas.Identity.Pages.Account
             Email = email;
             // Display the default confirmation link if SendGrid User/Key values aren't entered in site configuration area of admin
             var configuration = await _config.GetConfigAsync();
-            DisplayConfirmAccountLink = !String.IsNullOrEmpty(configuration.SendGridUser) 
+            DisplayConfirmAccountLink = !String.IsNullOrEmpty(configuration.EmailSenderName) 
                 && !String.IsNullOrEmpty(configuration.SendGridKey) ? false : true;
             if (DisplayConfirmAccountLink)
             {

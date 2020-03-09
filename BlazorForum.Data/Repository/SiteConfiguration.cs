@@ -49,7 +49,7 @@ namespace BlazorForum.Data.Repository
             {
                 config.AnalyticsCode = editedConfig.AnalyticsCode;
                 config.EmailAddress = editedConfig.EmailAddress;
-                config.SendGridUser = editedConfig.SendGridUser;
+                config.EmailSenderName = editedConfig.EmailSenderName;
                 config.SendGridKey = editedConfig.SendGridKey;
                 config.RegistrationApprovalMessage = editedConfig.RegistrationApprovalMessage;
                 await _context.SaveChangesAsync();
