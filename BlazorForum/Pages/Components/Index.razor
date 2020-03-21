@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject HeadBuilderService head
 @inject IJSRuntime JSRuntime
 @inject IManagePages managePages
 @inject Microsoft.Extensions.Configuration.IConfiguration config
@@ -17,17 +18,12 @@ else
     </section>
 }
 
-
 @code{
     private Models.SitePage _sitePage;
 
     protected override async Task OnInitializedAsync()
     {
+        head.Title = config.GetSection("SiteTitle").Value;
         _sitePage = await managePages.GetIndexPageAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await JSRuntime.InvokeVoidAsync("setDocTitle", config.GetSection("SiteTitle").Value);
     }
 }

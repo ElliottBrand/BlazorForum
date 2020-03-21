@@ -1,5 +1,5 @@
 ﻿@page "/admin/themes/"
-
+@inject HeadBuilderService head
 @inject IManageThemes manageThemes
 @inject IJSRuntime  jsRuntime
 
@@ -41,6 +41,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        head.Title = "Themes | Administration";
         selectedTheme = await manageThemes.GetSelectedThemeNameAsync();
 
         var themes = System.IO.Directory.GetDirectories("wwwroot/custom-themes/");
@@ -62,11 +63,6 @@
                 themeInfoList.Add(themeInfo);
             }
         }
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await jsRuntime.InvokeVoidAsync("setDocTitle", "Settings | Administration");
     }
 
     private string GetThemeInfo(IEnumerable<string> lines, string ThemeProperty)

@@ -1,4 +1,5 @@
 ﻿@page "/admin/forums/{forumId:int}/categories/{id:int}"
+@inject HeadBuilderService head
 @inject IManageForumCategories manageCategories
 @inject IManageForumTopics manageTopics
 @inject UserManager<ApplicationUser> userManager
@@ -71,6 +72,7 @@
     protected override async Task OnInitializedAsync()
     {
         _category = await manageCategories.GetForumCategoryAsync(id);
+        head.Title = "Forum Category | Administration";
         await LoadTopicsAsync();
 
         blazorModal.OnConfirmDeleteForumCategory += CategoryDeleteConfirmed;
@@ -79,7 +81,7 @@
 
     private async Task LoadTopicsAsync()
     {
-        _topics = await manageTopics.GetForumTopicsAsync(id);
+        _topics = await manageTopics.GetApprovedForumTopicsAsync(id);
         _topics = _topics.OrderByDescending(p => p.PostedDate).ToList();
         await AddUserToTopic();
     }

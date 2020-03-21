@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration</title>
+    <component type="typeof(BlazorForum.Pages.Components.Head.HeadSection)" render-mode="ServerPrerendered" />
     <base href="~/" />
     <link rel="stylesheet" href="~/css/bootstrap/bootstrap.min.css" />
     <link href="~/css/blazorforum-adminstyles.min.css" rel="stylesheet" />
@@ -32,9 +32,6 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
-    <script>
-        setDocTitle = (title) => { document.title = title; };
-    </script>
     <script src="~/scripts/js/ckeditor.js"></script>
     <script>
         var ckeditor = null;

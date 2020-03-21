@@ -1,4 +1,5 @@
 ﻿@page "/admin/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}"
+@inject HeadBuilderService head
 @inject IManageForumTopics manageTopics
 @inject IManageForumPosts managePosts
 @inject UserManager<ApplicationUser> userManager
@@ -68,18 +69,11 @@
     protected override async Task OnInitializedAsync()
     {
         _topic = await manageTopics.GetForumTopicAsync(topicId);
+        head.Title = "Forum Topic | Administration";
         await LoadPostsAsync();
 
         blazorModal.OnConfirmDeleteForumTopic += DeleteTopicConfirmedAsync;
         blazorModal.OnConfirmDeleteForumPostItem += DeletePostConfirmedAsync;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await jsRuntime.InvokeVoidAsync("setDocTitle", "Forum Topic | Administration");
-        }
     }
 
     private async Task LoadPostsAsync()

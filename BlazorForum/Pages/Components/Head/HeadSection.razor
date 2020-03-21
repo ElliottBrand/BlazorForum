@@ -1,0 +1,16 @@
+﻿@using System.ComponentModel
+@inject BlazorForum.Domain.Services.HeadBuilderService head
+
+<title>@head.Title</title>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        head.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
+        {
+            InvokeAsync(() => { StateHasChanged(); });
+        };
+
+        await base.OnInitializedAsync();
+    }
+}

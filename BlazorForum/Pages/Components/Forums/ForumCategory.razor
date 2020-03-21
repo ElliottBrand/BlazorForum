@@ -1,4 +1,5 @@
 ﻿@page "/category/{id:int}/{slug}"
+@inject HeadBuilderService head
 @inject NavigationManager navManager
 @inject IManageForumCategories manageForumCategories
 @inject IManageForumTopics manageForumTopics
@@ -87,6 +88,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         _category = await manageForumCategories.GetForumCategoryAsync(id);
+        head.Title = _category.Title;
         _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
 
         if (_maxCount >= _topics.Count)
@@ -99,13 +101,13 @@ else
         await SetTopicsCount();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    @*protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
             await JSRuntime.InvokeVoidAsync("setDocTitle", _category.Title);
         }
-    }
+    }*@
 
     public async void UpdateTopicsAsync()
     {

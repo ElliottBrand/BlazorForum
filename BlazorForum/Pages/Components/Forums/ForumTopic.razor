@@ -3,6 +3,7 @@
 @using System.Collections.Generic
 @using BlazorForum.Pages.Components.Forums.SubComponents
 
+@inject HeadBuilderService head
 @inject NavigationManager navManager
 @inject IManageForumCategories manageForumCategories
 @inject IManageForumTopics manageForumTopics
@@ -117,6 +118,7 @@ else
     {
         await LoadTopicAsync();
 
+        head.Title = _topic.Title;
         _posts = await manageForumPosts.GetApprovedForumPostsAsync(id);
         _category = await manageForumCategories.GetForumCategoryAsync(_topic.ForumCategoryId);
         var forum = await manageForums.GetForumAsync(_category.ForumId);
@@ -130,14 +132,6 @@ else
         await AddUserToPostAsync();
 
         await CheckIfUserIsSubscribed();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JSRuntime.InvokeVoidAsync("setDocTitle", _topic.Title);
-        }
     }
 
     private async Task LoadTopicAsync()
