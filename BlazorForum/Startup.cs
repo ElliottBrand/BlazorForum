@@ -21,6 +21,7 @@ using BlazorForum.Pages.Components.BlazorModal;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BlazorForum.Domain.Services;
 using Microsoft.AspNetCore.Http;
+using BlazorForum.Pages.Components.Head;
 
 namespace BlazorForum
 {
@@ -92,7 +93,7 @@ namespace BlazorForum
             services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
             services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
             services.AddBlazorModal();
-            services.AddScoped<HeadBuilderService>();
+            services.AddHeadBuilder();
 
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();

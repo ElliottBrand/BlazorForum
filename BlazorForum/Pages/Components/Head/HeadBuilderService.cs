@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace BlazorForum.Domain.Services
+namespace BlazorForum.Pages.Components.Head
 {
     public class HeadBuilderService : INotifyPropertyChanged
     {
