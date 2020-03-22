@@ -3,7 +3,11 @@ var allCkEditors = [];
 window.methods = {
     loadEditor: function (TextAreaId) {
         ClassicEditor
-            .create(document.querySelector('#' + TextAreaId))
+            .create(document.querySelector('#' + TextAreaId), {
+                link: {
+                    addTargetToExternalLinks: true
+                }
+            })
             .then(editor => {
                 ckeditor = editor;
 
