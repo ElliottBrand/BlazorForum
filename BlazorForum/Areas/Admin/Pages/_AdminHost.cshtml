@@ -11,7 +11,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <component type="typeof(BlazorForum.Pages.Components.Head.HeadSection)" render-mode="ServerPrerendered" />
-    <base href="~/" />
+    <base href="~/admin/" />
     <link rel="stylesheet" href="~/css/bootstrap/bootstrap.min.css" />
     <link href="~/css/blazorforum-adminstyles.min.css" rel="stylesheet" />
 </head>
@@ -31,7 +31,15 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="/_framework/blazor.server.js"></script>
+    <script src="/_framework/blazor.server.js" autostart="false"></script>
+    <script>
+        Blazor.start({
+            configureSignalR: function (builder) {
+                builder.withUrl("/admin/_blazor")
+                .build();
+            }
+        });
+    </script>
     <script src="~/scripts/js/ckeditor.js"></script>
     <script src="~/scripts/js/custom-ckeditor-scripts.js"></script>
 </body>
