@@ -1,5 +1,6 @@
-﻿@page "/admin/"
-
+﻿@page "/dashboard"
+@page "/admin/"
+@inject HeadBuilderService head
 @inject IJSRuntime jsRuntime
 
 <h1>Administration</h1>
@@ -9,11 +10,8 @@
 
 
 @code{
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            await jsRuntime.InvokeVoidAsync("setDocTitle", "Dashboard | Administration");
-        }
+        head.Title = "Dashboard | Administration";
     }
 }

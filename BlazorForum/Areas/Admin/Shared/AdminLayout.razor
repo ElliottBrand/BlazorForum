@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
-@* // Need to add roles authorization at some point. *@
+@inject NavigationManager navManager
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor contextAccessor
+
 <AuthorizeView Roles="Administrator">
     <Authorized>
         <div class="sidebar">
@@ -20,11 +22,17 @@
     <NotAuthorized>
         <div class="container pt-3">
             <div class="alert alert-warning text-center">
-                <span>
                     <i class="oi oi-warning"></i> You are not authorized to view this page.
-                </span>
+
+                    @if (context.User.Identity.Name == null)
+                    {
+                        <p>
+                            <a class="btn btn-warning mt-3" href="@String.Format("{0}://{1}/Identity/Account/Login", contextAccessor.HttpContext.Request.Scheme, contextAccessor.HttpContext.Request.Host)">
+                                LOGIN
+                            </a>
+                        </p>
+                    }
             </div>
         </div>
-
     </NotAuthorized>
 </AuthorizeView>

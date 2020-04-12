@@ -1,4 +1,5 @@
-﻿@page "/admin/membership"
+﻿@page "/manage/membership"
+@inject HeadBuilderService head
 @inject UserManager<ApplicationUser> userManager
 @inject RoleManager<IdentityRole> roleManager
 @inject IJSRuntime jsRuntime
@@ -13,7 +14,7 @@
     {
         foreach (var user in _users)
         {
-            <li><a href="@String.Format("/admin/membership/{0}/edit", user.Id)">@user.UserName</a></li>
+            <li><a href="@String.Format("/admin/manage/membership/{0}/edit", user.Id)">@user.UserName</a></li>
         }
     }
 </ul>
@@ -39,12 +40,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        head.Title = "Membership | Administration";
         _users = userManager.Users.OrderBy(p => p.UserName).ToList();
         _roles = roleManager.Roles.OrderBy(p => p.Name).ToList();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await jsRuntime.InvokeVoidAsync("setDocTitle", "Membership | Administration");
     }
 }

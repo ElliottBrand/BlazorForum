@@ -1,4 +1,5 @@
-﻿@page "/admin/forums/{forumId:int}/categories/{id:int}/edit"
+﻿@page "/manage/forums/{forumId:int}/categories/{id:int}/edit"
+@inject HeadBuilderService head
 @inject IManageForumCategories manageCategories
 @inject NavigationManager navManager
 @inject IJSRuntime jsRuntime
@@ -35,15 +36,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        head.Title = "Edit Forum Category | Administration";
         category = await manageCategories.GetForumCategoryAsync(id);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await jsRuntime.InvokeVoidAsync("setDocTitle", "Edit Forum Category | Administration");
-        }
     }
 
     private async Task UpdateCategory()
@@ -61,6 +55,6 @@
         btnVisibility = "d-inline-block";
         submitVisibility = "d-none";
 
-        navManager.NavigateTo(String.Format("/admin/forums/{0}/categories/{1}", forumId, id));
+        navManager.NavigateTo(String.Format("/admin/manage/forums/{0}/categories/{1}", forumId, id));
     }
 }

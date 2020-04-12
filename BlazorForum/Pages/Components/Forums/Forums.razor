@@ -1,4 +1,5 @@
 ﻿@page "/forums"
+@inject HeadBuilderService head
 @inject IManageForums manageForums
 @inject IManageForumCategories manageCategories
 @inject IManageForumTopics manageTopics
@@ -52,20 +53,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        head.Title = "Forums";
         _forums = await manageForums.GetForumsAsync();
 
         await SetTopicsCount();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await JSRuntime.InvokeVoidAsync("setDocTitle", "Forums");
-    }
-
     protected async Task SetTopicsCount()
     {
         var categories = await manageCategories.GetForumCategoriesAsync();
-        
+
         foreach (var category in categories)
         {
             var topics = await manageTopics.GetApprovedForumTopicsAsync(category.ForumCategoryId);

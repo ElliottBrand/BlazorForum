@@ -1,0 +1,14 @@
+﻿@using System.ComponentModel
+@inject HeadBuilderService head
+
+<title>@head.Title</title>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        head.PropertyChanged += async (object sender, PropertyChangedEventArgs e) =>
+        {
+            await InvokeAsync(() => { StateHasChanged(); });
+        };
+    }
+}

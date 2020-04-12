@@ -1,11 +1,11 @@
-﻿@page "/admin/forums/{id:int}"
+﻿@page "/manage/forums/{id:int}"
 @inject IManageForums manageForums
 @inject IManageForumCategories manageCategories
 @inject IBlazorModal blazorModal
 @inject NavigationManager navManager
 
 <section class="mb-3">
-    <a href="@String.Format("/admin/forums/{0}/edit", id)" class="btn btn-blazorforum">Edit Details</a>
+    <a href="@String.Format("/admin/manage/forums/{0}/edit", id)" class="btn btn-blazorforum">Edit Details</a>
     <button class="btn btn-danger float-right" @onclick="@(() => DeleteClicked())">Delete Forum</button>
 </section>
 <section>
@@ -31,7 +31,7 @@
                 foreach (var category in categories)
                 {
                     <li>
-                        <a href="@String.Format("/admin/forums/{0}/categories/{1}",
+                        <a href="@String.Format("/admin/manage/forums/{0}/categories/{1}",
                           forum.ForumId, category.ForumCategoryId)">
                             @category.Title
                         </a>
@@ -82,6 +82,6 @@
         blazorModal.Close();
         var deleted = await manageForums.DeleteForumAsync(id);
         if (deleted)
-            navManager.NavigateTo("/admin/forums");
+            navManager.NavigateTo("/admin/manage/forums");
     }
 }

@@ -21,6 +21,7 @@ using BlazorForum.Pages.Components.BlazorModal;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BlazorForum.Domain.Services;
 using Microsoft.AspNetCore.Http;
+using BlazorForum.Pages.Components.Head;
 
 namespace BlazorForum
 {
@@ -92,6 +93,7 @@ namespace BlazorForum
             services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
             services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
             services.AddBlazorModal();
+            services.AddHeadBuilder();
 
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
@@ -114,9 +116,7 @@ namespace BlazorForum
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -124,20 +124,8 @@ namespace BlazorForum
             {
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
-                endpoints.MapFallbackToAreaPage("/admin/forums", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/forums/{id:int}", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/forums/{id:int}/edit", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/forums/{forumId:int}/categories/{id:int}", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/forums/{forumId:int}/categories/{id:int}/edit", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}/edit", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}/posts/{postId:int}/edit", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/membership", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/membership/{id}/edit", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/themes", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/configuration", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/pages", "/_AdminHost", "Admin");
-                endpoints.MapFallbackToAreaPage("/admin/pages/{pageId:int}/edit", "/_AdminHost", "Admin");
+                endpoints.MapBlazorHub("~/admin/_blazor");
+                endpoints.MapFallbackToAreaPage("~/admin/{*clientroutes:nonfile}", "/_AdminHost", "Admin");
                 endpoints.MapFallbackToPage("/_Host");
             });
         }

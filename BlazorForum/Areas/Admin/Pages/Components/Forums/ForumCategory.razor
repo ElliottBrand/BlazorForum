@@ -1,4 +1,5 @@
-﻿@page "/admin/forums/{forumId:int}/categories/{id:int}"
+﻿@page "/manage/forums/{forumId:int}/categories/{id:int}"
+@inject HeadBuilderService head
 @inject IManageForumCategories manageCategories
 @inject IManageForumTopics manageTopics
 @inject UserManager<ApplicationUser> userManager
@@ -6,7 +7,7 @@
 @inject NavigationManager navManager
 
 <section class="mb-3">
-    <a href="@String.Format("/admin/forums/{0}/categories/{1}/edit", forumId, id)"
+    <a href="@String.Format("/admin/manage/forums/{0}/categories/{1}/edit", forumId, id)"
        class="btn btn-blazorforum">Edit Details</a>
     <button class="btn btn-danger float-right" type="button" @onclick="@(() => DeleteCategoryClicked())">Delete Category</button>
 </section>
@@ -40,7 +41,7 @@
                         Posted @DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
                         by @topic.UserName | Flags @topic.Flags
                         <div>
-                            <a href="@String.Format("/admin/forums/{0}/categories/{1}/topics/{2}", forumId, id, topic.ForumTopicId)" 
+                            <a href="@String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}", forumId, id, topic.ForumTopicId)" 
                                class="btn btn-sm btn-blazorforum mt-1 mr-2">
                                 Edit
                             </a>
@@ -71,6 +72,7 @@
     protected override async Task OnInitializedAsync()
     {
         _category = await manageCategories.GetForumCategoryAsync(id);
+        head.Title = "Forum Category | Administration";
         await LoadTopicsAsync();
 
         blazorModal.OnConfirmDeleteForumCategory += CategoryDeleteConfirmed;
@@ -79,7 +81,7 @@
 
     private async Task LoadTopicsAsync()
     {
-        _topics = await manageTopics.GetForumTopicsAsync(id);
+        _topics = await manageTopics.GetApprovedForumTopicsAsync(id);
         _topics = _topics.OrderByDescending(p => p.PostedDate).ToList();
         await AddUserToTopic();
     }
@@ -117,7 +119,7 @@
 
         var deleted = await manageCategories.DeleteCategoryAsync(id);
         if (deleted)
-            navManager.NavigateTo("/admin/forums/" + forumId);
+            navManager.NavigateTo("/admin/manage/forums/" + forumId);
     }
 
     public async void TopicDeleteConfirmed()

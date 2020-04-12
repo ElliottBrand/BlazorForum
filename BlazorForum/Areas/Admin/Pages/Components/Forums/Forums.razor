@@ -1,4 +1,5 @@
-﻿@page "/admin/forums"
+﻿@page "/manage/forums"
+@inject HeadBuilderService head
 @inject IManageForums manageForums
 @inject IJSRuntime jsRuntime
 
@@ -29,7 +30,7 @@
             foreach (var forum in _forums)
             {
                 <li>
-                    <a href="@String.Format("/admin/forums/{0}", forum.ForumId)">
+                    <a href="@String.Format("/admin/manage/forums/{0}", forum.ForumId)">
                         @forum.Title
                     </a>
                 </li>
@@ -48,15 +49,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        head.Title = "Forums | Administration";
         _forums = await manageForums.GetForumsAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await jsRuntime.InvokeVoidAsync("setDocTitle", "Forums | Administration");
-        }
     }
 
     public async void UpdateForums()

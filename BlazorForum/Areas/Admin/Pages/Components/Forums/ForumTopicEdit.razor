@@ -1,4 +1,4 @@
-﻿@page "/admin/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}/edit"
+﻿@page "/manage/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}/edit"
 @inject IManageForumTopics manageTopics
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navManager
@@ -49,7 +49,7 @@
             <div class="mt-2">
                 <button class="btn btn-blazorforum mr-2" type="submit">Update</button>
                 <a class="btn btn-blazorforum" 
-                   href="@String.Format("/admin/forums/{0}/categories/{1}/topics/{2}", 
+                   href="@String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}", 
                           forumId, categoryId, topicId)">Cancel</a>
             </div>
         </EditForm>
@@ -85,6 +85,6 @@
 
         var updated = await manageTopics.UpdateTopicAsync(_topic);
         if (updated)
-            navManager.NavigateTo(String.Format("/admin/forums/{0}/categories/{1}/topics/{2}", forumId, categoryId, topicId));
+            navManager.NavigateTo(String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}", forumId, categoryId, topicId));
     }
 }

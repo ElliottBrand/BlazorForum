@@ -1,4 +1,4 @@
-﻿@page "/admin/pages/{pageId:int}/edit"
+﻿@page "/manage/pages/{pageId:int}/edit"
 @inject IManagePages managePages
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navManager
@@ -49,6 +49,6 @@
         _sitePage.MainContent = await jsRuntime.InvokeAsync<string>("methods.getEditorText");
         var updated = await managePages.UpdatePageAsync(_sitePage);
         if(updated)
-            navManager.NavigateTo("/admin/pages");
+            navManager.NavigateTo("/admin/manage/pages");
     }
 }
