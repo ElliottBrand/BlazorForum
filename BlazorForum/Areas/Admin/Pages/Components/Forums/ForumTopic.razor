@@ -1,4 +1,4 @@
-﻿@page "/admin/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}"
+﻿@page "/manage/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}"
 @inject HeadBuilderService head
 @inject IManageForumTopics manageTopics
 @inject IManageForumPosts managePosts
@@ -11,7 +11,7 @@
 <section class="content-container">
     @((MarkupString)_topic.TopicText)
     <div class="mt-2">
-        <a href="@String.Format("/admin/forums/{0}/categories/{1}/topics/{2}/edit", forumId, categoryId, topicId)"
+        <a href="@String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}/edit", forumId, categoryId, topicId)"
            class="btn btn-blazorforum mr-2">Edit</a>
         <button class="btn btn-blazorforum-danger" @onclick="(() => DeleteTopicClicked())">Delete</button>
     </div>
@@ -38,7 +38,7 @@
                     Posted @DateTimeFormatting.RelativeDateAgo(post.PostedDate)
                     by @post.UserName  | Flags @post.Flags
                     <div>
-                        <a href="@String.Format("/admin/forums/{0}/categories/{1}/topics/{2}/posts/{3}/edit", forumId, categoryId, topicId, post.ForumPostId)"
+                        <a href="@String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}/posts/{3}/edit", forumId, categoryId, topicId, post.ForumPostId)"
                            class="btn btn-sm btn-blazorforum mt-1 mr-2">
                             Edit
                         </a>
@@ -115,7 +115,7 @@
 
         var deletedTopic = await manageTopics.DeleteForumTopicAsync(topicId);
         if (deletedTopic)
-            navManager.NavigateTo(String.Format("/admin/forums/{0}/categories/{1}", forumId, categoryId));
+            navManager.NavigateTo(String.Format("/admin/manage/forums/{0}/categories/{1}", forumId, categoryId));
     }
 
     public async void DeletePostConfirmedAsync()

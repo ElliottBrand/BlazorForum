@@ -1,4 +1,4 @@
-﻿@page "/admin/forums"
+﻿@page "/manage/forums"
 @inject HeadBuilderService head
 @inject IManageForums manageForums
 @inject IJSRuntime jsRuntime
@@ -30,7 +30,7 @@
             foreach (var forum in _forums)
             {
                 <li>
-                    <a href="@String.Format("/admin/forums/{0}", forum.ForumId)">
+                    <a href="@String.Format("/admin/manage/forums/{0}", forum.ForumId)">
                         @forum.Title
                     </a>
                 </li>

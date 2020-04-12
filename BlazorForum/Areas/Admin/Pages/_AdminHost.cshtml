@@ -31,15 +31,7 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="/_framework/blazor.server.js" autostart="false"></script>
-    <script>
-        Blazor.start({
-            configureSignalR: function (builder) {
-                builder.withUrl("/admin/_blazor")
-                .build();
-            }
-        });
-    </script>
+    <script src="/_framework/blazor.server.js"></script>
     <script src="~/scripts/js/ckeditor.js"></script>
     <script src="~/scripts/js/custom-ckeditor-scripts.js"></script>
 </body>

@@ -1,4 +1,4 @@
-﻿@page "/admin/forums/{id:int}/edit"
+﻿@page "/manage/forums/{id:int}/edit"
 @inject IManageForums manageForums
 @inject NavigationManager navManager
 
@@ -75,7 +75,7 @@
             btnVisibility = "d-inline-block";
             submitVisibility = "d-none";
 
-            navManager.NavigateTo("/admin/forums/" + id);
+            navManager.NavigateTo("/admin/manage/forums/" + id);
         }
         catch(Exception ex)
         {
@@ -88,6 +88,6 @@
 
     private void CancelClick()
     {
-        navManager.NavigateTo("/admin/forums/" + id);
+        navManager.NavigateTo("/admin/manage/forums/" + id);
     }
 }

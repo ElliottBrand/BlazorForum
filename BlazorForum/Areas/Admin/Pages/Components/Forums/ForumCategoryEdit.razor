@@ -1,4 +1,4 @@
-﻿@page "/admin/forums/{forumId:int}/categories/{id:int}/edit"
+﻿@page "/manage/forums/{forumId:int}/categories/{id:int}/edit"
 @inject HeadBuilderService head
 @inject IManageForumCategories manageCategories
 @inject NavigationManager navManager
@@ -55,6 +55,6 @@
         btnVisibility = "d-inline-block";
         submitVisibility = "d-none";
 
-        navManager.NavigateTo(String.Format("/admin/forums/{0}/categories/{1}", forumId, id));
+        navManager.NavigateTo(String.Format("/admin/manage/forums/{0}/categories/{1}", forumId, id));
     }
 }

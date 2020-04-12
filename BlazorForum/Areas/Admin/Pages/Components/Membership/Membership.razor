@@ -1,4 +1,4 @@
-﻿@page "/admin/membership"
+﻿@page "/manage/membership"
 @inject HeadBuilderService head
 @inject UserManager<ApplicationUser> userManager
 @inject RoleManager<IdentityRole> roleManager
@@ -14,7 +14,7 @@
     {
         foreach (var user in _users)
         {
-            <li><a href="@String.Format("/admin/membership/{0}/edit", user.Id)">@user.UserName</a></li>
+            <li><a href="@String.Format("/admin/manage/membership/{0}/edit", user.Id)">@user.UserName</a></li>
         }
     }
 </ul>

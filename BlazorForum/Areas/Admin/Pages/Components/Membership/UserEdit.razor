@@ -1,4 +1,4 @@
-﻿@page "/admin/membership/{id}/edit"
+﻿@page "/manage/membership/{id}/edit"
 @inject HeadBuilderService head
 @inject UserManager<ApplicationUser> userManager
 @inject NavigationManager navManager
@@ -86,7 +86,7 @@
     </div>
     <div class="mt-2">
         <button type="submit" class="btn btn-blazorforum mr-2">Update</button>
-        <button @onclick="@(() => navManager.NavigateTo("/admin/membership/"))" type="button" class="btn btn-blazorforum">Cancel</button>
+        <button @onclick="@(() => navManager.NavigateTo("/admin/manage/membership/"))" type="button" class="btn btn-blazorforum">Cancel</button>
     </div>
 </EditForm>
     }
@@ -146,7 +146,7 @@
                     await userManager.AddToRoleAsync(_user, selectedRole.Name);
                 }
 
-                navManager.NavigateTo("/admin/membership/");
+                navManager.NavigateTo("/admin/manage/membership/");
             }
         }
         catch(Exception ex)

@@ -6,11 +6,9 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        head.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
+        head.PropertyChanged += async (object sender, PropertyChangedEventArgs e) =>
         {
-            InvokeAsync(() => { StateHasChanged(); });
+            await InvokeAsync(() => { StateHasChanged(); });
         };
-
-        await base.OnInitializedAsync();
     }
 }

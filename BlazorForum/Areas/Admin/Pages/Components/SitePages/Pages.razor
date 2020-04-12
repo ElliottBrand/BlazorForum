@@ -1,4 +1,4 @@
-﻿@page "/admin/pages"
+﻿@page "/manage/pages"
 @inject IManagePages managePages
 
 <h3>Pages</h3>
@@ -13,7 +13,7 @@
             @foreach (var sitePage in _sitePages)
             {
                 <li>
-                    <a href="@String.Format("/admin/pages/{0}/edit", sitePage.SitePageId)">
+                    <a href="@String.Format("/admin/manage/pages/{0}/edit", sitePage.SitePageId)">
                         @sitePage.Title
                     </a>
                 </li>
