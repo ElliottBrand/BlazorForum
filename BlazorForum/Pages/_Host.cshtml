@@ -6,7 +6,6 @@
 
 @{
     Layout = null;
-    // This may need to be changed using an await if it starts causing issues with DbContext conflicts
     string themeName = new Domain.Interfaces.ManageThemes(context)
         .GetSelectedThemeNameAsync().Result;
 
