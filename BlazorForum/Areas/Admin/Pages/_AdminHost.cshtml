@@ -3,6 +3,8 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
+    var appComponent = await Html.RenderComponentAsync<AdminApp>(RenderMode.ServerPrerendered);
+    var headComponent = await Html.RenderComponentAsync<BlazorForum.Pages.Components.Head.HeadSection>(RenderMode.ServerPrerendered);
 }
 
 <!DOCTYPE html>
@@ -10,14 +12,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <component type="typeof(BlazorForum.Pages.Components.Head.HeadSection)" render-mode="ServerPrerendered" />
+    @headComponent
     <base href="~/admin/" />
     <link rel="stylesheet" href="~/css/bootstrap/bootstrap.min.css" />
     <link href="~/css/blazorforum-adminstyles.min.css" rel="stylesheet" />
 </head>
 <body>
     <app>
-        <component type="typeof(AdminApp)" render-mode="ServerPrerendered" />
+        @appComponent
     </app>
 
     <div id="blazor-error-ui">
