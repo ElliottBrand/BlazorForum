@@ -1,5 +1,6 @@
 ﻿@page "/manage/pages"
 @inject IManagePages managePages
+@inject HeadBuilderService head
 
 <h3>Pages</h3>
 <section>
@@ -27,6 +28,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        head.Title = "Pages | Administration";
         _sitePages = await managePages.GetPagesAsync();
     }
 }
