@@ -10,5 +10,7 @@
         {
             await InvokeAsync(() => { StateHasChanged(); });
         };
+
+        await base.OnInitializedAsync();
     }
 }

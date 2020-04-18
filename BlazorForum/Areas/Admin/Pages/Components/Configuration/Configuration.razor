@@ -1,6 +1,7 @@
 ﻿@page "/manage/configuration"
 @inject IJSRuntime  jsRuntime
 @inject IManageConfiguration manageConfig
+@inject HeadBuilderService head
 
 <h3>Site Configuration</h3>
 <section class="content-container">
@@ -54,6 +55,7 @@
     protected override async Task OnInitializedAsync()
     {
         _config = await manageConfig.GetConfigAsync();
+        head.Title = "Configuration | Administration";
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

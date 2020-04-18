@@ -9,6 +9,9 @@
     // This may need to be changed using an await if it starts causing issues with DbContext conflicts
     string themeName = new Domain.Interfaces.ManageThemes(context)
         .GetSelectedThemeNameAsync().Result;
+
+    var appComponent = await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered);
+    var headComponent = await Html.RenderComponentAsync<BlazorForum.Pages.Components.Head.HeadSection>(RenderMode.ServerPrerendered);
 }
 
 <!DOCTYPE html>
@@ -17,7 +20,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
-    <component type="typeof(BlazorForum.Pages.Components.Head.HeadSection)" render-mode="ServerPrerendered" />
+    @headComponent
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/blazorforum-styles.min.css" rel="stylesheet" />
     @if (!String.IsNullOrEmpty(themeName))
@@ -27,7 +30,7 @@
 </head>
 <body>
     <app>
-        <component type="typeof(App)" render-mode="ServerPrerendered" />
+        @appComponent
     </app>
 
     <div id="blazor-error-ui">

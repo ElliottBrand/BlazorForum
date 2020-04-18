@@ -23,11 +23,11 @@
             <Authorized>
                 @if (context.User.IsInRole("Administrator"))
                 {
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="/admin/dashboard">
-                        <span class="oi oi-cog" aria-hidden="true"></span> Admin
-                    </NavLink>
-                </li>
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="/admin/dashboard">
+                            <span class="oi oi-cog" aria-hidden="true"></span> Admin
+                        </NavLink>
+                    </li>
                 }
             </Authorized>
         </AuthorizeView>
