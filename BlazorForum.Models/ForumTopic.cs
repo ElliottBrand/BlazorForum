@@ -11,7 +11,7 @@ namespace BlazorForum.Models
         public int ForumTopicId { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(125)]
         public string Title { get; set; }
 
         [Required]
