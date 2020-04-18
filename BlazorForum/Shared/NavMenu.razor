@@ -1,5 +1,4 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfiguration appConfig
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor context
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">@appConfig.GetSection("SiteTitle").Value</a>
