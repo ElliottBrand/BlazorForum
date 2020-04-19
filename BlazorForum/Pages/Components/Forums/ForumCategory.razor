@@ -89,6 +89,7 @@ else
     {
         _category = await manageForumCategories.GetForumCategoryAsync(id);
         head.Title = _category.Title;
+        head.Description = _category.Description;
         _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
 
         if (_maxCount >= _topics.Count)

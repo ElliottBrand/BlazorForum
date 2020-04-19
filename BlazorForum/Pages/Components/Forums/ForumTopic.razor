@@ -119,6 +119,7 @@ else
         await LoadTopicAsync();
 
         head.Title = _topic.Title;
+        head.Description = _topic.TopicText;
         _posts = await manageForumPosts.GetApprovedForumPostsAsync(id);
         _category = await manageForumCategories.GetForumCategoryAsync(_topic.ForumCategoryId);
         var forum = await manageForums.GetForumAsync(_category.ForumId);
