@@ -24,5 +24,6 @@ else
     {
         head.Title = config.GetSection("SiteTitle").Value;
         _sitePage = await managePages.GetIndexPageAsync();
+        head.Description = _sitePage.MainContent;
     }
 }

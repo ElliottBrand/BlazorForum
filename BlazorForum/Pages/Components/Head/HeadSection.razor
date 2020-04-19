@@ -1,7 +1,13 @@
 ﻿@using System.ComponentModel
+@using System.Text.RegularExpressions
 @inject HeadBuilderService head
 
 <title>@head.Title</title>
+
+@if (!String.IsNullOrEmpty(head.Description))
+{
+    @((MarkupString)Domain.Utilities.Meta.MetaGenerator.BuildMetaTag("description", head.Description, true));
+}
 
 @code {
     protected override async Task OnInitializedAsync()

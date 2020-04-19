@@ -10,6 +10,7 @@ namespace BlazorForum.Pages.Components.Head
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private string _title;
+        private string _description;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -20,6 +21,12 @@ namespace BlazorForum.Pages.Components.Head
         {
             get { return _title; }
             set { _title = value; OnPropertyChanged(); }
+        }
+
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; OnPropertyChanged(); }
         }
     }
 }
