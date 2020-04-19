@@ -147,7 +147,8 @@ app {
 
 .forum-topic-content, .forum-post-content{
     vertical-align: top;
-    overflow:hidden;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .forum-topic-header .forum-post-time{
