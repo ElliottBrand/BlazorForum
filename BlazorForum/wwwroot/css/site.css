@@ -147,6 +147,7 @@ app {
 
 .forum-topic-content, .forum-post-content{
     vertical-align: top;
+    overflow:hidden;
 }
 
 .forum-topic-header .forum-post-time{
@@ -210,6 +211,7 @@ pre {
     border: 1px solid #b7aad4;
     tab-size: 4;
     -moz-tab-size: 4;
+    overflow-x: auto;
 }
 
 .se-spin-icon {
