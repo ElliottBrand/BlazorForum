@@ -72,9 +72,8 @@ else
     if (_posts != null && _posts.Count > 0)
     {
     <ul class="forum-post-ul">
-        @for(var index = 0; index < (_posts.Count); index++)
+        @for(var i = 0; i < (_posts.Count); i++)
         {
-            var i = index;
             <li>
                 <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" ThisPost="@_posts[i]" ForumId="_category.ForumCategoryId"></Post>
             </li>

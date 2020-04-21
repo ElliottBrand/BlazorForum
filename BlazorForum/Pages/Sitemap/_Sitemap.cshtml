@@ -1,0 +1,37 @@
+﻿@page "/sitemap"
+@using BlazorForum.Domain.Utilities.SEO
+@using BlazorForum.Domain.Utilities.Formatting
+@using System.Linq
+@inject BlazorForum.Domain.Interfaces.IManageForumCategories categoriesManager
+@inject BlazorForum.Domain.Interfaces.IManageForumTopics topicsManager
+
+@{
+    Layout = null;
+    HttpContext.Response.ContentType = "text/xml";
+
+    var categories = await categoriesManager.GetForumCategoriesAsync();
+    var topics = await topicsManager.GetAllApprovedForumTopicsAsync();
+
+    var basePath = HttpContext.Request.Scheme + "://" +
+    HttpContext.Request.Host + HttpContext.Request.PathBase;
+
+    var siteMapBuilder = new BlazorForum.Domain.Utilities.SEO.SitemapBuilder();
+    siteMapBuilder.AddUrl(basePath, modified: DateTime.UtcNow, changeFrequency: ChangeFrequency.Weekly, priority: 1.0);
+    siteMapBuilder.AddUrl(basePath + "/forums", modified: DateTime.UtcNow, changeFrequency: ChangeFrequency.Weekly, priority: 1.0);
+
+    foreach (var category in categories)
+    {
+        siteMapBuilder.AddUrl(basePath + "/category/" + category.ForumCategoryId + "/" +
+            UrlFormatting.PrepareUrlText(category.Title),
+            modified: DateTime.UtcNow, changeFrequency: ChangeFrequency.Daily, priority: 1.0);
+    }
+
+    foreach (var topic in topics)
+    {
+        siteMapBuilder.AddUrl(basePath + "/topic/" + topic.ForumTopicId + "/" +
+            UrlFormatting.PrepareUrlText(topic.Title),
+            modified: DateTime.UtcNow, changeFrequency: ChangeFrequency.Daily, priority: 1.0);
+    }
+
+    @Html.Raw(siteMapBuilder.ToString())
+}
