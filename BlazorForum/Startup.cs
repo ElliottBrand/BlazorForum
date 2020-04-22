@@ -127,6 +127,7 @@ namespace BlazorForum
                 endpoints.MapBlazorHub("~/admin/_blazor");
                 endpoints.MapFallbackToAreaPage("~/admin/{*clientroutes:nonfile}", "/_AdminHost", "Admin");
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapRazorPages();
             });
         }
     }
