@@ -22,6 +22,12 @@ namespace BlazorForum.Data.Repository
             return await _context.ForumTopics.Where(p => p.ForumCategoryId == catId).ToListAsync();
         }
 
+        public async Task<List<ForumTopic>> GetApprovedNewTopicsAsync(int count)
+        {
+            return await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false)
+                .OrderByDescending(p => p.PostedDate).Take(count).ToListAsync();
+        }
+
         public async Task<List<ForumTopic>> GetAllApprovedForumTopicsAsync()
         {
             return await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false).ToListAsync();
