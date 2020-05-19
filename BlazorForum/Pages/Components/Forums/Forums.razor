@@ -65,7 +65,7 @@ else
 
         foreach (var category in categories)
         {
-            var topics = await manageTopics.GetApprovedForumTopicsAsync(category.ForumCategoryId);
+            var topics = await manageTopics.GetForumCatTopicsAsync(category.ForumCategoryId);
             var topicCount = new TopicPostCount
             {
                 ParentItemId = category.ForumCategoryId,

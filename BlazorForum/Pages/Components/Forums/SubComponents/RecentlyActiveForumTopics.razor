@@ -1,0 +1,45 @@
+﻿@inject IManageForumTopics manageForumTopics
+@inject IManageForumPosts  manageForumPosts
+@inject IManageUsers manageUsers
+
+<header>
+    <h3>Recently Active Topics</h3>
+</header>
+@if (_topics == null)
+{
+    <div class="mb-2 loading-div">
+        <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
+    </div>
+}
+else
+{
+    <ul class="forum-post-ul">
+        @foreach (var topic in _topics)
+        {
+            <li>
+                <h6 class="">
+                    <a href="@String.Format("/topic/{0}/{1}", topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">@topic.Title</a>
+                    ( @ForumTopicCountHelpers.GetTopicCount(_postCountList, topic.ForumTopicId) )
+                </h6>
+                <div class="topic-author">
+                    Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
+                    by @topic.UserName
+                </div>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<Models.ForumTopic> _topics { get; set; }
+    private List<TopicPostCount> _postCountList = new List<TopicPostCount>();
+    private int _topicsCount = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var recentPosts = await manageForumPosts.Get
+        _topics = await manageForumTopics.GetActiveTopicsAsync(_topicsCount);
+        _postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(_topics);
+        await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
+    }
+}

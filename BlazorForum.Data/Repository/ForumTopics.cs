@@ -17,28 +17,41 @@ namespace BlazorForum.Data.Repository
             _context = context;
         }
 
-        public async Task<List<ForumTopic>> GetForumTopicsAsync(int catId)
+        public async Task<List<ForumTopic>> GetAllForumTopicsAsync(int catId)
         {
             return await _context.ForumTopics.Where(p => p.ForumCategoryId == catId).ToListAsync();
         }
 
-        public async Task<List<ForumTopic>> GetApprovedNewTopicsAsync(int count)
+        public async Task<List<ForumTopic>> GetNewTopicsAsync(int count)
         {
             return await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false)
                 .OrderByDescending(p => p.PostedDate).Take(count).ToListAsync();
         }
 
-        public async Task<List<ForumTopic>> GetAllApprovedForumTopicsAsync()
+        public async Task<List<ForumTopic>> GetActiveTopicsAsync(int count)
+        {
+            var topics = await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false).ToListAsync();
+            foreach(var topic in topics)
+            {
+                topic.ForumPosts = await _context.ForumPosts.Where(p => p.ForumTopicId == topic.ForumTopicId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
+            }
+
+            return topics.Where(p => p.ForumPosts.Count > 0)
+                .OrderByDescending(p => p.ForumPosts.OrderByDescending(x => x.PostedDate)
+                .FirstOrDefault().PostedDate).Take(count).ToList();
+        }
+
+        public async Task<List<ForumTopic>> GetForumTopicsAsync()
         {
             return await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false).ToListAsync();
         }
 
-        public async Task<List<ForumTopic>> GetApprovedForumTopicsAsync(int catId)
+        public async Task<List<ForumTopic>> GetForumCatTopicsAsync(int catId)
         {
             return await _context.ForumTopics.Where(p => p.ForumCategoryId == catId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
         }
 
-        public async Task<ForumTopic> GetForumTopic(int topicId)
+        public async Task<ForumTopic> GetForumTopicAsync(int topicId)
         {
             return await _context.ForumTopics.Where(p => p.ForumTopicId == topicId).FirstOrDefaultAsync();
         }
@@ -70,7 +83,7 @@ namespace BlazorForum.Data.Repository
             return false;
         }
 
-        public async Task<bool> DeleteTopicAsync(int id)
+        public async Task<bool> DeleteForumTopicAsync(int id)
         {
             var topics = _context.ForumTopics;
             var topic = await topics.Where(p => p.ForumTopicId == id).FirstOrDefaultAsync();

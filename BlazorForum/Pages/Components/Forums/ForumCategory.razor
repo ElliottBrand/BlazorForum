@@ -96,7 +96,7 @@ else
         _category = await manageForumCategories.GetForumCategoryAsync(id);
         head.Title = _category.Title;
         head.Description = _category.Description;
-        _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
+        _topics = await manageForumTopics.GetForumCatTopicsAsync(id);
 
         if (_maxCount >= _topics.Count)
             _loadMoreVisibility = "d-none";
@@ -118,7 +118,7 @@ else
 
 public async void UpdateTopicsAsync()
 {
-    _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
+    _topics = await manageForumTopics.GetForumCatTopicsAsync(id);
 
     if (_maxCount >= _topics.Count)
         _loadMoreVisibility = "d-none";
@@ -135,7 +135,7 @@ public async void UpdateTopicsAsync()
 public async Task LoadMoreTopicsAsync()
 {
     _maxCount += 10;
-    _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
+    _topics = await manageForumTopics.GetForumCatTopicsAsync(id);
 
     if (_maxCount >= _topics.Count)
         _loadMoreVisibility = "d-none";
@@ -150,7 +150,7 @@ public async Task LoadMoreTopicsAsync()
 
 protected async Task SetTopicsCount()
 {
-    var topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
+    var topics = await manageForumTopics.GetForumCatTopicsAsync(id);
 
     foreach (var topic in topics)
     {

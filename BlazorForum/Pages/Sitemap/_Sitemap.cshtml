@@ -10,7 +10,7 @@
     HttpContext.Response.ContentType = "text/xml";
 
     var categories = await categoriesManager.GetForumCategoriesAsync();
-    var topics = await topicsManager.GetAllApprovedForumTopicsAsync();
+    var topics = await topicsManager.GetForumTopicsAsync();
 
     var basePath = HttpContext.Request.Scheme + "://" +
     HttpContext.Request.Host + HttpContext.Request.PathBase;
