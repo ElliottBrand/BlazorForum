@@ -37,7 +37,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        //var recentPosts = await manageForumPosts.Get
+        await Task.Delay(500); // Add delay to see if it helps with circuit error
         _topics = await manageForumTopics.GetActiveTopicsAsync(_topicsCount);
         _postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(_topics);
         await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
