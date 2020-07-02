@@ -19,7 +19,7 @@ else
             <li>
                 <h6 class="">
                     <a href="@String.Format("/topic/{0}/{1}", topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">@topic.Title</a>
-                    ( @ForumTopicCountHelpers.GetTopicCount(_postCountList, topic.ForumTopicId) )
+                    <span class="text-nowrap">( @ForumTopicCountHelpers.GetTopicCount(_postCountList, topic.ForumTopicId) )</span>
                 </h6>
                 <div class="topic-author">
                     Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
