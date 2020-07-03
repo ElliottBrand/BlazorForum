@@ -7,6 +7,11 @@
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
 @inject IJSRuntime JSRuntime
+@inject IManageUsers manageUsers
+
+@* // Note: User Manager needs adjusted to utilize new IMangeUsers interface *@
+@* // New method will need added to interface *@
+@* // Other references will need change throughout code to work with interface *@
 
 <ul class="breadcrumb blazorforum-breadcrumb">
     <li class="breadcrumb-item">
@@ -42,10 +47,11 @@ else
                 <li>
                     <a href="@String.Format("/topic/{0}/{1}",
                         topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">
-                        @topic.Title</a> 
-                        ( @(_postCountList != null ? _postCountList.Where(p => p.ParentItemId == topic.ForumTopicId)
-                            .FirstOrDefault().ChildCount : 0 ) )
-                    <div class="topic-blazifier">
+                        @topic.Title
+                    </a>
+                    ( @(_postCountList != null ? _postCountList.Where(p => p.ParentItemId == topic.ForumTopicId)
+                      .FirstOrDefault().ChildCount : 0) )
+                    <div class="topic-author">
                         Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
                         by @topic.UserName
                     </div>
@@ -90,80 +96,71 @@ else
         _category = await manageForumCategories.GetForumCategoryAsync(id);
         head.Title = _category.Title;
         head.Description = _category.Description;
-        _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
+        _topics = await manageForumTopics.GetForumCatTopicsAsync(id);
 
         if (_maxCount >= _topics.Count)
             _loadMoreVisibility = "d-none";
 
         _topics = _topics.OrderByDescending(p => p.PostedDate).Take(_maxCount).ToList();
         CurrentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
-        await AddUserToTopicAsync();
+        await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
 
         await SetTopicsCount();
     }
 
     @*protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("setDocTitle", _category.Title);
-        }
-    }*@
-
-    public async void UpdateTopicsAsync()
-    {
-        _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
-
-        if (_maxCount >= _topics.Count)
-            _loadMoreVisibility = "d-none";
-        else
-            _loadMoreVisibility = "d-inline-block";
-
-        _topics = _topics.OrderByDescending(p => p.PostedDate).Take(_maxCount).ToList();
-
-        await AddUserToTopicAsync();
-        await SetTopicsCount();
-        StateHasChanged();
-    }
-
-    public async Task LoadMoreTopicsAsync()
-    {
-        _maxCount += 10;
-        _topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
-
-        if (_maxCount >= _topics.Count)
-            _loadMoreVisibility = "d-none";
-        else
-            _loadMoreVisibility = "d-inline-block";
-
-        _topics = _topics.OrderByDescending(p => p.PostedDate).Take(_maxCount).ToList();
-
-        await AddUserToTopicAsync();
-        StateHasChanged();
-    }
-
-    private async Task AddUserToTopicAsync()
-    {
-        foreach (var topic in _topics)
-        {
-            var user = await userManager.FindByIdAsync(topic.UserId);
-            topic.UserName = user.UserName;
-        }
-    }
-
-    protected async Task SetTopicsCount()
-    {
-        var topics = await manageForumTopics.GetApprovedForumTopicsAsync(id);
-        
-        foreach (var topic in topics)
-        {
-            var posts = await manageForumPosts.GetApprovedForumPostsAsync(topic.ForumTopicId);
-            var postCount = new TopicPostCount
+            if(firstRender)
             {
-                ParentItemId = topic.ForumTopicId,
-                ChildCount = posts.Count
-            };
-            _postCountList.Add(postCount);
-        }
+                await JSRuntime.InvokeVoidAsync("setDocTitle", _category.Title);
+            }
+        }*@
+
+public async void UpdateTopicsAsync()
+{
+    _topics = await manageForumTopics.GetForumCatTopicsAsync(id);
+
+    if (_maxCount >= _topics.Count)
+        _loadMoreVisibility = "d-none";
+    else
+        _loadMoreVisibility = "d-inline-block";
+
+    _topics = _topics.OrderByDescending(p => p.PostedDate).Take(_maxCount).ToList();
+
+    await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
+    await SetTopicsCount();
+    StateHasChanged();
+}
+
+public async Task LoadMoreTopicsAsync()
+{
+    _maxCount += 10;
+    _topics = await manageForumTopics.GetForumCatTopicsAsync(id);
+
+    if (_maxCount >= _topics.Count)
+        _loadMoreVisibility = "d-none";
+    else
+        _loadMoreVisibility = "d-inline-block";
+
+    _topics = _topics.OrderByDescending(p => p.PostedDate).Take(_maxCount).ToList();
+
+    await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
+    StateHasChanged();
+}
+
+protected async Task SetTopicsCount()
+{
+    var topics = await manageForumTopics.GetForumCatTopicsAsync(id);
+
+    foreach (var topic in topics)
+    {
+        var posts = await manageForumPosts.GetApprovedForumPostsAsync(topic.ForumTopicId);
+        var postCount = new TopicPostCount
+        {
+            ParentItemId = topic.ForumTopicId,
+            ChildCount = posts.Count
+        };
+        _postCountList.Add(postCount);
     }
+}
 }

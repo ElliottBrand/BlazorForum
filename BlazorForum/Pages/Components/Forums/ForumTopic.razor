@@ -13,6 +13,7 @@
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
 @inject IJSRuntime JSRuntime
+@inject IManageUsers manageUsers
 
     <ul class="breadcrumb blazorforum-breadcrumb">
         <li class="breadcrumb-item">
@@ -129,7 +130,7 @@ else
 
         _posts = _posts.Take(_maxCount).ToList();
         CurrentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
-        await AddUserToPostAsync();
+        await new ForumUserHelpers(manageUsers).AddUserToPostAsync(_posts);
 
         await CheckIfUserIsSubscribed();
     }
@@ -155,7 +156,7 @@ else
 
         _posts = _posts.Take(_maxCount).ToList();
 
-        await AddUserToPostAsync();
+        await new ForumUserHelpers(manageUsers).AddUserToPostAsync(_posts);
 
         // Update the subscription button in upper right, since they are subscribed after adding a new post.
         await CheckIfUserIsSubscribed();
@@ -175,17 +176,8 @@ else
 
         _posts = _posts.Take(_maxCount).ToList();
 
-        await AddUserToPostAsync();
+        await new ForumUserHelpers(manageUsers).AddUserToPostAsync(_posts);
         StateHasChanged();
-    }
-
-    private async Task AddUserToPostAsync()
-    {
-        foreach (var post in _posts)
-        {
-            var user = await userManager.FindByIdAsync(post.UserId);
-            post.UserName = user.UserName;
-        }
     }
 
     private async Task CheckIfUserIsSubscribed()

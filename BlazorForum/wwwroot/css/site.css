@@ -282,7 +282,7 @@ pre {
     align-items: center;
 }
 
-.topic-blazifier {
+.topic-author, .topic-blazifier {
     font-size: 0.8em;
     color: #6e6986;
 }

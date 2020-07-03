@@ -35,6 +35,8 @@
     <Compile Remove="Migrations\20200308235200_test.Designer.cs" />
     <Compile Remove="Migrations\20200309000247_AddTopicSubscriptionsTable.cs" />
     <Compile Remove="Migrations\20200309000247_AddTopicSubscriptionsTable.Designer.cs" />
+    <Compile Remove="Migrations\20200516021724_AddParentPostIdColumnToForumPostTable.cs" />
+    <Compile Remove="Migrations\20200516021724_AddParentPostIdColumnToForumPostTable.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

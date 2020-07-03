@@ -6,9 +6,8 @@
 @inject BlazorForum.Data.ApplicationDbContext context
 
 @{
-    // This may need to be changed using an await if it starts causing issues with DbContext conflicts
-    string themeName = new BlazorForum.Domain.Interfaces.ManageThemes(context)
-        .GetSelectedThemeNameAsync().Result;
+    string themeName = await new BlazorForum.Domain.Interfaces.ManageThemes(context)
+        .GetSelectedThemeNameAsync();
 }
 
 <!DOCTYPE html>
@@ -28,7 +27,7 @@
     <app>
         <div class="sidebar">
             <nav class="top-row pl-4 navbar navbar-dark">
-                <a class="navbar-brand" href="/">@config.GetSection("SiteTitle").Value</a>
+                <a class="navbar-brand" href="/">@config.GetSection("SiteNavbarBrand").Value</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>

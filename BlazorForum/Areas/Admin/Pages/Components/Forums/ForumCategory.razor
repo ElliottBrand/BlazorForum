@@ -81,7 +81,7 @@
 
     private async Task LoadTopicsAsync()
     {
-        _topics = await manageTopics.GetApprovedForumTopicsAsync(id);
+        _topics = await manageTopics.GetForumCatTopicsAsync(id);
         _topics = _topics.OrderByDescending(p => p.PostedDate).ToList();
         await AddUserToTopic();
     }

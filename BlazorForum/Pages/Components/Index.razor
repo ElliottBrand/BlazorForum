@@ -2,6 +2,7 @@
 @inject HeadBuilderService head
 @inject IManagePages managePages
 @inject Microsoft.Extensions.Configuration.IConfiguration config
+@using BlazorForum.Pages.Components.Forums.SubComponents
 
 @if (_sitePage == null)
 {
@@ -9,11 +10,23 @@
 }
 else
 {
-    <header>
-        <h1>@_sitePage.Title</h1>
-    </header>
     <section>
-        @((MarkupString)_sitePage.MainContent)
+        <header>
+            <h1>@_sitePage.Title</h1>
+        </header>
+        <section>
+            @((MarkupString)_sitePage.MainContent)
+        </section>
+    </section>
+    <section class="container-fluid p-0 mt-5">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <RecentForumTopics></RecentForumTopics>
+            </div>
+            <div class="col-12 col-md-6">
+                <RecentlyActiveForumTopics></RecentlyActiveForumTopics>
+            </div>
+        </div>
     </section>
 }
 
