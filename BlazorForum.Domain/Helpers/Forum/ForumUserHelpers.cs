@@ -34,5 +34,10 @@ namespace BlazorForum.Domain.Helpers.Forum
                 post.UserName = user.UserName;
             }
         }
+
+        public string GetUserName(string userId)
+        {
+            return _userManager.FindByIdAsync(userId).Result.UserName;
+        }
     }
 }

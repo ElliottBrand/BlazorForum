@@ -1,5 +1,6 @@
 ﻿@page "/manage/forums/{forumId:int}/categories/{categoryId:int}/topics/{topicId:int}/edit"
 @inject IManageForumTopics manageTopics
+@inject IManageForumCategories manageForumCategories
 @inject IJSRuntime jsRuntime
 @inject NavigationManager navManager
 @inject UserManager<ApplicationUser> userManager
@@ -11,6 +12,7 @@
     <section class="content-container">
         <EditForm Model="_topic" OnValidSubmit="UpdateTopicAsync">
             <DataAnnotationsValidator />
+            <ValidationSummary />
             <div class="input-group">
                 <div class="input-group-prepend">
                     <label class="input-group-text">Title</label>
@@ -18,6 +20,22 @@
                 <InputText @bind-Value="_topic.Title" class="form-control"></InputText>
             </div>
             <ValidationMessage For="@(() => _topic.Title)" class="text-danger"></ValidationMessage>
+
+            <div class="input-group mt-2">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">Category</label>
+                </div>
+                <InputSelect @bind-Value="_forumCategoryId" class="form-control">
+                    @* // ISSUE: THERE IS AN PROBLEM BINDING TO THE SELECTED CATEGORY *@
+                    @if (_catItems != null)
+                        {
+                            foreach (var item in _catItems)
+                            {
+                            <option selected="@item.Selected" value="@item.Value">@item.Text</option>
+                            }
+                        }
+                </InputSelect>
+            </div>
 
             <div class="container-fluid p-0">
                 <div class="row">
@@ -48,8 +66,8 @@
 
             <div class="mt-2">
                 <button class="btn btn-blazorforum mr-2" type="submit">Update</button>
-                <a class="btn btn-blazorforum" 
-                   href="@String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}", 
+                <a class="btn btn-blazorforum"
+                   href="@String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}",
                           forumId, categoryId, topicId)">Cancel</a>
             </div>
         </EditForm>
@@ -60,11 +78,22 @@
     [Parameter] public int forumId { get; set; }
     [Parameter] public int categoryId { get; set; }
     [Parameter] public int topicId { get; set; }
+    private string _forumCategoryId { get; set; }
+    private List<SelectListItem> _catItems = new List<SelectListItem>();
     private Models.ForumTopic _topic = new Models.ForumTopic();
 
     protected override async Task OnInitializedAsync()
     {
         _topic = await manageTopics.GetForumTopicAsync(topicId);
+        _forumCategoryId = _topic.ForumCategoryId.ToString();
+        var cats = await manageForumCategories.GetForumCategoriesAsync();
+        foreach (var cat in cats)
+        {
+            if (cat.ForumCategoryId == _topic.ForumCategoryId)
+                _catItems.Add(new SelectListItem(cat.Title, cat.ForumCategoryId.ToString(), true));
+            else
+                _catItems.Add(new SelectListItem(cat.Title, cat.ForumCategoryId.ToString(), false));
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -77,14 +106,17 @@
 
     private async void UpdateTopicAsync()
     {
-        // Should probably eventually validate to make sure topic text isn't empty (CKEditor has a placeholder tag)...but only administrators can edit it at this point.
         _topic.TopicText = await jsRuntime.InvokeAsync<string>("methods.getEditorText");
-        _topic.IsModeratorChanged = true;
-        _topic.EditedDate = DateTime.Now.ToUniversalTime();
-        _topic.EditedBy = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
+        if (!String.IsNullOrEmpty(_topic.TopicText))
+        {
+            _topic.IsModeratorChanged = true;
+            _topic.EditedDate = DateTime.Now.ToUniversalTime();
+            _topic.EditedBy = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
+            _topic.ForumCategoryId = Convert.ToInt32(_forumCategoryId);
 
-        var updated = await manageTopics.UpdateTopicAsync(_topic);
-        if (updated)
-            navManager.NavigateTo(String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}", forumId, categoryId, topicId));
+            var updated = await manageTopics.UpdateTopicAsync(_topic);
+            if (updated)
+                navManager.NavigateTo(String.Format("/admin/manage/forums/{0}/categories/{1}/topics/{2}", forumId, categoryId, topicId));
+        }
     }
 }

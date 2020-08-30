@@ -23,41 +23,41 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManageForumTopics : IManageForumTopics
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ManageForumTopics(ApplicationDbContext context)
+        public ManageForumTopics(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<ForumTopic>> GetAllForumTopicsAsync(int categoryId) => 
-            await new Data.Repository.ForumTopics(_context).GetAllForumTopicsAsync(categoryId);
+            await new Data.Repository.ForumTopics(_dbFactory).GetAllForumTopicsAsync(categoryId);
 
         public async Task<List<ForumTopic>> GetNewTopicsAsync(int count) =>
-            await new Data.Repository.ForumTopics(_context).GetNewTopicsAsync(count);
+            await new Data.Repository.ForumTopics(_dbFactory).GetNewTopicsAsync(count);
 
         public async Task<List<ForumTopic>> GetActiveTopicsAsync(int count) =>
-            await new Data.Repository.ForumTopics(_context).GetActiveTopicsAsync(count);
+            await new Data.Repository.ForumTopics(_dbFactory).GetActiveTopicsAsync(count);
 
         public async Task<List<ForumTopic>> GetForumTopicsAsync() =>
-            await new Data.Repository.ForumTopics(_context).GetForumTopicsAsync();
+            await new Data.Repository.ForumTopics(_dbFactory).GetForumTopicsAsync();
 
         public async Task<List<ForumTopic>> GetForumCatTopicsAsync(int categoryId) =>
-            await new Data.Repository.ForumTopics(_context).GetForumCatTopicsAsync(categoryId);
+            await new Data.Repository.ForumTopics(_dbFactory).GetForumCatTopicsAsync(categoryId);
 
         public async Task<ForumTopic> GetForumTopicAsync(int topicId) => 
-            await new Data.Repository.ForumTopics(_context).GetForumTopicAsync(topicId);
+            await new Data.Repository.ForumTopics(_dbFactory).GetForumTopicAsync(topicId);
 
         public async Task<int> PostNewTopicAsync(ForumTopic newTopic) => 
-            await new Data.Repository.ForumTopics(_context).PostNewTopicAsync(newTopic);
+            await new Data.Repository.ForumTopics(_dbFactory).PostNewTopicAsync(newTopic);
 
         public async Task<bool> DeleteForumTopicAsync(int id) =>
-            await new Data.Repository.ForumTopics(_context).DeleteForumTopicAsync(id);
+            await new Data.Repository.ForumTopics(_dbFactory).DeleteForumTopicAsync(id);
 
         public async Task<bool> MarkUserTopicsAsDeletedAsync(string userId) =>
-            await new Data.Repository.ForumTopics(_context).MarkUserTopicsAsDeletedAsync(userId);
+            await new Data.Repository.ForumTopics(_dbFactory).MarkUserTopicsAsDeletedAsync(userId);
 
         public async Task<bool> UpdateTopicAsync(ForumTopic editedTopic) =>
-            await new Data.Repository.ForumTopics(_context).UpdateTopicAsync(editedTopic);
+            await new Data.Repository.ForumTopics(_dbFactory).UpdateTopicAsync(editedTopic);
     }
 }

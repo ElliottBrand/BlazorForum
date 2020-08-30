@@ -17,23 +17,23 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManagePages : IManagePages
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ManagePages(ApplicationDbContext context)
+        public ManagePages(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<SitePage> GetIndexPageAsync() => 
-            await new Data.Repository.SitePages(_context).GetIndexPageAsync();
+            await new Data.Repository.SitePages(_dbFactory).GetIndexPageAsync();
 
         public async Task<List<SitePage>> GetPagesAsync() =>
-            await new Data.Repository.SitePages(_context).GetPagesAsync();
+            await new Data.Repository.SitePages(_dbFactory).GetPagesAsync();
 
         public async Task<SitePage> GetPageAsync(int pageId) =>
-            await new Data.Repository.SitePages(_context).GetPageAsync(pageId);
+            await new Data.Repository.SitePages(_dbFactory).GetPageAsync(pageId);
 
         public async Task<bool> UpdatePageAsync(SitePage editedPage) =>
-            await new Data.Repository.SitePages(_context).UpdatePageAsync(editedPage);
+            await new Data.Repository.SitePages(_dbFactory).UpdatePageAsync(editedPage);
     }
 }

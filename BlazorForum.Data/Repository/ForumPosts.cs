@@ -10,39 +10,44 @@ namespace BlazorForum.Data.Repository
 {
     public class ForumPosts
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ForumPosts(ApplicationDbContext context)
+        public ForumPosts(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<ForumPost>> GetForumPostsAsync(int topicId)
         {
-            return await _context.ForumPosts.Where(p => p.ForumTopicId == topicId).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumPosts.Where(p => p.ForumTopicId == topicId).ToListAsync();
         }
 
         public async Task<List<ForumPost>> GetApprovedForumPostsAsync(int topicId)
         {
-            return await _context.ForumPosts.Where(p => p.ForumTopicId == topicId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumPosts.Where(p => p.ForumTopicId == topicId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
         }
 
         public async Task<ForumPost> GetForumPostAsync(int postId)
         {
-            return await _context.ForumPosts.Where(p => p.ForumPostId == postId).FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumPosts.Where(p => p.ForumPostId == postId).FirstOrDefaultAsync();
         }
 
         public async Task<bool> AddNewPostAsync(ForumPost newPost)
         {
-            var posts = _context.ForumPosts;
+            using var context = _dbFactory.CreateDbContext();
+            var posts = context.ForumPosts;
             await posts.AddAsync(newPost);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> UpdatePostAsync(ForumPost editedPost)
         {
-            var post = await _context.ForumPosts
+            using var context = _dbFactory.CreateDbContext();
+            var post = await context.ForumPosts
                 .Where(p => p.ForumPostId == editedPost.ForumPostId).FirstOrDefaultAsync();
             if(post != null)
             {
@@ -53,7 +58,7 @@ namespace BlazorForum.Data.Repository
                 post.EditedBy = editedPost.EditedBy;
                 post.EditedDate = editedPost.EditedDate;
                 post.EditReason = editedPost.EditReason;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
             return false;
@@ -61,22 +66,24 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> DeletePostAsync(int postId)
         {
-            var posts = _context.ForumPosts;
+            using var context = _dbFactory.CreateDbContext();
+            var posts = context.ForumPosts;
             var post = await posts.Where(p => p.ForumPostId == postId).FirstOrDefaultAsync();
             posts.Remove(post);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> MarkUserPostsAsDeletedAsync(string userId)
         {
-            var posts = _context.ForumPosts;
+            using var context = _dbFactory.CreateDbContext();
+            var posts = context.ForumPosts;
             foreach (var post in await posts.Where(p => p.UserId == userId).ToListAsync())
             {
                 post.DeleteReason = "Automated on User Delete";
                 post.IsDeleted = true;
             }
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
     }

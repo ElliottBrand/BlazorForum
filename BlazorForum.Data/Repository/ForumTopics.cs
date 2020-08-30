@@ -10,30 +10,33 @@ namespace BlazorForum.Data.Repository
 {
     public class ForumTopics
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ForumTopics(ApplicationDbContext context)
+        public ForumTopics(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<ForumTopic>> GetAllForumTopicsAsync(int catId)
         {
-            return await _context.ForumTopics.Where(p => p.ForumCategoryId == catId).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumTopics.Where(p => p.ForumCategoryId == catId).ToListAsync();
         }
 
         public async Task<List<ForumTopic>> GetNewTopicsAsync(int count)
         {
-            return await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false)
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false)
                 .OrderByDescending(p => p.PostedDate).Take(count).ToListAsync();
         }
 
         public async Task<List<ForumTopic>> GetActiveTopicsAsync(int count)
         {
-            var topics = await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var topics = await context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false).ToListAsync();
             foreach(var topic in topics)
             {
-                topic.ForumPosts = await _context.ForumPosts.Where(p => p.ForumTopicId == topic.ForumTopicId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
+                topic.ForumPosts = await context.ForumPosts.Where(p => p.ForumTopicId == topic.ForumTopicId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
             }
 
             return topics.Where(p => p.ForumPosts.Count > 0)
@@ -43,33 +46,39 @@ namespace BlazorForum.Data.Repository
 
         public async Task<List<ForumTopic>> GetForumTopicsAsync()
         {
-            return await _context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumTopics.Where(p => p.IsApproved == true && p.IsDeleted == false).ToListAsync();
         }
 
         public async Task<List<ForumTopic>> GetForumCatTopicsAsync(int catId)
         {
-            return await _context.ForumTopics.Where(p => p.ForumCategoryId == catId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumTopics.Where(p => p.ForumCategoryId == catId && p.IsApproved == true && p.IsDeleted == false).ToListAsync();
         }
 
         public async Task<ForumTopic> GetForumTopicAsync(int topicId)
         {
-            return await _context.ForumTopics.Where(p => p.ForumTopicId == topicId).FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.ForumTopics.Where(p => p.ForumTopicId == topicId).FirstOrDefaultAsync();
         }
 
         public async Task<int> PostNewTopicAsync(ForumTopic newTopic)
         {
-            var topics = _context.ForumTopics;
+            using var context = _dbFactory.CreateDbContext();
+            var topics = context.ForumTopics;
             await topics.AddAsync(newTopic);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return newTopic.ForumTopicId;
         }
 
         public async Task<bool> UpdateTopicAsync(ForumTopic editedTopic)
         {
-            var topic = await _context.ForumTopics
+            using var context = _dbFactory.CreateDbContext();
+            var topic = await context.ForumTopics
                 .Where(p => p.ForumTopicId == editedTopic.ForumTopicId).FirstOrDefaultAsync();
             if(topic != null)
             {
+                topic.ForumCategoryId = editedTopic.ForumCategoryId;
                 topic.Title = editedTopic.Title;
                 topic.TopicText = editedTopic.TopicText;
                 topic.IsApproved = editedTopic.IsApproved;
@@ -77,7 +86,7 @@ namespace BlazorForum.Data.Repository
                 topic.IsModeratorChanged = editedTopic.IsModeratorChanged;
                 topic.EditedDate = editedTopic.EditedDate;
                 topic.EditedBy = editedTopic.EditedBy;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
             return false;
@@ -85,22 +94,24 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> DeleteForumTopicAsync(int id)
         {
-            var topics = _context.ForumTopics;
+            using var context = _dbFactory.CreateDbContext();
+            var topics = context.ForumTopics;
             var topic = await topics.Where(p => p.ForumTopicId == id).FirstOrDefaultAsync();
             var removed = topics.Remove(topic);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> MarkUserTopicsAsDeletedAsync(string userId)
         {
-            var topics = _context.ForumTopics;
+            using var context = _dbFactory.CreateDbContext();
+            var topics = context.ForumTopics;
             foreach (var topic in await topics.Where(p => p.UserId == userId).ToListAsync())
             {
                 topic.DeleteReason = "Automated on User Delete";
                 topic.IsDeleted = true;
             }
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
     }

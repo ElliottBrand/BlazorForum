@@ -20,29 +20,29 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManageForumCategories : IManageForumCategories
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ManageForumCategories(ApplicationDbContext context)
+        public ManageForumCategories(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<ForumCategory>> GetForumCategoriesAsync() => 
-            await new Data.Repository.ForumCategories(_context).GetForumCategoriesAsync();
+            await new Data.Repository.ForumCategories(_dbFactory).GetForumCategoriesAsync();
 
         public async Task<List<ForumCategory>> GetForumCategoriesAsync(int forumId) => 
-            await new Data.Repository.ForumCategories(_context).GetForumCategoriesAsync(forumId);
+            await new Data.Repository.ForumCategories(_dbFactory).GetForumCategoriesAsync(forumId);
 
         public async Task<ForumCategory> GetForumCategoryAsync(int categoryId) => 
-            await new Data.Repository.ForumCategories(_context).GetForumCategory(categoryId);
+            await new Data.Repository.ForumCategories(_dbFactory).GetForumCategory(categoryId);
 
         public async Task<bool> CreateCategoryAsync(ForumCategory newCategory) => 
-            await new Data.Repository.ForumCategories(_context).CreateCategoryAsync(newCategory);
+            await new Data.Repository.ForumCategories(_dbFactory).CreateCategoryAsync(newCategory);
 
         public async Task<bool> UpdateCategoryAsync(ForumCategory editedCategory) =>
-            await new Data.Repository.ForumCategories(_context).UpdateCategoryAsync(editedCategory);
+            await new Data.Repository.ForumCategories(_dbFactory).UpdateCategoryAsync(editedCategory);
 
         public async Task<bool> DeleteCategoryAsync(int categoryId) =>
-            await new Data.Repository.ForumCategories(_context).DeleteCategoryAsync(categoryId);
+            await new Data.Repository.ForumCategories(_dbFactory).DeleteCategoryAsync(categoryId);
     }
 }

@@ -10,21 +10,23 @@ namespace BlazorForum.Data.Repository
 {
     public class TopicSubscriptions
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public TopicSubscriptions(ApplicationDbContext context)
+        public TopicSubscriptions(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<TopicSubscription>> GetSubscriptionsForTopicAsync(int topicId)
         {
-            return await _context.TopicSubscriptions.Where(p => p.ForumTopicId == topicId).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.TopicSubscriptions.Where(p => p.ForumTopicId == topicId).ToListAsync();
         }
 
         public async Task<bool> AddSubscriptionToTopicAsync(TopicSubscription newSubscription)
         {
-            var subscriptions = _context.TopicSubscriptions;
+            using var context = _dbFactory.CreateDbContext();
+            var subscriptions = context.TopicSubscriptions;
 
             // Make sure the user isn't already subscribed
             var currentSubscription = await subscriptions
@@ -33,7 +35,7 @@ namespace BlazorForum.Data.Repository
             if(currentSubscription == null)
             {
                 await subscriptions.AddAsync(newSubscription);
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
             return false;
@@ -41,12 +43,13 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> RemoveSubscriptionFromTopicAsync(int topicId, string userId)
         {
-            var subscriptions = _context.TopicSubscriptions;
+            using var context = _dbFactory.CreateDbContext();
+            var subscriptions = context.TopicSubscriptions;
             var sub = await subscriptions.Where(p => p.Id == userId && p.ForumTopicId == topicId).FirstOrDefaultAsync();
             if(sub != null)
             {
                 subscriptions.Remove(sub);
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
             return false;
@@ -54,12 +57,13 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> DeleteAllSubscriptionsForUser(string userId)
         {
-            var subscriptions = _context.TopicSubscriptions;
+            using var context = _dbFactory.CreateDbContext();
+            var subscriptions = context.TopicSubscriptions;
             foreach (var subscription in await subscriptions.Where(p => p.Id == userId).ToListAsync())
             {
                 subscriptions.Remove(subscription);
             }
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
     }

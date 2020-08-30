@@ -10,37 +10,41 @@ namespace BlazorForum.Data.Repository
 {
     public class SitePages
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public SitePages(ApplicationDbContext context)
+        public SitePages(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<SitePage> GetIndexPageAsync()
         {
+            using var context = _dbFactory.CreateDbContext();
             await CreatePageIfNoneFound();
-            return await _context.Pages.Where(p => p.IsIndex == true).FirstOrDefaultAsync();
+            return await context.Pages.Where(p => p.IsIndex == true).FirstOrDefaultAsync();
         }
 
         public async Task<SitePage> GetPageAsync(int pageId)
         {
-            return await _context.Pages.Where(p => p.SitePageId == pageId).FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.Pages.Where(p => p.SitePageId == pageId).FirstOrDefaultAsync();
         }
 
         public async Task<List<SitePage>> GetPagesAsync()
         {
-            return await _context.Pages.ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            return await context.Pages.ToListAsync();
         }
 
         public async Task<bool> UpdatePageAsync(SitePage editedPage)
         {
-            var page = await _context.Pages.Where(p => p.SitePageId == editedPage.SitePageId).FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var page = await context.Pages.Where(p => p.SitePageId == editedPage.SitePageId).FirstOrDefaultAsync();
             if(page != null)
             {
                 page.Title = editedPage.Title;
                 page.MainContent = editedPage.MainContent;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
             return false;
@@ -49,7 +53,8 @@ namespace BlazorForum.Data.Repository
         private async Task CreatePageIfNoneFound()
         {
             // This is mostly used for the very first page visit after a fresh install.
-            var pages = await _context.Pages.ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var pages = await context.Pages.ToListAsync();
             if(pages.Count == 0)
             {
                 var page = new SitePage
@@ -62,8 +67,8 @@ namespace BlazorForum.Data.Repository
                     IsIndex = true,
                     AllowDelete = false
                 };
-                await _context.Pages.AddAsync(page);
-                await _context.SaveChangesAsync();
+                await context.Pages.AddAsync(page);
+                await context.SaveChangesAsync();
             }
         }
     }

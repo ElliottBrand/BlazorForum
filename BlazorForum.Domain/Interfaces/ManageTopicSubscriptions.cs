@@ -17,23 +17,23 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManageTopicSubscriptions : IManageTopicSubscriptions
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ManageTopicSubscriptions(ApplicationDbContext context)
+        public ManageTopicSubscriptions(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<TopicSubscription>> GetSubscriptionsForTopicAsync(int topicId) =>
-            await new Data.Repository.TopicSubscriptions(_context).GetSubscriptionsForTopicAsync(topicId);
+            await new Data.Repository.TopicSubscriptions(_dbFactory).GetSubscriptionsForTopicAsync(topicId);
 
         public async Task<bool> AddSubscriptionToTopicAsync(TopicSubscription newSubscription) =>
-            await new Data.Repository.TopicSubscriptions(_context).AddSubscriptionToTopicAsync(newSubscription);
+            await new Data.Repository.TopicSubscriptions(_dbFactory).AddSubscriptionToTopicAsync(newSubscription);
 
         public async Task<bool> RemoveSubscriptionFromTopicAsync(int topicId, string userId) =>
-            await new Data.Repository.TopicSubscriptions(_context).RemoveSubscriptionFromTopicAsync(topicId, userId);
+            await new Data.Repository.TopicSubscriptions(_dbFactory).RemoveSubscriptionFromTopicAsync(topicId, userId);
 
         public async Task<bool> DeleteAllSubscriptionsForUser(string userId) =>
-            await new Data.Repository.TopicSubscriptions(_context).DeleteAllSubscriptionsForUser(userId);
+            await new Data.Repository.TopicSubscriptions(_dbFactory).DeleteAllSubscriptionsForUser(userId);
     }
 }

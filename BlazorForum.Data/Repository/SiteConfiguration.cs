@@ -10,21 +10,23 @@ namespace BlazorForum.Data.Repository
 {
     public class SiteConfiguration
     {
-        private ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public SiteConfiguration(ApplicationDbContext context)
+        public SiteConfiguration(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public Configuration GetConfig()
         {
-            return _context.Configuration.FirstOrDefault();
+            using var context = _dbFactory.CreateDbContext();
+            return context.Configuration.FirstOrDefault();
         }
 
         public async Task<Configuration> GetConfigAsync()
         {
-            var config = await _context.Configuration.FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var config = await context.Configuration.FirstOrDefaultAsync();
             if (config != null)
                 return config;
             else
@@ -33,18 +35,20 @@ namespace BlazorForum.Data.Repository
 
         private async Task<Configuration> CreateConfigAsync()
         {
+            using var context = _dbFactory.CreateDbContext();
             var newConfig = new Configuration
             {
                 AnalyticsCode = null
             };
-            await _context.Configuration.AddAsync(newConfig);
-            await _context.SaveChangesAsync();
-            return await _context.Configuration.FirstOrDefaultAsync();
+            await context.Configuration.AddAsync(newConfig);
+            await context.SaveChangesAsync();
+            return await context.Configuration.FirstOrDefaultAsync();
         }
 
         public async Task<bool> UpdateConfigAsync(Configuration editedConfig)
         {
-            var config = await _context.Configuration.FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var config = await context.Configuration.FirstOrDefaultAsync();
             if(config != null)
             {
                 config.AnalyticsCode = editedConfig.AnalyticsCode;
@@ -52,7 +56,7 @@ namespace BlazorForum.Data.Repository
                 config.EmailSenderName = editedConfig.EmailSenderName;
                 config.SendGridKey = editedConfig.SendGridKey;
                 config.RegistrationApprovalMessage = editedConfig.RegistrationApprovalMessage;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
             return false;

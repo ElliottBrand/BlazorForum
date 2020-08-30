@@ -15,22 +15,22 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManageThemes : IManageThemes
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
         public string ThemeName { get; set; }
 
-        public ManageThemes(ApplicationDbContext context)
+        public ManageThemes(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<string> GetSelectedThemeNameAsync() => 
-            await new Data.Repository.Themes(_context).GetSelectedThemeNameAsync();
+            await new Data.Repository.Themes(_dbFactory).GetSelectedThemeNameAsync();
 
         public async Task<bool> RemoveThemesAsync() =>
-            await new Data.Repository.Themes(_context).RemoveThemesAsync();
+            await new Data.Repository.Themes(_dbFactory).RemoveThemesAsync();
 
         public async Task<bool> AddThemeAsync(string textDomain) =>
-            await new Data.Repository.Themes(_context).AddThemeAsync(textDomain);
+            await new Data.Repository.Themes(_dbFactory).AddThemeAsync(textDomain);
     }
 }

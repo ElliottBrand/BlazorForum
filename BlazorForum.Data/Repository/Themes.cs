@@ -10,29 +10,31 @@ namespace BlazorForum.Data.Repository
 {
     public class Themes
     {
-        private ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public Themes(ApplicationDbContext context)
+        public Themes(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<string> GetSelectedThemeNameAsync()
         {
-            var theme = await _context.Themes.Where(p => p.IsSelected == true && !String.IsNullOrEmpty(p.TextDomain.Trim())).FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var theme = await context.Themes.Where(p => p.IsSelected == true && !String.IsNullOrEmpty(p.TextDomain.Trim())).FirstOrDefaultAsync();
             return theme?.TextDomain;
         }
 
         public async Task<bool> RemoveThemesAsync()
         {
-            var themes = _context.Themes;
+            using var context = _dbFactory.CreateDbContext();
+            var themes = context.Themes;
             if(themes != null)
             {
                 foreach(var theme in themes.ToList())
                 {
                     themes.Remove(theme);
                 }
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 return true;
             }
 
@@ -41,14 +43,15 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> AddThemeAsync(string textDomain)
         {
-            var themes = _context.Themes;
+            using var context = _dbFactory.CreateDbContext();
+            var themes = context.Themes;
             var theme = new Theme
             {
                 TextDomain = textDomain,
                 IsSelected = true
             };
             themes.Add(theme);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
     }
