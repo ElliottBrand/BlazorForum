@@ -4,10 +4,10 @@
 @inject ICompositeViewEngine Engine
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject IDbContextFactory<ApplicationDbContext> dbFactory
+@inject BlazorForum.Domain.Interfaces.IManageThemes manageThemes
 
 @{
-    string themeName = await new BlazorForum.Domain.Interfaces.ManageThemes(dbFactory)
-        .GetSelectedThemeNameAsync();
+    string themeName = await manageThemes.GetSelectedThemeNameAsync();
 }
 
 <!DOCTYPE html>
