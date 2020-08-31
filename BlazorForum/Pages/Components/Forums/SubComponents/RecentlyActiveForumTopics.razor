@@ -22,8 +22,9 @@ else
                     <span class="text-nowrap">( @ForumTopicCountHelpers.GetTopicCount(_postCountList, topic.ForumTopicId) )</span>
                 </h6>
                 <div class="topic-author">
-                    Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
-                    by @topic.UserName
+                    @{ var recentPost = topic.ForumPosts.OrderByDescending(p => p.PostedDate).FirstOrDefault(); }
+                    @(new ForumUserHelpers(manageUsers).GetUserName(recentPost.UserId)) replied 
+                    @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(recentPost.PostedDate)
                 </div>
             </li>
         }
@@ -37,27 +38,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Adding loop because there are issues with RecentlyActiveForumTopics.razor and RecentForumTopics.razor both accessing
-        // ApplicationDbContext at the same time and causing a circuit error.
-        var exception = new Exception();
-        for (int i = 0; i < 10; i++)
-        {
-            try
-            {
-                _topics = await manageForumTopics.GetActiveTopicsAsync(_topicsCount);
-                _postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(_topics);
-                await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
-                exception = null;
-                break;
-            }
-            catch(Exception ex)
-            {
-                exception = ex;
-                await Task.Delay(500);
-            }
-        }
-
-        if (exception != null)
-            throw exception;
+        _topics = await manageForumTopics.GetActiveTopicsAsync(_topicsCount);
+        _postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(_topics);
+        await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
     }
 }

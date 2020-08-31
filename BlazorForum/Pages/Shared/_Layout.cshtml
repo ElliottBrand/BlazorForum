@@ -3,11 +3,11 @@
 @inject IWebHostEnvironment Environment
 @inject ICompositeViewEngine Engine
 @inject Microsoft.Extensions.Configuration.IConfiguration config
-@inject BlazorForum.Data.ApplicationDbContext context
+@inject IDbContextFactory<ApplicationDbContext> dbFactory
+@inject BlazorForum.Domain.Interfaces.IManageThemes manageThemes
 
 @{
-    string themeName = await new BlazorForum.Domain.Interfaces.ManageThemes(context)
-        .GetSelectedThemeNameAsync();
+    string themeName = await manageThemes.GetSelectedThemeNameAsync();
 }
 
 <!DOCTYPE html>

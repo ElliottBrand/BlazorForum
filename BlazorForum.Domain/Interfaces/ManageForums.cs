@@ -18,25 +18,25 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManageForums : IManageForums
     {
-        private readonly ApplicationDbContext _context;
-        public ManageForums(ApplicationDbContext context)
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
+        public ManageForums(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<Forum>> GetForumsAsync() => 
-            await new Data.Repository.Forums(_context).GetForumsAsync();
+            await new Data.Repository.Forums(_dbFactory).GetForumsAsync();
 
         public async Task<Forum> GetForumAsync(int id) => 
-            await new Data.Repository.Forums(_context).GetForumAsync(id);
+            await new Data.Repository.Forums(_dbFactory).GetForumAsync(id);
 
         public async Task<bool> CreateForumAsync(Forum newForum) => 
-            await new Data.Repository.Forums(_context).CreateForumAsync(newForum);
+            await new Data.Repository.Forums(_dbFactory).CreateForumAsync(newForum);
 
         public async Task<bool> UpdateForumAsync(Forum editedForum) =>
-            await new Data.Repository.Forums(_context).UpdateForumAsync(editedForum);
+            await new Data.Repository.Forums(_dbFactory).UpdateForumAsync(editedForum);
 
         public async Task<bool> DeleteForumAsync(int forumId) =>
-            await new Data.Repository.Forums(_context).DeleteForumAsync(forumId);
+            await new Data.Repository.Forums(_dbFactory).DeleteForumAsync(forumId);
     }
 }

@@ -10,16 +10,17 @@ namespace BlazorForum.Data.Repository
 {
     public class UpDownVotes
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public UpDownVotes(ApplicationDbContext context)
+        public UpDownVotes(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<int> GetPostUpDownVoteCountAsync(int postId)
         {
-            var votes = await _context.UpDownVotes.Where(p => p.PostId == postId).ToListAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var votes = await context.UpDownVotes.Where(p => p.PostId == postId).ToListAsync();
             int count = 0;
             foreach (var vote in votes)
             {
@@ -30,7 +31,8 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> VoterHasVoted(string voterId, int postId)
         {
-            var votes = await _context.UpDownVotes.Where(p => p.PostId == postId && p.VoterId == voterId).FirstOrDefaultAsync();
+            using var context = _dbFactory.CreateDbContext();
+            var votes = await context.UpDownVotes.Where(p => p.PostId == postId && p.VoterId == voterId).FirstOrDefaultAsync();
             if (votes != null)
                 return true;
             return false;
@@ -38,7 +40,8 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> AddPostUpDownVoteAsync(UpDownVote newUpDownVote)
         {
-            var votes = _context.UpDownVotes;
+            using var context = _dbFactory.CreateDbContext();
+            var votes = context.UpDownVotes;
             var vote = new UpDownVote
             {
                 PostId = newUpDownVote.PostId,
@@ -50,29 +53,31 @@ namespace BlazorForum.Data.Repository
                 UpDownVoteId = newUpDownVote.UpDownVoteId
             };
             await votes.AddAsync(vote);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DeleteUpDownVotesByUserAsync(string userId)
         {
-            var votes = _context.UpDownVotes;
+            using var context = _dbFactory.CreateDbContext();
+            var votes = context.UpDownVotes;
             foreach (var vote in await votes.Where(p => p.VoterId == userId).ToListAsync())
             {
                 votes.Remove(vote);
             }
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DeleteUpDownVotesForUserAsync(string userId)
         {
-            var votes = _context.UpDownVotes;
+            using var context = _dbFactory.CreateDbContext();
+            var votes = context.UpDownVotes;
             foreach (var vote in await votes.Where(p => p.PosterId == userId).ToListAsync())
             {
                 votes.Remove(vote);
             }
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return true;
         }
     }

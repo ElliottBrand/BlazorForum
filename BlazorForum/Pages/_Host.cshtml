@@ -1,14 +1,14 @@
 ﻿@page "/"
 @namespace BlazorForum.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@inject Data.ApplicationDbContext context
+@inject IDbContextFactory<ApplicationDbContext> dbFactory
 @inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject Domain.Interfaces.IManageThemes manageThemes 
 
 @{
     Layout = null;
 
-    string themeName = await new Domain.Interfaces.ManageThemes(context)
-        .GetSelectedThemeNameAsync();
+    string themeName = await manageThemes.GetSelectedThemeNameAsync();
 
     var appComponent = await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered);
     var headComponent = await Html.RenderComponentAsync<BlazorForum.Pages.Components.Head.HeadSection>(RenderMode.ServerPrerendered);

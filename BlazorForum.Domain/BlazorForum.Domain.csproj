@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="3.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
-    <PackageReference Include="SendGrid" Version="9.12.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.7" />
+    <PackageReference Include="SendGrid" Version="9.21.0" />
   </ItemGroup>
 
   <ItemGroup>

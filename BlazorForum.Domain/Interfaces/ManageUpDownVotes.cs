@@ -18,26 +18,26 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManageUpDownVotes : IManageUpDownVotes
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ManageUpDownVotes(ApplicationDbContext context)
+        public ManageUpDownVotes(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<int> GetPostUpDownVoteCountAsync(int postId) =>
-            await new Data.Repository.UpDownVotes(_context).GetPostUpDownVoteCountAsync(postId);
+            await new Data.Repository.UpDownVotes(_dbFactory).GetPostUpDownVoteCountAsync(postId);
 
         public async Task<bool> AddPostUpDownVoteAsync(UpDownVote newUpDownVote) =>
-            await new Data.Repository.UpDownVotes(_context).AddPostUpDownVoteAsync(newUpDownVote);
+            await new Data.Repository.UpDownVotes(_dbFactory).AddPostUpDownVoteAsync(newUpDownVote);
 
         public async Task<bool> VoterHasVoted(string voterId, int postId) =>
-            await new Data.Repository.UpDownVotes(_context).VoterHasVoted(voterId, postId);
+            await new Data.Repository.UpDownVotes(_dbFactory).VoterHasVoted(voterId, postId);
 
         public async Task<bool> DeleteUpDownVotesByUserAsync(string userId) =>
-            await new Data.Repository.UpDownVotes(_context).DeleteUpDownVotesByUserAsync(userId);
+            await new Data.Repository.UpDownVotes(_dbFactory).DeleteUpDownVotesByUserAsync(userId);
 
         public async Task<bool> DeleteUpDownVotesForUserAsync(string userId) =>
-            await new Data.Repository.UpDownVotes(_context).DeleteUpDownVotesForUserAsync(userId);
+            await new Data.Repository.UpDownVotes(_dbFactory).DeleteUpDownVotesForUserAsync(userId);
     }
 }

@@ -37,7 +37,7 @@ namespace BlazorForum.Domain.Helpers.Forum
         public static int GetTopicCount(List<TopicPostCount> topicPostCountList, int forumTopicId)
         {
             return topicPostCountList != null ? topicPostCountList.Where(p => p.ParentItemId == forumTopicId)
-                              .FirstOrDefault().ChildCount : 0;
+                .FirstOrDefault().ChildCount : 0;
         }
     }
 }

@@ -1,14 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +14,6 @@ using BlazorForum.Domain.Interfaces;
 using BlazorForum.Pages.Components.BlazorModal;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BlazorForum.Domain.Services;
-using Microsoft.AspNetCore.Http;
 using BlazorForum.Pages.Components.Head;
 
 namespace BlazorForum
@@ -38,9 +31,12 @@ namespace BlazorForum
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContextFactory<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddRoleManager<RoleManager<IdentityRole>>()
@@ -83,16 +79,16 @@ namespace BlazorForum
             });
 
             services.AddHttpContextAccessor();
-            services.AddTransient<IManageForums, ManageForums>();
-            services.AddTransient<IManageForumCategories, ManageForumCategories>();
-            services.AddTransient<IManageForumTopics, ManageForumTopics>();
-            services.AddTransient<IManageForumPosts, ManageForumPosts>();
-            services.AddTransient<IManageThemes, ManageThemes>();
-            services.AddTransient<IManageConfiguration, ManageConfiguration>();
-            services.AddTransient<IManagePages, ManagePages>();
-            services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
-            services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
-            services.AddTransient<IManageUsers, ManageUsers>();
+            services.AddScoped<IManageForums, ManageForums>();
+            services.AddScoped<IManageForumCategories, ManageForumCategories>();
+            services.AddScoped<IManageForumTopics, ManageForumTopics>();
+            services.AddScoped<IManageForumPosts, ManageForumPosts>();
+            services.AddScoped<IManageThemes, ManageThemes>();
+            services.AddScoped<IManageConfiguration, ManageConfiguration>();
+            services.AddScoped<IManagePages, ManagePages>();
+            services.AddScoped<IManageUpDownVotes, ManageUpDownVotes>();
+            services.AddScoped<IManageTopicSubscriptions, ManageTopicSubscriptions>();
+            services.AddScoped<IManageUsers, ManageUsers>();
             services.AddBlazorModal();
             services.AddHeadBuilder();
 

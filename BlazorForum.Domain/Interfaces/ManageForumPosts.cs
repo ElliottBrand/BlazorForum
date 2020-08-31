@@ -20,32 +20,32 @@ namespace BlazorForum.Domain.Interfaces
 
     public class ManageForumPosts : IManageForumPosts
     {
-        private ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ManageForumPosts(ApplicationDbContext context)
+        public ManageForumPosts(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
         }
 
         public async Task<List<ForumPost>> GetForumPostsAsync(int topicId) => 
-            await new Data.Repository.ForumPosts(_context).GetForumPostsAsync(topicId);
+            await new Data.Repository.ForumPosts(_dbFactory).GetForumPostsAsync(topicId);
 
         public async Task<List<ForumPost>> GetApprovedForumPostsAsync(int topicId) =>
-            await new Data.Repository.ForumPosts(_context).GetApprovedForumPostsAsync(topicId);
+            await new Data.Repository.ForumPosts(_dbFactory).GetApprovedForumPostsAsync(topicId);
 
         public async Task<bool> AddNewPostAsync(ForumPost newPost) => 
-            await new Data.Repository.ForumPosts(_context).AddNewPostAsync(newPost);
+            await new Data.Repository.ForumPosts(_dbFactory).AddNewPostAsync(newPost);
 
         public async Task<bool> DeletePostAsync(int postId) =>
-            await new Data.Repository.ForumPosts(_context).DeletePostAsync(postId);
+            await new Data.Repository.ForumPosts(_dbFactory).DeletePostAsync(postId);
 
         public async Task<bool> MarkUserPostsAsDeletedAsync(string userId) =>
-            await new Data.Repository.ForumPosts(_context).MarkUserPostsAsDeletedAsync(userId);
+            await new Data.Repository.ForumPosts(_dbFactory).MarkUserPostsAsDeletedAsync(userId);
 
         public async Task<ForumPost> GetForumPostAsync(int postId) =>
-            await new Data.Repository.ForumPosts(_context).GetForumPostAsync(postId);
+            await new Data.Repository.ForumPosts(_dbFactory).GetForumPostAsync(postId);
 
         public async Task<bool> UpdatePostAsync(ForumPost editedPost) =>
-            await new Data.Repository.ForumPosts(_context).UpdatePostAsync(editedPost);
+            await new Data.Repository.ForumPosts(_dbFactory).UpdatePostAsync(editedPost);
     }
 }
