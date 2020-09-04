@@ -81,6 +81,11 @@ app {
     padding-top: 1.1rem;
 }
 
+.forum-category-description-small {
+    font-size:.8em;
+    color: #6d6b93;
+}
+
 .forum-description, .forum-category-description, forum-topic-description {
     color: #ccc;
 }

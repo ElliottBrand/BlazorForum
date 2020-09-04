@@ -5,7 +5,7 @@
 <header>
     <h3>Recently Active Topics</h3>
 </header>
-@if (_topics == null)
+@if (_topics == null || _postCountList == null)
 {
     <div class="mb-2 loading-div">
         <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
@@ -22,9 +22,8 @@ else
                     <span class="text-nowrap">( @ForumTopicCountHelpers.GetTopicCount(_postCountList, topic.ForumTopicId) )</span>
                 </h6>
                 <div class="topic-author">
-                    @{ var recentPost = topic.ForumPosts.OrderByDescending(p => p.PostedDate).FirstOrDefault(); }
-                    @(new ForumUserHelpers(manageUsers).GetUserName(recentPost.UserId)) replied 
-                    @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(recentPost.PostedDate)
+                    @{ GetRepliedDate(topic); }
+                    Replied to @_postedAgo
                 </div>
             </li>
         }
@@ -35,11 +34,20 @@ else
     private List<Models.ForumTopic> _topics { get; set; }
     private List<TopicPostCount> _postCountList = new List<TopicPostCount>();
     private int _topicsCount = 10;
+    private string _postedAgo = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         _topics = await manageForumTopics.GetActiveTopicsAsync(_topicsCount);
         _postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(_topics);
-        await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_topics);
+    }
+
+    protected void GetRepliedDate(ForumTopic topic)
+    {
+        var recentPost = topic.ForumPosts.OrderByDescending(p => p.PostedDate).FirstOrDefault();
+        if (recentPost != null)
+        {
+            _postedAgo = Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(recentPost.PostedDate);
+        }
     }
 }
