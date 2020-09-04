@@ -79,16 +79,16 @@ namespace BlazorForum
             });
 
             services.AddHttpContextAccessor();
-            services.AddScoped<IManageForums, ManageForums>();
-            services.AddScoped<IManageForumCategories, ManageForumCategories>();
-            services.AddScoped<IManageForumTopics, ManageForumTopics>();
-            services.AddScoped<IManageForumPosts, ManageForumPosts>();
-            services.AddScoped<IManageThemes, ManageThemes>();
-            services.AddScoped<IManageConfiguration, ManageConfiguration>();
-            services.AddScoped<IManagePages, ManagePages>();
-            services.AddScoped<IManageUpDownVotes, ManageUpDownVotes>();
-            services.AddScoped<IManageTopicSubscriptions, ManageTopicSubscriptions>();
-            services.AddScoped<IManageUsers, ManageUsers>();
+            services.AddTransient<IManageForums, ManageForums>();
+            services.AddTransient<IManageForumCategories, ManageForumCategories>();
+            services.AddTransient<IManageForumTopics, ManageForumTopics>();
+            services.AddTransient<IManageForumPosts, ManageForumPosts>();
+            services.AddTransient<IManageThemes, ManageThemes>();
+            services.AddTransient<IManageConfiguration, ManageConfiguration>();
+            services.AddTransient<IManagePages, ManagePages>();
+            services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
+            services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
+            services.AddTransient<IManageUsers, ManageUsers>();
             services.AddBlazorModal();
             services.AddHeadBuilder();
 

@@ -35,11 +35,14 @@ else
                 @foreach (var category in forum.ForumCategories)
                 {
                     <li>
-                        <a href="@String.Format("/category/{0}/{1}",
-                                  category.ForumCategoryId,
-                                  UrlFormatting.PrepareUrlText(category.Title))">@category.Title</a> 
-                                    ( @(_topicCountList != null ? _topicCountList.Where(p => p.ParentItemId == category.ForumCategoryId)
-                                    .FirstOrDefault().ChildCount : 0 ) )
+                        <div>
+                            <a href="@String.Format("/category/{0}/{1}",
+                                        category.ForumCategoryId,
+                                        UrlFormatting.PrepareUrlText(category.Title))">@category.Title</a> 
+                            ( @(_topicCountList != null ? _topicCountList.Where(p => p.ParentItemId == category.ForumCategoryId)
+                            .FirstOrDefault().ChildCount : 0 ) )
+                        </div>
+                        <div class="forum-category-description-small">@category.Description</div>
                     </li>
                 }
             </ul>
