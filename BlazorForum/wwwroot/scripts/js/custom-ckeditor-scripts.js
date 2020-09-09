@@ -13,32 +13,36 @@ window.methods = {
 
                 allCkEditors.push(editor);
 
-                // Show icon while user is typing in editor
+                
+                // Show typing alert while user is typing in editor
+                let typerId = "";
                 editor.editing.view.document.on('keydown', function () {
                     // Call blazor to alert that someone is typing.
-                    // ** Need to fix this to hide the alert for the user who is typing ** //
+                    /*
+                     * Need to fix this to hide the alert for the user who is typing, but display it for anyone else viewing the same topic
+                     * It's close, but if a browser who isn't the typer, loads/refreshes...it stops working
+                     * The component receiving this is BlazorForum/Pages/Components/TypingNotice/TypingNotice.razor
+                     */
                     var topicTypingContainer = document.getElementsByClassName('topic-typing-container');
                     if (topicTypingContainer) {
                         const typerIdPromise = new Promise((resolve, reject) => {
                             resolve(DotNet.invokeMethodAsync('BlazorForum', 'GetTyperId'));
                         })
 
-                        let typerId = "test";
                         typerIdPromise.then((result) => {
                             typerId = result;
-                        })
-                        console.log(typerId);
-                        // Isn't currently sending typerId to Blazor. Value isn't being set inside Promise 'then' statement
-                        DotNet.invokeMethodAsync('BlazorForum', 'ShowTypingNotice', topicTypingContainer[0].id, typerId);
+                        });
+                        
+                        if (typerId) {
+                            console.log(typerId);
+                            DotNet.invokeMethodAsync('BlazorForum', 'ShowTypingNotice', topicTypingContainer[0].id, typerId);
+                        }
                     }
                 });
             })
             .catch(error => {
                 console.error(error);
             });
-    },
-    typingDelay: function () {
-
     },
     getEditorText: function () {
         return ckeditor.getData();

@@ -57,7 +57,6 @@
     public static void ShowTypingNotice(string typingTopicId, string currentTyperId)
     {
         _currentTyperId = currentTyperId;
-        // TODO: Need to make sure the notice doesn't display for the user who is typing (when they are the one who is firing it)
         _typingTopicId = typingTopicId;
         typingAction.Invoke();
     }
