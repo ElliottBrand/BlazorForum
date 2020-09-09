@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @using System.Collections.Generic
 @using BlazorForum.Pages.Components.Forums.SubComponents
+@using BlazorForum.Pages.Components.TypingNotice
 
 @inject HeadBuilderService head
 @inject NavigationManager navManager
@@ -85,6 +86,8 @@ else
     <div class="text-center">
         <button class="btn btn-blazorforum @loadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
     </div>
+
+    <TypingNotice TopicId="@id" CurrentUserId="@CurrentUserId"></TypingNotice>
 }
 
 <section class="mt-4 mb-3">

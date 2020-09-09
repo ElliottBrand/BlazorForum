@@ -12,10 +12,33 @@ window.methods = {
                 ckeditor = editor;
 
                 allCkEditors.push(editor);
+
+                // Show icon while user is typing in editor
+                editor.editing.view.document.on('keydown', function () {
+                    // Call blazor to alert that someone is typing.
+                    // ** Need to fix this to hide the alert for the user who is typing ** //
+                    var topicTypingContainer = document.getElementsByClassName('topic-typing-container');
+                    if (topicTypingContainer) {
+                        const typerIdPromise = new Promise((resolve, reject) => {
+                            resolve(DotNet.invokeMethodAsync('BlazorForum', 'GetTyperId'));
+                        })
+
+                        let typerId = "test";
+                        typerIdPromise.then((result) => {
+                            typerId = result;
+                        })
+                        console.log(typerId);
+                        // Isn't currently sending typerId to Blazor. Value isn't being set inside Promise 'then' statement
+                        DotNet.invokeMethodAsync('BlazorForum', 'ShowTypingNotice', topicTypingContainer[0].id, typerId);
+                    }
+                });
             })
             .catch(error => {
                 console.error(error);
             });
+    },
+    typingDelay: function () {
+
     },
     getEditorText: function () {
         return ckeditor.getData();
