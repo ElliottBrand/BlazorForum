@@ -1,7 +1,9 @@
 ﻿@implements IDisposable
+@inject IManageUsers _userManager 
 
 <section id="typingAlertSection">
     <div id="@TopicId" class="@typingNoticeStyle topic-typing-container">Someone is typing...</div>
+    <input id="typerid" hidden="hidden" value="@CurrentUserId" />
 </section>
 
 @code {
@@ -9,7 +11,6 @@
     public static Action typingAction;
     [Parameter] public int TopicId { get; set; }
     [Parameter] public string CurrentUserId { get; set; }
-    private static string _currentUserId { get; set; }
     private static int _topicId { get; set; }
     private static string _typingTopicId { get; set; }
     private static string _currentTyperId { get; set; }
@@ -19,7 +20,6 @@
     {
         typingAction += ShowHideTypingNoticeAsync;
         _topicId = TopicId;
-        _currentUserId = CurrentUserId;
 
         _timer = new System.Timers.Timer(1000);
         _timer.Elapsed += RemoveTypingNotice;
@@ -59,11 +59,5 @@
         _currentTyperId = currentTyperId;
         _typingTopicId = typingTopicId;
         typingAction.Invoke();
-    }
-
-    [JSInvokable]
-    public static string GetTyperId()
-    {
-        return _currentUserId;
     }
 }

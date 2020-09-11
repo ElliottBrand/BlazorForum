@@ -10,26 +10,17 @@ window.methods = {
             })
             .then(editor => {
                 ckeditor = editor;
-
                 allCkEditors.push(editor);
 
-                
                 // Show typing alert while user is typing in editor
                 let typerId = "";
                 editor.editing.view.document.on('keydown', function () {
                     // Call blazor to alert that someone is typing.
-                    /*
-                     * Need to fix this to hide the alert for the user who is typing, but display it for anyone else viewing the same topic
-                     * It's close, but if a browser who isn't the typer, loads/refreshes...it stops working
-                     * The component receiving this is BlazorForum/Pages/Components/TypingNotice/TypingNotice.razor
-                     */
                     var topicTypingContainer = document.getElementsByClassName('topic-typing-container');
                     if (topicTypingContainer) {
                         const typerIdPromise = new Promise((resolve, reject) => {
-                            resolve(DotNet.invokeMethodAsync('BlazorForum', 'GetTyperId'));
-                        })
-
-                        typerIdPromise.then((result) => {
+                            resolve(document.getElementById('typerid').value);
+                        }).then((result) => {
                             typerId = result;
                         });
                         
