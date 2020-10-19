@@ -90,7 +90,7 @@ namespace BlazorForum
             services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
             services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
             services.AddTransient<IManageUsers, ManageUsers>();
-            services.AddTransient<PostState>();
+            services.AddTransient<ForumPostService>();
             services.AddBlazorModal();
             services.AddHeadBuilder();
 

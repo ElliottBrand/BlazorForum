@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace BlazorForum.Pages.Components.Forums
 {
-    public class PostState
+    public class ForumPostService
     {
         private readonly IManageForumPosts _manageForumPosts;
         private readonly IManageUsers _manageUsers;
 
-        public PostState(IManageForumPosts manageForumPosts, IManageUsers manageUsers)
+        public ForumPostService(IManageForumPosts manageForumPosts, IManageUsers manageUsers)
         {
             _manageForumPosts = manageForumPosts;
             _manageUsers = manageUsers;
