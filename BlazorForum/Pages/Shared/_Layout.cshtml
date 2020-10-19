@@ -3,11 +3,11 @@
 @inject IWebHostEnvironment Environment
 @inject ICompositeViewEngine Engine
 @inject Microsoft.Extensions.Configuration.IConfiguration config
-@inject IDbContextFactory<ApplicationDbContext> dbFactory
 @inject BlazorForum.Domain.Interfaces.IManageThemes manageThemes
 
 @{
     string themeName = await manageThemes.GetSelectedThemeNameAsync();
+    var result = Engine.FindView(ViewContext, "_LoginPartial", isMainPage: false);
 }
 
 <!DOCTYPE html>
@@ -25,59 +25,51 @@
 </head>
 <body>
     <app>
-        <div class="sidebar">
-            <nav class="top-row pl-4 navbar navbar-dark">
-                <a class="navbar-brand" href="/">@config.GetSection("SiteNavbarBrand").Value</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </nav>
-            <nav class="collapse navbar-collapse" id="navbarContent">
-                <ul class="nav flex-column">
-                    <li class="nav-item px-3">
-                        <a class="nav-link" href="/">
-                            <span class="oi oi-home" aria-hidden="true"></span> Home
-                        </a>
-                    </li>
-                    <li class="nav-item px-3">
-                        <a class="nav-link" href="/forums">
-                            <span class="oi oi-chat" aria-hidden="true"></span> Forums
-                        </a>
-                    </li>
-                    @if (Context.User.IsInRole("Administrator"))
-                    {
-                        <li class="nav-item px-3">
-                            <a class="nav-link" href="/admin/dashboard">
-                                <span class="oi oi-cog" aria-hidden="true"></span> Admin
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </nav>
-        </div>
         <div class="main">
-            <section class="top-row px-4 auth d-none d-md-block">
-                <header>
-                    <nav class="navbar navbar-expand-md navbar-light navbar-toggleable-md">
-                        <div class="container">
-                            <div class="navbar-collapse collapse d-md-inline-flex flex-md-row-reverse">
-                                @{
-                                    var result = Engine.FindView(ViewContext, "_LoginPartial", isMainPage: false);
-                                }
-                                @if (result.Success)
+            <section class="top-row auth">
+                <div class="top-row-nav-area">
+                    <nav class="navbar navbar-expand-md navbar-dark py-0 w-100">
+                        <a class="navbar-brand" href="/">@config.GetSection("SiteNavbarBrand").Value</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="oi oi-menu"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse ml-1" id="navbarContent">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/">
+                                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/forums">
+                                        <span class="oi oi-chat" aria-hidden="true"></span> Forums
+                                    </a>
+                                </li>
+                                @if (Context.User.IsInRole("Administrator"))
                                 {
-                                    await Html.RenderPartialAsync("_LoginPartial");
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/admin/dashboard">
+                                            <span class="oi oi-cog" aria-hidden="true"></span> Admin
+                                        </a>
+                                    </li>
                                 }
-                                else
-                                {
-                                    throw new InvalidOperationException("The default Identity UI layout requires a partial view '_LoginPartial' " +
-                                        "usually located at '/Pages/_LoginPartial' or at '/Views/Shared/_LoginPartial' to work. Based on your configuration " +
-                                        $"we have looked at it in the following locations: {System.Environment.NewLine}{string.Join(System.Environment.NewLine, result.SearchedLocations)}.");
-                                }
-                            </div>
+                            </ul>
                         </div>
                     </nav>
-                </header>
+                </div>
+                <div class="top-row-login-area">
+                    @if (result.Success)
+                    {
+                        await Html.RenderPartialAsync("_LoginPartial");
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("The default Identity UI layout requires a partial view '_LoginPartial' " +
+                            "usually located at '/Pages/_LoginPartial' or at '/Views/Shared/_LoginPartial' to work. Based on your configuration " +
+                            $"we have looked at it in the following locations: {System.Environment.NewLine}{string.Join(System.Environment.NewLine, result.SearchedLocations)}.");
+                    }
+                </div>
             </section>
 
             <section class="content px-4">

@@ -1,0 +1,41 @@
+﻿@inject IManageForumPosts  manageForumPosts
+@inject UserManager<ApplicationUser> userManager
+@inject IManageUsers manageUsers
+@inject PostState postState
+
+@if (TopicPosts != null && TopicPosts.Count > 0)
+{
+    <ul class="forum-post-ul">
+        @for (var i = 0; i < (TopicPosts.Count); i++)
+        {
+            <li>
+                <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@ForumUpDownVoteEnabled" ThisPost="@TopicPosts[i]" ForumId="Category.ForumCategoryId"></Post>
+            </li>
+        }
+    </ul>
+}
+
+<div class="text-center">
+    <button class="btn btn-blazorforum @postState.LoadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
+</div>
+
+@code {
+    [Parameter] public string CurrentUserId { get; set; }
+    [Parameter] public int Id { get; set; }
+    [Parameter] public bool ForumUpDownVoteEnabled { get; set; }
+    [Parameter] public Models.ForumCategory Category { get; set; }
+    [Parameter] public List<Models.ForumPost> TopicPosts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        postState.Id = Id;
+
+        //await postState.LoadPostsAsync();
+    }
+
+    public async Task LoadMorePostsAsync()
+    {
+        await postState.LoadMorePostsAsync();
+        StateHasChanged();
+    }
+}

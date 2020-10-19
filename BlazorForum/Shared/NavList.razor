@@ -1,0 +1,24 @@
+﻿<ul class="navbar-nav nav mr-auto">
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+            <span class="oi oi-home" aria-hidden="true"></span> Home
+        </NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="/forums">
+            <span class="oi oi-chat" aria-hidden="true"></span> Forums
+        </NavLink>
+    </li>
+    <AuthorizeView>
+        <Authorized>
+            @if (context.User.IsInRole("Administrator"))
+            {
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/admin/dashboard">
+                        <span class="oi oi-cog" aria-hidden="true"></span> Admin
+                    </NavLink>
+                </li>
+            }
+        </Authorized>
+    </AuthorizeView>
+</ul>

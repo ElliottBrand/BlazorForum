@@ -8,30 +8,31 @@
 @inject NavigationManager navManager
 @inject IManageForumCategories manageForumCategories
 @inject IManageForumTopics manageForumTopics
-@inject IManageForumPosts  manageForumPosts
 @inject IManageForums manageForums
 @inject IManageTopicSubscriptions manageTopicSubscriptions
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider authStateProvider
 @inject IJSRuntime JSRuntime
 @inject IManageUsers manageUsers
+@inject PostState postState
+@implements IDisposable
 
-    <ul class="breadcrumb blazorforum-breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="/forums/">Forums</a>
-        </li>
-        <li class="breadcrumb-item">
-            @{
-                var bc = _category != null && _category.Title != null ?
-                String.Format("<a href=\"/category/{0}/{1}\">{2}</a>", _category.ForumCategoryId,
-                Domain.Utilities.Formatting.UrlFormatting.PrepareUrlText(_category.Title), _category.Title) : "";
-                @((MarkupString)bc)
-            }
-        </li>
-        <li class="breadcrumb-item">
-            @(_topic != null && _topic.Title != null ? _topic.Title : "")
-        </li>
-    </ul>
+<ul class="breadcrumb blazorforum-breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="/forums/">Forums</a>
+    </li>
+    <li class="breadcrumb-item">
+        @{
+            var bc = _category != null && _category.Title != null ?
+            String.Format("<a href=\"/category/{0}/{1}\">{2}</a>", _category.ForumCategoryId,
+            Domain.Utilities.Formatting.UrlFormatting.PrepareUrlText(_category.Title), _category.Title) : "";
+            @((MarkupString)bc)
+        }
+    </li>
+    <li class="breadcrumb-item">
+        @(_topic != null && _topic.Title != null ? _topic.Title : "")
+    </li>
+</ul>
 
 @if (_topic == null)
 {
@@ -41,19 +42,19 @@
 }
 else
 {
-<div class="text-right">
-    @if (CurrentUserId != null)
-    {
-        if (_userIsSubscribedToTopic)
+    <div class="text-right">
+        @if (CurrentUserId != null)
         {
-            <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => UnsubscribeUserFromTopic())" title="Unsubscribe from this topic">Unsubscribe</button>
+            if (_userIsSubscribedToTopic)
+            {
+                <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => UnsubscribeUserFromTopic())" title="Unsubscribe from this topic">Unsubscribe</button>
+            }
+            else
+            {
+                <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => SubscribeUserToTopic())" title="Subscribe to this topic">Subscribe</button>
+            }
         }
-        else
-        {
-            <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => SubscribeUserToTopic())" title="Subscribe to this topic">Subscribe</button>
-        }
-    }
-</div>
+    </div>
     <header class="forum-topic-header">
         <h3>@_topic.Title</h3>
         <div class="forum-post-time d-inline-block">
@@ -67,24 +68,25 @@ else
             </div>
         }
     </header>
+
     <section class="forum-topic-text-section">
         <Topic ThisTopic="@_topic" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" CurrentUserId="@CurrentUserId"></Topic>
     </section>
 
-    if (_posts != null && _posts.Count > 0)
+    @if (postState.Posts != null && postState.Posts.Count > 0)
     {
-    <ul class="forum-post-ul">
-        @for(var i = 0; i < (_posts.Count); i++)
-        {
-            <li>
-                <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" ThisPost="@_posts[i]" ForumId="_category.ForumCategoryId"></Post>
-            </li>
-         }
-    </ul>
+        <ul class="forum-post-ul">
+            @for (var i = 0; i < (postState.Posts.Count); i++)
+            {
+                <li>
+                    <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" ThisPost="@postState.Posts[i]" ForumId="_category.ForumCategoryId"></Post>
+                </li>
+            }
+        </ul>
     }
 
     <div class="text-center">
-        <button class="btn btn-blazorforum @loadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
+        <button class="btn btn-blazorforum @postState.LoadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
     </div>
 
     <TypingNotice TopicId="@id" CurrentUserId="@CurrentUserId"></TypingNotice>
@@ -111,37 +113,37 @@ else
     [Parameter] public string CurrentUserId { get; set; }
     private Models.ForumCategory _category;
     private Models.ForumTopic _topic;
-    private List<Models.ForumPost> _posts;
-    private int _maxCount = 10;
-    private string loadMoreVisibility;
     private bool _forumUpDownVoteEnabled;
     private bool _userIsSubscribedToTopic;
 
     protected override async Task OnInitializedAsync()
     {
+        postState.Id = id;
+        postState.OnPosted += StateHasChanged;
+
         await LoadTopicAsync();
+        await postState.LoadPostsAsync();
 
         head.Title = _topic.Title;
         head.Description = _topic.TopicText;
-        _posts = await manageForumPosts.GetApprovedForumPostsAsync(id);
         _category = await manageForumCategories.GetForumCategoryAsync(_topic.ForumCategoryId);
         var forum = await manageForums.GetForumAsync(_category.ForumId);
         _forumUpDownVoteEnabled = forum.EnableUpDownVotes;
 
-        if (_maxCount >= _posts.Count)
-            loadMoreVisibility = "d-none";
-
-        _posts = _posts.Take(_maxCount).ToList();
         CurrentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
-        await new ForumUserHelpers(manageUsers).AddUserToPostAsync(_posts);
 
         await CheckIfUserIsSubscribed();
+    }
+
+    public void Dispose()
+    {
+        postState.OnPosted -= StateHasChanged;
     }
 
     private async Task LoadTopicAsync()
     {
         _topic = await manageForumTopics.GetForumTopicAsync(id);
-        if(_topic == null || _topic.IsApproved != true || _topic.IsDeleted == true)
+        if (_topic == null || _topic.IsApproved != true || _topic.IsDeleted == true)
             navManager.NavigateTo("/");
 
         var user = await userManager.FindByIdAsync(_topic.UserId);
@@ -150,36 +152,16 @@ else
 
     public async void UpdatePostsAsync()
     {
-        _posts = await manageForumPosts.GetApprovedForumPostsAsync(id);
-
-        if (_maxCount >= _posts.Count)
-            loadMoreVisibility = "d-none";
-        else
-            loadMoreVisibility = "d-inline-block";
-
-        _posts = _posts.Take(_maxCount).ToList();
-
-        await new ForumUserHelpers(manageUsers).AddUserToPostAsync(_posts);
+        // TODO: Adjust to reload for all connected clients/circuits
+        await postState.RefreshPostsAsync();
 
         // Update the subscription button in upper right, since they are subscribed after adding a new post.
         await CheckIfUserIsSubscribed();
-
-        StateHasChanged();
     }
 
     public async Task LoadMorePostsAsync()
     {
-        _maxCount += 10;
-        _posts = await manageForumPosts.GetApprovedForumPostsAsync(id);
-
-        if (_maxCount >= _posts.Count)
-            loadMoreVisibility = "d-none";
-        else
-            loadMoreVisibility = "d-inline-block";
-
-        _posts = _posts.Take(_maxCount).ToList();
-
-        await new ForumUserHelpers(manageUsers).AddUserToPostAsync(_posts);
+        await postState.LoadMorePostsAsync();
         StateHasChanged();
     }
 
@@ -197,7 +179,8 @@ else
 
     private async Task SubscribeUserToTopic()
     {
-        var newSubscription = new TopicSubscription {
+        var newSubscription = new TopicSubscription
+        {
             Id = CurrentUserId,
             ForumTopicId = id
         };

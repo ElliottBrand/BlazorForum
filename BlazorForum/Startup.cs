@@ -15,6 +15,7 @@ using BlazorForum.Pages.Components.BlazorModal;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BlazorForum.Domain.Services;
 using BlazorForum.Pages.Components.Head;
+using BlazorForum.Pages.Components.Forums;
 
 namespace BlazorForum
 {
@@ -89,6 +90,7 @@ namespace BlazorForum
             services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
             services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
             services.AddTransient<IManageUsers, ManageUsers>();
+            services.AddTransient<PostState>();
             services.AddBlazorModal();
             services.AddHeadBuilder();
 

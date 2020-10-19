@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BlazorForum.Data;
 using BlazorForum.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorForum.Domain.Interfaces
 {
