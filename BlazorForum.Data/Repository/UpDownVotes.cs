@@ -17,10 +17,10 @@ namespace BlazorForum.Data.Repository
             _dbFactory = dbFactory;
         }
 
-        public async Task<int> GetPostUpDownVoteCountAsync(int postId)
+        public async Task<int> GetPostUpDownVoteCountAsync(int postId, string uniqueIdentifier)
         {
             using var context = _dbFactory.CreateDbContext();
-            var votes = await context.UpDownVotes.Where(p => p.PostId == postId).ToListAsync();
+            var votes = await context.UpDownVotes.Where(p => p.PostId == postId).Where(p => p.UniqueIdentifier == uniqueIdentifier).ToListAsync();
             int count = 0;
             foreach (var vote in votes)
             {
@@ -29,10 +29,10 @@ namespace BlazorForum.Data.Repository
             return count;
         }
 
-        public async Task<bool> VoterHasVoted(string voterId, int postId)
+        public async Task<bool> VoterHasVoted(string voterId, int postId, string uniqueIdentifier)
         {
             using var context = _dbFactory.CreateDbContext();
-            var votes = await context.UpDownVotes.Where(p => p.PostId == postId && p.VoterId == voterId).FirstOrDefaultAsync();
+            var votes = await context.UpDownVotes.Where(p => p.PostId == postId && p.VoterId == voterId).Where(p => p.UniqueIdentifier == uniqueIdentifier).FirstOrDefaultAsync();
             if (votes != null)
                 return true;
             return false;
