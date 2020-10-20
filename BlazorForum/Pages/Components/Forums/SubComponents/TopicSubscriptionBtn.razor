@@ -23,6 +23,12 @@
         await CheckIfUserIsSubscribed();
     }
 
+    public async void RefreshButton()
+    {
+        await CheckIfUserIsSubscribed();
+        StateHasChanged();
+    }
+
     private async Task CheckIfUserIsSubscribed()
     {
         _userIsSubscribedToTopic = await new Domain.Helpers.Forum.ForumTopicHelpers(manageTopicSubscriptions)

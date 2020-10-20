@@ -42,7 +42,7 @@
 else
 {
     <div class="text-right">
-        <TopicSubscriptionBtn Id="@id" CurrentUserId="@CurrentUserId" />
+        <TopicSubscriptionBtn Id="@id" CurrentUserId="@CurrentUserId" @ref="topicSubscriptionBtn" />
     </div>
 
     <ForumTopicHeader Topic="_topic" />
@@ -77,6 +77,7 @@ else
     private Models.ForumCategory _category;
     private Models.ForumTopic _topic;
     private bool _forumUpDownVoteEnabled;
+    protected TopicSubscriptionBtn topicSubscriptionBtn;
 
     protected override async Task OnInitializedAsync()
     {
@@ -117,7 +118,8 @@ else
     public async void UpdatePostsAsync()
     {
         // TODO: Adjust to reload for all connected clients/circuits
-        // TODO: Update Topic Subscription Button after refreshing posts
         await forumPostService.RefreshPostsAsync();
+
+        topicSubscriptionBtn.RefreshButton();
     }
 }
