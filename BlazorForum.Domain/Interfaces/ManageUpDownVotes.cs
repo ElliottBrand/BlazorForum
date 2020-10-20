@@ -10,9 +10,9 @@ namespace BlazorForum.Domain.Interfaces
 {
     public interface IManageUpDownVotes
     {
-        Task<int> GetPostUpDownVoteCountAsync(int postId);
+        Task<int> GetPostUpDownVoteCountAsync(int postId, string uniqueIdentifier);
         Task<bool> AddPostUpDownVoteAsync(UpDownVote newUpDownVote);
-        Task<bool> VoterHasVoted(string voterId, int postId);
+        Task<bool> VoterHasVoted(string voterId, int postId, string uniqueIdentifier);
         Task<bool> DeleteUpDownVotesByUserAsync(string userId);
         Task<bool> DeleteUpDownVotesForUserAsync(string userId);
     }
@@ -26,14 +26,14 @@ namespace BlazorForum.Domain.Interfaces
             _dbFactory = dbFactory;
         }
 
-        public async Task<int> GetPostUpDownVoteCountAsync(int postId) =>
-            await new Data.Repository.UpDownVotes(_dbFactory).GetPostUpDownVoteCountAsync(postId);
+        public async Task<int> GetPostUpDownVoteCountAsync(int postId, string uniqueIdentifier) =>
+            await new Data.Repository.UpDownVotes(_dbFactory).GetPostUpDownVoteCountAsync(postId, uniqueIdentifier);
 
         public async Task<bool> AddPostUpDownVoteAsync(UpDownVote newUpDownVote) =>
             await new Data.Repository.UpDownVotes(_dbFactory).AddPostUpDownVoteAsync(newUpDownVote);
 
-        public async Task<bool> VoterHasVoted(string voterId, int postId) =>
-            await new Data.Repository.UpDownVotes(_dbFactory).VoterHasVoted(voterId, postId);
+        public async Task<bool> VoterHasVoted(string voterId, int postId, string uniqueIdentifier) =>
+            await new Data.Repository.UpDownVotes(_dbFactory).VoterHasVoted(voterId, postId, uniqueIdentifier);
 
         public async Task<bool> DeleteUpDownVotesByUserAsync(string userId) =>
             await new Data.Repository.UpDownVotes(_dbFactory).DeleteUpDownVotesByUserAsync(userId);

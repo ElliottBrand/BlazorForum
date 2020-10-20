@@ -20,11 +20,11 @@
     [Parameter] public string VoterId { get; set; }
     public int totalCount = 0;
     private bool disabled = true;
-    private string disabledClass;
+    private string disabledClass = "disabled";
 
     protected override async Task OnInitializedAsync()
     {
-        totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId);
+        totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
 
         await SetUpDownVoteVisibility();
     }
@@ -36,7 +36,7 @@
             var added = await manageUpDownVotes.AddPostUpDownVoteAsync(BuildNewPostVote(voteIncrement));
             if (added)
             {
-                totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId);
+                totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
                 await SetUpDownVoteVisibility();
             }
         }
@@ -58,8 +58,11 @@
 
     private async Task SetUpDownVoteVisibility()
     {
-        if (VoterId != null && PosterId != VoterId && await manageUpDownVotes.VoterHasVoted(VoterId, PostId) == false)
+        if (VoterId != null && PosterId != VoterId && await manageUpDownVotes.VoterHasVoted(VoterId, PostId, UniqueIdentifier) == false)
+        {
             disabled = false;
+            disabledClass = string.Empty;
+        }
         else
         {
             disabled = true;
