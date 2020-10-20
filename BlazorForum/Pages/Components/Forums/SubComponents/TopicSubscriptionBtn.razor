@@ -1,0 +1,54 @@
+﻿@inject IManageTopicSubscriptions manageTopicSubscriptions
+@inject ForumPostService forumPostService
+
+@if (CurrentUserId != null && _userIsSubscribedToTopic != null && Id != 0)
+{
+    if (_userIsSubscribedToTopic == true)
+    {
+        <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => UnsubscribeUserFromTopic())" title="Unsubscribe from this topic">Unsubscribe</button>
+    }
+    else
+    {
+        <button class="btn btn-sm btn-blazorforum mb-1" type="button" @onclick="(() => SubscribeUserToTopic())" title="Subscribe to this topic">Subscribe</button>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public string CurrentUserId { get; set; }
+    private bool? _userIsSubscribedToTopic;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckIfUserIsSubscribed();
+    }
+
+    public async void RefreshButton()
+    {
+        await CheckIfUserIsSubscribed();
+        StateHasChanged();
+    }
+
+    private async Task CheckIfUserIsSubscribed()
+    {
+        _userIsSubscribedToTopic = await new Domain.Helpers.Forum.ForumTopicHelpers(manageTopicSubscriptions)
+            .CurrentUserIsSubscribedToTopic(CurrentUserId, Id);
+    }
+
+    private async Task UnsubscribeUserFromTopic()
+    {
+        await manageTopicSubscriptions.RemoveSubscriptionFromTopicAsync(Id, CurrentUserId);
+        await CheckIfUserIsSubscribed();
+    }
+
+    private async Task SubscribeUserToTopic()
+    {
+        var newSubscription = new TopicSubscription
+        {
+            Id = CurrentUserId,
+            ForumTopicId = Id
+        };
+        await manageTopicSubscriptions.AddSubscriptionToTopicAsync(newSubscription);
+        await CheckIfUserIsSubscribed();
+    }
+}

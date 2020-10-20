@@ -1,46 +1,32 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfiguration appConfig
 
-<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">@appConfig.GetSection("SiteNavbarBrand").Value</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+<nav class="container-fluid">
+    <div class="d-none d-md-block">
+        <a class="navbar-brand" href="">@appConfig.GetSection("SiteNavbarBrand").Value</a>
+        <div class="d-inline-block">
+            <NavList></NavList>
+        </div>
+    </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/forums">
-                <span class="oi oi-chat" aria-hidden="true"></span> Forums
-            </NavLink>
-        </li>
-        <AuthorizeView>
-            <Authorized>
-                @if (context.User.IsInRole("Administrator"))
-                {
-                    <li class="nav-item px-3">
-                        <NavLink class="nav-link" href="/admin/dashboard">
-                            <span class="oi oi-cog" aria-hidden="true"></span> Admin
-                        </NavLink>
-                    </li>
-                }
-            </Authorized>
-        </AuthorizeView>
-    </ul>
-</div>
+    <div class="navbar navbar-dark d-md-none">
+        <a class="navbar-brand" href="">@appConfig.GetSection("SiteNavbarBrand").Value</a>
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="oi oi-menu"></span>
+        </button>
+    </div>
+
+    <div class="d-md-none @_navMenuCssClass" @onclick="ToggleNavMenu" id="navbar-toggler-panel">
+        <NavList></NavList>
+    </div>
+</nav>
 
 @code {
-    private bool collapseNavMenu = true;
+    private bool _collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string _navMenuCssClass => _collapseNavMenu ? "collapse navbar-collapse" : null;
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        _collapseNavMenu = !_collapseNavMenu;
     }
 }

@@ -1,0 +1,63 @@
+﻿@implements IDisposable
+@inject IManageUsers _userManager 
+
+<section id="typingAlertSection">
+    <div id="@TopicId" class="@typingNoticeStyle topic-typing-container">Someone is typing...</div>
+    <input id="typerid" hidden="hidden" value="@CurrentUserId" />
+</section>
+
+@code {
+    public string typingNoticeStyle = "d-none";
+    public static Action typingAction;
+    [Parameter] public int TopicId { get; set; }
+    [Parameter] public string CurrentUserId { get; set; }
+    private static int _topicId { get; set; }
+    private static string _typingTopicId { get; set; }
+    private static string _currentTyperId { get; set; }
+    private System.Timers.Timer _timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        typingAction += ShowHideTypingNoticeAsync;
+        _topicId = TopicId;
+
+        _timer = new System.Timers.Timer(1000);
+        _timer.Elapsed += RemoveTypingNotice;
+        _timer.AutoReset = false;
+    }
+
+    private async void ShowHideTypingNoticeAsync()
+    {
+        if ((_typingTopicId == TopicId.ToString()) && (_currentTyperId != CurrentUserId))
+        {
+            typingNoticeStyle = "d-block ";
+            await InvokeAsync(() => StateHasChanged());
+
+            // Stop and restart the timer to reset it when a keydown is detected from JS
+            _timer.Stop();
+            _timer.Start();
+        }
+    }
+
+    private async void RemoveTypingNotice(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        await InvokeAsync(() =>
+        {
+            typingNoticeStyle = "d-none";
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        typingAction -= ShowHideTypingNoticeAsync;
+    }
+
+    [JSInvokable]
+    public static void ShowTypingNotice(string typingTopicId, string currentTyperId)
+    {
+        _currentTyperId = currentTyperId;
+        _typingTopicId = typingTopicId;
+        typingAction.Invoke();
+    }
+}

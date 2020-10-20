@@ -10,8 +10,26 @@ window.methods = {
             })
             .then(editor => {
                 ckeditor = editor;
-
                 allCkEditors.push(editor);
+
+                // Show typing alert while user is typing in editor
+                let typerId = "";
+                editor.editing.view.document.on('keydown', function () {
+                    // Call blazor to alert that someone is typing.
+                    var topicTypingContainer = document.getElementsByClassName('topic-typing-container');
+                    if (topicTypingContainer) {
+                        const typerIdPromise = new Promise((resolve, reject) => {
+                            resolve(document.getElementById('typerid').value);
+                        }).then((result) => {
+                            typerId = result;
+                        });
+                        
+                        if (typerId) {
+                            console.log(typerId);
+                            DotNet.invokeMethodAsync('BlazorForum', 'ShowTypingNotice', topicTypingContainer[0].id, typerId);
+                        }
+                    }
+                });
             })
             .catch(error => {
                 console.error(error);
