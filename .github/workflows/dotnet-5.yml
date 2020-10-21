@@ -2,9 +2,13 @@ name: .NET 5
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - development
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - development
 
 jobs:
   build:
@@ -16,7 +20,7 @@ jobs:
     - name: Setup .NET5
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0
+        dotnet-version: 5.0.0-rc.2.20475.17
     - name: Install dependencies
       run: dotnet restore
     - name: Build
