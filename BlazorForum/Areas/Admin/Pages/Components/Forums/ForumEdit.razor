@@ -23,6 +23,15 @@
             </div>
         </div>
 
+        <div class="input-group mt-2">
+            <div class="input-group-prepend">
+                <label class="input-group-text">Is Support Forum</label>
+            </div>
+            <div class="form-control">
+                <InputCheckbox @bind-Value="forum.IsSupportForum" />
+            </div>
+        </div>
+
         <InputTextArea id="Description" @bind-Value="forum.Description" rows="3" class="@textAreaClass" />
         <ValidationMessage For="@(() => forum.Description)" />
         <button class="btn btn-blazorforum mt-2 mr-2 @btnVisibility" type="submit">Update</button>
@@ -64,6 +73,7 @@
                 Title = forum.Title,
                 Description = forum.Description,
                 EnableUpDownVotes = forum.EnableUpDownVotes,
+                IsSupportForum = forum.IsSupportForum,
                 ForumId = id
             };
 

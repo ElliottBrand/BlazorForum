@@ -1,0 +1,63 @@
+﻿@*/*
+    TODOs
+    * Add ability to set/unset a forum as a support forum in admin area
+    * Keep track of user answers count
+    */
+*@
+
+@inject IManageUsers userManager
+@inject IManageForumPosts managePosts
+
+@if (showMarkAsAnswerBtn)
+{
+    <button class="btn btn-sm btn-success mb-2" @onclick="() => SetAnswerStatus(true)">Mark as Answer</button>
+}
+else if (showUnmarkAsAnswerBtn)
+{
+    <button class="btn btn-sm btn-danger mb-2" @onclick="() => SetAnswerStatus(false)">Unmark as Answer</button>
+}
+
+@code {
+    bool showMarkAsAnswerBtn;
+    bool showUnmarkAsAnswerBtn;
+    [Parameter] public bool IsSupportForum { get; set; }
+    [Parameter] public bool IsAnswer { get; set; }
+    [Parameter] public string TopicAuthorId { get; set; }
+    [Parameter] public string CurrentUserId { get; set; }
+    [Parameter] public int PostId { get; set; }
+    [Parameter] public Action OnChange { get; set; }
+    bool IsAdmin;
+    bool IsTopicAuthor;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(CurrentUserId == TopicAuthorId)
+            IsTopicAuthor = true;
+
+        IsAdmin = await userManager.IsInRoleAsync("Administrator", CurrentUserId);
+
+        ShowHideAnswerButton();
+    }
+
+    async void SetAnswerStatus(bool isAnswer)
+    {
+        IsAnswer = await managePosts.SetPostAnswerStatusAsync(PostId, isAnswer);
+        ShowHideAnswerButton();
+        StateHasChanged();
+        OnChange.Invoke();
+    }
+
+    void ShowHideAnswerButton()
+    {
+        if (IsSupportForum && !IsAnswer && (IsTopicAuthor || IsAdmin))
+        {
+            showMarkAsAnswerBtn = true;
+            showUnmarkAsAnswerBtn = false;
+        }
+        else if (IsSupportForum && IsAnswer && (IsTopicAuthor || IsAdmin))
+        {
+            showUnmarkAsAnswerBtn = true;
+            showMarkAsAnswerBtn = false;
+        }
+    }
+}

@@ -3,6 +3,7 @@ using BlazorForum.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace BlazorForum.Domain.Interfaces
         Task<bool> MarkUserPostsAsDeletedAsync(string userId);
         Task<ForumPost> GetForumPostAsync(int postId);
         Task<bool> UpdatePostAsync(ForumPost editedPost);
+        Task<bool> SetPostAnswerStatusAsync(int postId, bool isAnswer);
     }
 
     public class ManageForumPosts : IManageForumPosts
@@ -48,5 +50,8 @@ namespace BlazorForum.Domain.Interfaces
 
         public async Task<bool> UpdatePostAsync(ForumPost editedPost) =>
             await new Data.Repository.ForumPosts(_dbFactory).UpdatePostAsync(editedPost);
+
+        public async Task<bool> SetPostAnswerStatusAsync(int postId, bool isAnswer) =>
+            await new Data.Repository.ForumPosts(_dbFactory).SetPostAnswerStatusAsync(postId, isAnswer);
     }
 }

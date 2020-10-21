@@ -57,6 +57,12 @@ namespace BlazorForum.Models
         [Required]
         public int ForumCategoryId { get; set; }
 
+        [NotMapped]
+        public bool HasAnswer { get; set; }
+
+        [NotMapped]
+        public bool IsInSupportForum { get; set; }
+
         public virtual ICollection<ForumPost> ForumPosts { get; set; }
     }
 }

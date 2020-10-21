@@ -18,9 +18,10 @@
     [Parameter] public int PostId { get; set; }
     [Parameter] public string PosterId { get; set; }
     [Parameter] public string VoterId { get; set; }
+    [Parameter] public bool IsAnswer { get; set; }
     public int totalCount = 0;
-    private bool disabled = true;
-    private string disabledClass = "disabled";
+    bool disabled = true;
+    string disabledClass = "disabled";
 
     protected override async Task OnInitializedAsync()
     {

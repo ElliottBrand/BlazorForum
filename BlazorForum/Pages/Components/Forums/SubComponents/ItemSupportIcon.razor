@@ -1,0 +1,12 @@
+﻿@if (Topic.HasAnswer && Topic.IsInSupportForum)
+{
+    <div style="float: left; padding-right: 0.5em;"><span class="oi oi-circle-check text-success" title="Has Answer"></span></div>
+}
+else if (Topic.IsInSupportForum)
+{
+    <div style="float: left; padding-right: 0.5em;"><span class="oi oi-flag text-orange" title="Needs Assistance"></span></div>
+}
+
+@code {
+    [Parameter] public Models.ForumTopic Topic { get; set; }
+}

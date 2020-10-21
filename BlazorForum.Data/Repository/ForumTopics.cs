@@ -92,6 +92,33 @@ namespace BlazorForum.Data.Repository
             return false;
         }
 
+        public async Task<bool> TopicHasAnswerAsync(int topicId)
+        {
+            using var context = _dbFactory.CreateDbContext();
+            var posts = await context.ForumPosts.Where(p => p.ForumTopicId == topicId).ToListAsync();
+            foreach (var post in posts)
+            {
+                if (post.IsAnswer)
+                    return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> IsInSupportForumAsync(int categoryId)
+        {
+            using var context = _dbFactory.CreateDbContext();
+            var forumCategory = await context.ForumCategories.Where(p => p.ForumCategoryId == categoryId).FirstOrDefaultAsync();
+
+            if(forumCategory != null)
+            {
+                var forum = await context.Forums.Where(p => p.ForumId == forumCategory.ForumId).FirstOrDefaultAsync();
+
+                if (forum != null && forum.IsSupportForum)
+                    return true;
+            }
+            return false;
+        }
+
         public async Task<bool> DeleteForumTopicAsync(int id)
         {
             using var context = _dbFactory.CreateDbContext();

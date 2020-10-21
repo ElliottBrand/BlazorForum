@@ -21,7 +21,7 @@ namespace BlazorForum.Domain.Helpers.Forum
         {
             foreach (var topic in topics)
             {
-                var user = await _userManager.FindByIdAsync(topic.UserId);
+                var user = await _userManager.GetUserAsync(topic.UserId);
                 topic.UserName = user.UserName;
             }
         }
@@ -30,7 +30,7 @@ namespace BlazorForum.Domain.Helpers.Forum
         {
             foreach (var post in posts)
             {
-                var user = await _userManager.FindByIdAsync(post.UserId);
+                var user = await _userManager.GetUserAsync(post.UserId);
                 post.UserName = user.UserName;
             }
         }

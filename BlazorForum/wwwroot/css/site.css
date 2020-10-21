@@ -111,7 +111,6 @@ app {
     .forum-post-ul li {
         border: 1px solid #8070a6;
         border-top: none;
-        padding: 0.5em;
         background-color: #e0dcf8;
         word-break:break-word;
     }
@@ -147,6 +146,11 @@ app {
 
 .forum-post-container, .forum-topic-container{
     display:flex;
+    padding: 0.5em;
+}
+
+.forum-post-container.is-answer {
+    background-color: #d1f3c7;
 }
 
 .forum-topic-content, .forum-post-content{
@@ -164,7 +168,6 @@ app {
     background-color: #e0dcf8;
     border-bottom-left-radius: 0.25em;
     border-bottom-right-radius: 0.25em;
-    padding: 0.5em;
     color: #000;
     border: 1px solid #8070a6;
     border-top: none;
@@ -238,10 +241,10 @@ nav ul.navbar-nav .nav-item {
 }
 
 pre {
-    background-color: #eae5f6;
+    background-color: rgba(255, 255, 255, 0.85);
     border-radius: 0.25em;
     padding: 0.5em;
-    border: 1px solid #b7aad4;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     tab-size: 4;
     -moz-tab-size: 4;
     overflow-x: auto;
@@ -254,6 +257,10 @@ pre {
 @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }
     100% { -webkit-transform: rotate(360deg); }
+}
+
+.text-orange {
+    color: #ff8d00;
 }
 
 .top-row {
@@ -289,14 +296,14 @@ pre {
     color: #6e6986;
 }
 
-.up-down-vote-count{
+.up-down-vote-count {
     text-align:center;
     font-size:x-large;
 }
 
-.up-down-vote-container{
+.up-down-vote-container {
     margin-right:0.5em;
-    background-color:#e7e4f7;
+    background-color: rgba(255, 255, 255, 0.4);
     padding:0.25em;
     border-radius:0.25em;
     float:left;
