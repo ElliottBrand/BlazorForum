@@ -1,10 +1,11 @@
 ﻿@using BlazorForum.Pages.Components.UpDownVote
 @inject IManageForums manageForums
+@inject IManageForumPosts managePosts
 
-<div class="forum-post-container">
+<div class="forum-post-container @answerClass">
     @if (!_isEditorVisible && ForumUpDownVoteEnabled)
     {
-        <UpDownVote PostId="@ThisPost.ForumPostId" UniqueIdentifier="ForumPost" PosterId="@ThisPost.UserId" VoterId="@CurrentUserId"></UpDownVote>
+        <UpDownVote PostId="@ThisPost.ForumPostId" UniqueIdentifier="ForumPost" PosterId="@ThisPost.UserId" VoterId="@CurrentUserId" IsAnswer="@ThisPost.IsAnswer" />
     }
 
     <div class="forum-post-content @(_isEditorVisible ? "w-100" : "")">
@@ -19,24 +20,26 @@
             }
             else
             {
-                <div>
-                    <button class="btn btn-sm btn-blazorforum mb-2" type="button" @onclick="@(() => _isEditorVisible = true)">Edit</button>
-                </div>
+                <button class="btn btn-sm btn-blazorforum mb-2 mr-1" type="button" @onclick="@(() => _isEditorVisible = true)">Edit</button>
             }
         }
 
+        <PostAnswerBtn IsSupportForum="@IsSupportForum" IsAnswer="@ThisPost.IsAnswer" CurrentUserId="@CurrentUserId" TopicAuthorId="@TopicAuthorId" PostId="@ThisPost.ForumPostId" OnChange="StateChanged" />
+
         @if (_isEditorVisible == false)
         {
-            <div class="forum-post-time d-inline-block">
+        <div>
+            <span class="forum-post-time">
                 Posted @DateTimeFormatting.RelativeDateAgo(ThisPost.PostedDate)
                 by @ThisPost.UserName
-            </div>
+            </span>
             @if (ThisPost.EditedDate != null)
             {
-                <div class="forum-post-time ml-3 d-inline-block">
+                <span class="forum-post-time ml-3">
                     Edited @DateTimeFormatting.RelativeDateAgo(Convert.ToDateTime(ThisPost.EditedDate))
-                </div>
+                </span>
             }
+        </div>
         }
     </div>
 </div>
@@ -45,12 +48,40 @@
     [Parameter] public string CurrentUserId { get; set; }
     [Parameter] public ForumPost ThisPost { get; set; }
     [Parameter] public int ForumId { get; set; }
+    [Parameter] public string TopicAuthorId { get; set; }
     [Parameter] public bool ForumUpDownVoteEnabled { get; set; }
+    [Parameter] public bool IsSupportForum { get; set; }
     private bool _isEditorVisible = false;
+    string answerClass;
+
+    protected override void OnInitialized()
+    {
+        CheckAnswerClass(ThisPost.IsAnswer);
+    }
 
     private void HideThisEditor()
     {
         _isEditorVisible = false;
         StateHasChanged();
+    }
+
+    async void StateChanged()
+    {
+        var post = await managePosts.GetForumPostAsync(ThisPost.ForumPostId);
+        var isAnswer = post.IsAnswer;
+        CheckAnswerClass(isAnswer);
+        StateHasChanged();
+    }
+
+    void CheckAnswerClass(bool isAnswer)
+    {
+        if (IsSupportForum && isAnswer)
+        {
+            answerClass = "is-answer";
+        }
+        else
+        {
+            answerClass = string.Empty;
+        }
     }
 }

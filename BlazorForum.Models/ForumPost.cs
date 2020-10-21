@@ -54,5 +54,7 @@ namespace BlazorForum.Models
         public int ForumTopicId { get; set; }
 
         public int? ParentPostId { get; set; }
+
+        public bool IsAnswer { get; set; }
     }
 }

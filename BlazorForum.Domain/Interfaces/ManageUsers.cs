@@ -1,5 +1,7 @@
-﻿using BlazorForum.Models;
+﻿using BlazorForum.Data;
+using BlazorForum.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,19 +11,24 @@ namespace BlazorForum.Domain.Interfaces
 {
     public interface IManageUsers
     {
-        Task<ApplicationUser> FindByIdAsync(string userId);
+        Task<ApplicationUser> GetUserAsync(string userId);
+
+        Task<bool> IsInRoleAsync(string role, string userId);
     }
 
     public class ManageUsers : IManageUsers
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
 
-        public ManageUsers(UserManager<ApplicationUser> userManager)
+        public ManageUsers(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _userManager = userManager;
+            _dbFactory = dbFactory;
         }
 
-        public async Task<ApplicationUser> FindByIdAsync(string userId) =>
-            await _userManager.FindByIdAsync(userId);
+        public async Task<ApplicationUser> GetUserAsync(string userId) =>
+            await new Data.Repository.Users(_dbFactory).GetUserAsync(userId);
+
+        public async Task<bool> IsInRoleAsync(string role, string userId) =>
+            await new Data.Repository.Users(_dbFactory).IsInRoleAsync(role, userId);
     }
 }

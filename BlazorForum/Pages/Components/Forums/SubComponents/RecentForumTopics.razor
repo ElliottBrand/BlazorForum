@@ -5,7 +5,7 @@
 <header>
     <h3>Latest Topics</h3>
 </header>
-@if (_newTopics == null)
+@if (newTopics == null)
 {
     <div class="mb-2 loading-div">
         <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
@@ -14,16 +14,21 @@
 else
 {
     <ul class="forum-post-ul">
-        @foreach (var topic in _newTopics)
+        @foreach (var topic in newTopics)
         {
-            <li>
-                <h6 class="">
-                    <a href="@String.Format("/topic/{0}/{1}", topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">@topic.Title</a>
-                    <span class="text-nowrap">( @ForumTopicCountHelpers.GetTopicCount(_postCountList, topic.ForumTopicId) )</span>
-                </h6>
-                <div class="topic-author">
-                    Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
-                    by @topic.UserName
+            <li class="p-2">
+                <div class="home-post-item-container" style="display: flex;">
+                    <ItemSupportIcon Topic="topic" />
+                    <div style="flex: 1;">
+                        <h6 class="">
+                            <a href="@String.Format("/topic/{0}/{1}", topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">@topic.Title</a>
+                            <span class="text-nowrap">( @ForumTopicCountHelpers.GetTopicCount(postCountList, topic.ForumTopicId) )</span>
+                        </h6>
+                        <div class="topic-author">
+                            Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
+                            by @topic.UserName
+                        </div>
+                    </div>
                 </div>
             </li>
         }
@@ -31,14 +36,37 @@ else
 }
 
 @code {
-    private List<Models.ForumTopic> _newTopics { get; set; }
-    private List<TopicPostCount> _postCountList = new List<TopicPostCount>();
-    private int _newTopicsCount = 10;
+    List<Models.ForumTopic> newTopics { get; set; }
+    List<TopicPostCount> postCountList = new List<TopicPostCount>();
+    int newTopicsCount = 10;
 
     protected override async Task OnInitializedAsync()
     {
-        _newTopics = await manageForumTopics.GetNewTopicsAsync(_newTopicsCount);
-        _postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(_newTopics);
-        await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(_newTopics);
+        newTopics = await manageForumTopics.GetNewTopicsAsync(newTopicsCount);
+        await CheckTopicsForAnswers();
+        await CheckSupportForumStatus();
+
+        postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(newTopics);
+        await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(newTopics);
+    }
+
+    async Task CheckTopicsForAnswers()
+    {
+        foreach (var topic in newTopics)
+        {
+            var hasAnswer = await manageForumTopics.TopicHasAnswerAsync(topic.ForumTopicId);
+            if (hasAnswer)
+                topic.HasAnswer = true;
+        }
+    }
+
+    async Task CheckSupportForumStatus()
+    {
+        foreach (var topic in newTopics)
+        {
+            var inSupportForum = await manageForumTopics.IsInSupportForumAsync(topic.ForumCategoryId);
+            if (inSupportForum)
+                topic.IsInSupportForum = true;
+        }
     }
 }

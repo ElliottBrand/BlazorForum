@@ -5,7 +5,7 @@
 <header>
     <h3>Recently Active Topics</h3>
 </header>
-@if (_topics == null || _postCountList == null)
+@if (topics == null || postCountList == null)
 {
     <div class="mb-2 loading-div">
         <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
@@ -14,32 +14,40 @@
 else
 {
     <ul class="forum-post-ul">
-        @foreach (var topic in _topics)
+        @foreach (var topic in topics)
         {
-            <li>
-                <h6 class="">
-                    <a href="@String.Format("/topic/{0}/{1}", topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">@topic.Title</a>
-                    <span class="text-nowrap">( @ForumTopicCountHelpers.GetTopicCount(_postCountList, topic.ForumTopicId) )</span>
-                </h6>
-                <div class="topic-author">
-                    @{ GetRepliedDate(topic); }
-                    Replied to @_postedAgo
+        <li class="p-2">
+            <div class="home-post-item-container" style="display: flex;">
+                <ItemSupportIcon Topic="topic" />
+                <div style="flex: 1;">
+                    <h6 class="">
+                        <a href="@String.Format("/topic/{0}/{1}", topic.ForumTopicId, UrlFormatting.PrepareUrlText(topic.Title))">@topic.Title</a>
+                        <span class="text-nowrap">( @ForumTopicCountHelpers.GetTopicCount(postCountList, topic.ForumTopicId) )</span>
+                    </h6>
+                    <div class="topic-author">
+                        @{ GetRepliedDate(topic); }
+                        Replied to @postedAgo
+                    </div>
                 </div>
-            </li>
+            </div>
+        </li>
         }
     </ul>
 }
 
 @code {
-    private List<Models.ForumTopic> _topics { get; set; }
-    private List<TopicPostCount> _postCountList = new List<TopicPostCount>();
-    private int _topicsCount = 10;
-    private string _postedAgo = string.Empty;
+    List<Models.ForumTopic> topics { get; set; }
+    List<TopicPostCount> postCountList = new List<TopicPostCount>();
+    int topicsCount = 10;
+    string postedAgo = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        _topics = await manageForumTopics.GetActiveTopicsAsync(_topicsCount);
-        _postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(_topics);
+        topics = await manageForumTopics.GetActiveTopicsAsync(topicsCount);
+        await CheckTopicsForAnswers();
+        await CheckSupportForumStatus();
+
+        postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(topics);
     }
 
     protected void GetRepliedDate(ForumTopic topic)
@@ -47,7 +55,27 @@ else
         var recentPost = topic.ForumPosts.OrderByDescending(p => p.PostedDate).FirstOrDefault();
         if (recentPost != null)
         {
-            _postedAgo = Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(recentPost.PostedDate);
+            postedAgo = Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(recentPost.PostedDate);
+        }
+    }
+
+    async Task CheckTopicsForAnswers()
+    {
+        foreach (var topic in topics)
+        {
+            var hasAnswer = await manageForumTopics.TopicHasAnswerAsync(topic.ForumTopicId);
+            if (hasAnswer)
+                topic.HasAnswer = true;
+        }
+    }
+
+    async Task CheckSupportForumStatus()
+    {
+        foreach (var topic in topics)
+        {
+            var inSupportForum = await manageForumTopics.IsInSupportForumAsync(topic.ForumCategoryId);
+            if (inSupportForum)
+                topic.IsInSupportForum = true;
         }
     }
 }

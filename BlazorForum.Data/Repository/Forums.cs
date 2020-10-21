@@ -52,6 +52,7 @@ namespace BlazorForum.Data.Repository
             var forum = context.Forums.Where(p => p.ForumId == editedForum.ForumId).FirstOrDefault();
             forum.Title = editedForum.Title;
             forum.EnableUpDownVotes = editedForum.EnableUpDownVotes;
+            forum.IsSupportForum = editedForum.IsSupportForum;
             forum.Description = editedForum.Description;
             await context.SaveChangesAsync();
             return true;

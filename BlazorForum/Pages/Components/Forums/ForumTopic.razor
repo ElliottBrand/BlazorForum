@@ -22,18 +22,18 @@
     </li>
     <li class="breadcrumb-item">
         @{
-            var bc = _category != null && _category.Title != null ?
-            String.Format("<a href=\"/category/{0}/{1}\">{2}</a>", _category.ForumCategoryId,
-            Domain.Utilities.Formatting.UrlFormatting.PrepareUrlText(_category.Title), _category.Title) : "";
+            var bc = category != null && category.Title != null ?
+            String.Format("<a href=\"/category/{0}/{1}\">{2}</a>", category.ForumCategoryId,
+            Domain.Utilities.Formatting.UrlFormatting.PrepareUrlText(category.Title), category.Title) : "";
             @((MarkupString)bc)
         }
     </li>
     <li class="breadcrumb-item">
-        @(_topic != null && _topic.Title != null ? _topic.Title : "")
+        @(topic != null && topic.Title != null ? topic.Title : "")
     </li>
 </ul>
 
-@if (_topic == null)
+@if (topic == null)
 {
     <div class="mb-2 loading-div">
         <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
@@ -45,12 +45,12 @@ else
         <TopicSubscriptionBtn Id="@id" CurrentUserId="@CurrentUserId" @ref="topicSubscriptionBtn" />
     </div>
 
-    <ForumTopicHeader Topic="_topic" />
+    <ForumTopicHeader Topic="topic" />
     <section class="forum-topic-text-section">
-        <Topic ThisTopic="@_topic" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" CurrentUserId="@CurrentUserId" />
+        <Topic ThisTopic="@topic" ForumUpDownVoteEnabled="@forumUpDownVoteEnabled" CurrentUserId="@CurrentUserId" />
     </section>
 
-    <Posts CurrentUserId="@CurrentUserId" Id="@id" ForumUpDownVoteEnabled="@_forumUpDownVoteEnabled" Category="@_category" ForumPostService="@forumPostService" />
+    <Posts CurrentUserId="@CurrentUserId" Topic="@topic" ForumUpDownVoteEnabled="@forumUpDownVoteEnabled" Category="@category" ForumPostService="@forumPostService" IsSupportForum="isSupportForum" />
 
     <TypingNotice TopicId="@id" CurrentUserId="@CurrentUserId" />
 }
@@ -74,9 +74,10 @@ else
     [Parameter] public int id { get; set; }
     [Parameter] public string slug { get; set; }
     [Parameter] public string CurrentUserId { get; set; }
-    private Models.ForumCategory _category;
-    private Models.ForumTopic _topic;
-    private bool _forumUpDownVoteEnabled;
+    Models.ForumCategory category;
+    Models.ForumTopic topic;
+    bool forumUpDownVoteEnabled;
+    bool isSupportForum;
     protected TopicSubscriptionBtn topicSubscriptionBtn;
 
     protected override async Task OnInitializedAsync()
@@ -87,9 +88,10 @@ else
         await LoadTopicAsync();
         SetHeadData();
 
-        _category = await manageForumCategories.GetForumCategoryAsync(_topic.ForumCategoryId);
-        var forum = await manageForums.GetForumAsync(_category.ForumId);
-        _forumUpDownVoteEnabled = forum.EnableUpDownVotes;
+        category = await manageForumCategories.GetForumCategoryAsync(topic.ForumCategoryId);
+        var forum = await manageForums.GetForumAsync(category.ForumId);
+        forumUpDownVoteEnabled = forum.EnableUpDownVotes;
+        isSupportForum = forum.IsSupportForum;
 
         CurrentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
     }
@@ -101,18 +103,18 @@ else
 
     private async Task LoadTopicAsync()
     {
-        _topic = await manageForumTopics.GetForumTopicAsync(id);
-        if (_topic == null || _topic.IsApproved != true || _topic.IsDeleted == true)
+        topic = await manageForumTopics.GetForumTopicAsync(id);
+        if (topic == null || topic.IsApproved != true || topic.IsDeleted == true)
             navManager.NavigateTo("/");
 
-        var user = await userManager.FindByIdAsync(_topic.UserId);
-        _topic.UserName = user.UserName;
+        var user = await userManager.FindByIdAsync(topic.UserId);
+        topic.UserName = user.UserName;
     }
 
     private void SetHeadData()
     {
-        head.Title = _topic.Title;
-        head.Description = _topic.TopicText;
+        head.Title = topic.Title;
+        head.Description = topic.TopicText;
     }
 
     public async void UpdatePostsAsync()

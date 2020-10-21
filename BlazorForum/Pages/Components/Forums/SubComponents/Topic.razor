@@ -15,7 +15,7 @@
         {
             @if (_isEditorVisible)
             {
-                <TopicForm OnTopicUpdated="@RefreshTopic" CurrentUserId="@CurrentUserId" ForumTopicToEdit="@ThisTopic" OnCancel="@RefreshTopic"></TopicForm>
+                <TopicForm OnTopicUpdated="RefreshTopic" CurrentUserId="@CurrentUserId" ForumTopicToEdit="@ThisTopic" OnCancel="RefreshTopic" />
             }
             else
             {

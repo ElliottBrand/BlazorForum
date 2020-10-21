@@ -74,6 +74,19 @@ namespace BlazorForum.Data.Repository
             return true;
         }
 
+        public async Task<bool> SetPostAnswerStatusAsync(int postId, bool isAnswer)
+        {
+            using var context = _dbFactory.CreateDbContext();
+            var post = await context.ForumPosts.Where(p => p.ForumPostId == postId).FirstOrDefaultAsync();
+            if(post != null)
+            {
+                post.IsAnswer = isAnswer;
+                await context.SaveChangesAsync();
+                return isAnswer;
+            }
+            return !isAnswer;
+        }
+
         public async Task<bool> MarkUserPostsAsDeletedAsync(string userId)
         {
             using var context = _dbFactory.CreateDbContext();

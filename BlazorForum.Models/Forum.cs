@@ -18,6 +18,8 @@ namespace BlazorForum.Models
 
         public bool EnableUpDownVotes { get; set; }
 
+        public bool IsSupportForum { get; set; }
+
         public virtual ICollection<ForumCategory> ForumCategories { get; set; }
     }
 }
