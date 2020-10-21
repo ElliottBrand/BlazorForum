@@ -17,6 +17,11 @@ namespace BlazorForum.Domain.Helpers.Forum
             _manageForumPosts = manageForumPosts;
         }
 
+        /// <summary>
+        /// Returns a list of topic post counts, where the post count is associated with the parent topic Id.
+        /// </summary>
+        /// <param name="forumTopics"></param>
+        /// <returns></returns>
         public async Task<List<TopicPostCount>> GetTopicsPostCountListAsync(List<ForumTopic> forumTopics)
         {
             var postCountList = new List<TopicPostCount>();
@@ -34,9 +39,15 @@ namespace BlazorForum.Domain.Helpers.Forum
             return postCountList;
         }
 
+        /// <summary>
+        /// Selects the topic based on the ForumTopicId, then returns the post count
+        /// </summary>
+        /// <param name="topicPostCountList"></param>
+        /// <param name="forumTopicId"></param>
+        /// <returns></returns>
         public static int GetTopicCount(List<TopicPostCount> topicPostCountList, int forumTopicId)
         {
-            return topicPostCountList != null ? topicPostCountList.Where(p => p.ParentItemId == forumTopicId)
+            return topicPostCountList != null && topicPostCountList.Count != 0 ? topicPostCountList.Where(p => p.ParentItemId == forumTopicId)
                 .FirstOrDefault().ChildCount : 0;
         }
     }
