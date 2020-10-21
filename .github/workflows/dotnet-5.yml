@@ -20,7 +20,7 @@ jobs:
     - name: Setup .NET5
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.0-rc.2.20475.17
+        dotnet-version: 5.0.0-rc.2.20475.5
     - name: Install dependencies
       run: dotnet restore
     - name: Build
