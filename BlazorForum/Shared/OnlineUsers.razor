@@ -1,0 +1,30 @@
+﻿
+@using Microsoft.AspNetCore.Components.Server.Circuits
+@using BlazorForum.Domain.Services
+
+@inject CircuitHandler circuitHandler
+@implements IDisposable
+
+<div class="alert mt-4 online-users-container">
+    <small class="online-users-text">
+        Number of online users: @((circuitHandler as CircuitHandlerService).Circuits.Count)
+    </small>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        (circuitHandler as CircuitHandlerService).CircuitsChanged += HandleCircuitsChanged;
+    }
+
+    public void Dispose()
+    {
+        (circuitHandler as CircuitHandlerService).CircuitsChanged -= HandleCircuitsChanged;
+    }
+
+    public void HandleCircuitsChanged(object sender, EventArgs args)
+    {
+        // You must use InvokeAsync here
+        InvokeAsync(() => StateHasChanged());
+    }
+}

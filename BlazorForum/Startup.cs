@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using BlazorForum.Domain.Services;
 using BlazorForum.Pages.Components.Head;
 using BlazorForum.Pages.Components.Forums;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 
 namespace BlazorForum
 {
@@ -91,6 +92,7 @@ namespace BlazorForum
             services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
             services.AddTransient<IManageUsers, ManageUsers>();
             services.AddTransient<ForumPostService>();
+            services.AddSingleton<CircuitHandler>(new CircuitHandlerService());
             services.AddBlazorModal();
             services.AddHeadBuilder();
 

@@ -193,7 +193,7 @@ app {
 }
 
 .main {
-    padding-bottom:80px;
+    padding-bottom: 60px;
     position: relative;
 }
 
@@ -240,6 +240,14 @@ nav ul.navbar-nav .nav-item {
     padding-bottom: 0.25em;
 }
 
+.online-users-container {
+    background-color: #e4e4e4;
+}
+
+.online-users-text {
+    color: #909090;
+}
+
 pre {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 0.25em;
@@ -247,6 +255,8 @@ pre {
     border: 1px solid rgba(0, 0, 0, 0.1);
     tab-size: 4;
     -moz-tab-size: 4;
+    max-height: 450px;
+    overflow-y: auto;
     overflow-x: auto;
 }
 
