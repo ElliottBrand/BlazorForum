@@ -1,18 +1,25 @@
-﻿
-@if (ForumPostService.Posts != null && ForumPostService.Posts.Count > 0)
+﻿@inject ForumPostService forumPostService
+
+@if (forumPostService.Posts == null)
+{
+    <div class="mb-2 loading-div">
+        <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
+    </div>
+}
+else if (forumPostService.Posts.Count > 0)
 {
     <ul class="forum-post-ul">
-        @for (var i = 0; i < (ForumPostService.Posts.Count); i++)
+        @for (var i = 0; i < (forumPostService.Posts.Count); i++)
         {
             <li>
-                <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@ForumUpDownVoteEnabled" ThisPost="@ForumPostService.Posts[i]" ForumId="@Category.ForumCategoryId" IsSupportForum="@IsSupportForum" TopicAuthorId="@Topic.UserId" />
+                <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@ForumUpDownVoteEnabled" ThisPost="@forumPostService.Posts[i]" ForumId="@Category.ForumCategoryId" IsSupportForum="@IsSupportForum" TopicAuthorId="@Topic.UserId" />
             </li>
         }
     </ul>
 }
 
 <div class="text-center">
-    <button class="btn btn-blazorforum @ForumPostService.LoadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
+    <button class="btn btn-blazorforum @forumPostService.LoadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
 </div>
 
 @code {
@@ -21,18 +28,28 @@
     [Parameter] public bool ForumUpDownVoteEnabled { get; set; }
     [Parameter] public bool IsSupportForum { get; set; }
     [Parameter] public Models.ForumCategory Category { get; set; }
-    [Parameter] public ForumPostService ForumPostService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        ForumPostService.Id = Topic.ForumTopicId;
+        forumPostService.Id = Topic.ForumTopicId;
+        forumPostService.OnPosted += HandleUpdatingPosts;
 
-        await ForumPostService.LoadPostsAsync();
+        await forumPostService.LoadPostsAsync();
+    }
+
+    public void Dispose()
+    {
+        forumPostService.OnPosted -= HandleUpdatingPosts;
     }
 
     public async Task LoadMorePostsAsync()
     {
-        await ForumPostService.LoadMorePostsAsync();
+        await forumPostService.LoadMorePostsAsync();
         StateHasChanged();
+    }
+
+    public void HandleUpdatingPosts(object sender, EventArgs args)
+    {
+        InvokeAsync(() => StateHasChanged());
     }
 }

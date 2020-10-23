@@ -10,7 +10,7 @@
 
     <EditForm EditContext="@_editContext" OnSubmit="AddNewPost">
         <DataAnnotationsValidator />
-        <InputTextArea id="@("PostText-" + _forumPost.ForumPostId)" @bind-Value="_forumPost.PostText" />
+        <InputTextArea id="@("PostText-" + _forumPost.ForumPostId)" class="d-none" @bind-Value="_forumPost.PostText" />
         <ValidationMessage For="@(() => _forumPost.PostText)" />
         @if (PostToEdit != null)
         {

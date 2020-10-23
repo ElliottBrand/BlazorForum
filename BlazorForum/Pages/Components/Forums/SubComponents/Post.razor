@@ -1,8 +1,9 @@
 ﻿@using BlazorForum.Pages.Components.UpDownVote
-@inject IManageForums manageForums
 @inject IManageForumPosts managePosts
+@inject ForumPostService forumPostService
+@implements IDisposable
 
-<div class="forum-post-container @answerClass">
+<div class="forum-post-container @(ThisPost.IsAnswer && IsSupportForum ? "is-answer" : "")">
     @if (!_isEditorVisible && ForumUpDownVoteEnabled)
     {
         <UpDownVote PostId="@ThisPost.ForumPostId" UniqueIdentifier="ForumPost" PosterId="@ThisPost.UserId" VoterId="@CurrentUserId" IsAnswer="@ThisPost.IsAnswer" />
@@ -56,7 +57,12 @@
 
     protected override void OnInitialized()
     {
-        CheckAnswerClass(ThisPost.IsAnswer);
+        forumPostService.OnAnswerStatusChanged += HandleAnswerStatusChanged;
+    }
+
+    public void Dispose()
+    {
+        forumPostService.OnAnswerStatusChanged -= HandleAnswerStatusChanged;
     }
 
     private void HideThisEditor()
@@ -65,23 +71,15 @@
         StateHasChanged();
     }
 
-    async void StateChanged()
+    void StateChanged()
     {
-        var post = await managePosts.GetForumPostAsync(ThisPost.ForumPostId);
-        var isAnswer = post.IsAnswer;
-        CheckAnswerClass(isAnswer);
-        StateHasChanged();
+        forumPostService.RefreshAnswerStatus();
     }
 
-    void CheckAnswerClass(bool isAnswer)
+    async void HandleAnswerStatusChanged(object sender, EventArgs args)
     {
-        if (IsSupportForum && isAnswer)
-        {
-            answerClass = "is-answer";
-        }
-        else
-        {
-            answerClass = string.Empty;
-        }
+        var post = await managePosts.GetForumPostAsync(ThisPost.ForumPostId);
+        ThisPost.IsAnswer = post.IsAnswer;
+        await InvokeAsync(() => StateHasChanged());
     }
 }

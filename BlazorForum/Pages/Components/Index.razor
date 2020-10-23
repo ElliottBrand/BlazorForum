@@ -1,12 +1,14 @@
 ﻿@page "/"
+
 @inject HeadBuilderService head
 @inject IManagePages managePages
 @inject Microsoft.Extensions.Configuration.IConfiguration config
-@using BlazorForum.Pages.Components.Forums.SubComponents
 
 @if (_sitePage == null)
 {
-    <p>Loading...</p>
+    <div class="mb-2 loading-div">
+        <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
+    </div>
 }
 else
 {

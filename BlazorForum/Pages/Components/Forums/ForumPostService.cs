@@ -20,11 +20,15 @@ namespace BlazorForum.Pages.Components.Forums
             _manageUsers = manageUsers;
         }
 
-        public Action OnPosted;
+        public event EventHandler OnPosted;
+        public event EventHandler OnAnswerStatusChanged;
         public List<Models.ForumPost> Posts { get; private set; }
         public int Id { get; set; }
         public int MaxCount = 10;
         public string LoadMoreVisibility;
+
+        public virtual void NotifyStateChanged() => OnPosted?.Invoke(this, EventArgs.Empty);
+        public virtual void NotifyAnswerStatusChanged() => OnAnswerStatusChanged?.Invoke(this, EventArgs.Empty);
 
         public async Task LoadPostsAsync()
         {
@@ -66,6 +70,9 @@ namespace BlazorForum.Pages.Components.Forums
             NotifyStateChanged();
         }
 
-        private void NotifyStateChanged() => OnPosted?.Invoke();
+        public void RefreshAnswerStatus()
+        {
+            NotifyAnswerStatusChanged();
+        }
     }
 }
