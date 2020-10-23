@@ -17,6 +17,7 @@ using BlazorForum.Domain.Services;
 using BlazorForum.Pages.Components.Head;
 using BlazorForum.Pages.Components.Forums;
 using Microsoft.AspNetCore.Components.Server.Circuits;
+using BlazorForum.Pages.Components.UpDownVote;
 
 namespace BlazorForum
 {
@@ -93,6 +94,7 @@ namespace BlazorForum
             services.AddTransient<IManageUsers, ManageUsers>();
             services.AddSingleton<ForumPostService>();
             services.AddSingleton<CircuitHandler>(new CircuitHandlerService());
+            services.AddSingleton<UpDownVoteState>();
             services.AddBlazorModal();
             services.AddHeadBuilder();
 

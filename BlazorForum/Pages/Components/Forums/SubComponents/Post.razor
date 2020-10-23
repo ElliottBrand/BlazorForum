@@ -1,5 +1,7 @@
 ﻿@using BlazorForum.Pages.Components.UpDownVote
 @inject IManageForumPosts managePosts
+@inject ForumPostService forumPostService
+@implements IDisposable
 
 <div class="forum-post-container @(ThisPost.IsAnswer && IsSupportForum ? "is-answer" : "")">
     @if (!_isEditorVisible && ForumUpDownVoteEnabled)
@@ -53,16 +55,31 @@
     private bool _isEditorVisible = false;
     string answerClass;
 
+    protected override void OnInitialized()
+    {
+        forumPostService.OnAnswerStatusChanged += HandleAnswerStatusChanged;
+    }
+
+    public void Dispose()
+    {
+        forumPostService.OnAnswerStatusChanged -= HandleAnswerStatusChanged;
+    }
+
     private void HideThisEditor()
     {
         _isEditorVisible = false;
         StateHasChanged();
     }
 
-    async void StateChanged()
+    void StateChanged()
+    {
+        forumPostService.RefreshAnswerStatus();
+    }
+
+    async void HandleAnswerStatusChanged(object sender, EventArgs args)
     {
         var post = await managePosts.GetForumPostAsync(ThisPost.ForumPostId);
         ThisPost.IsAnswer = post.IsAnswer;
-        StateHasChanged();
+        await InvokeAsync(() => StateHasChanged());
     }
 }

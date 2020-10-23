@@ -1,4 +1,6 @@
 ﻿@inject IManageUpDownVotes manageUpDownVotes
+@inject UpDownVoteState upDownVoteState
+@implements IDisposable
 
 <section class="up-down-vote-container">
     <button class="oi oi-arrow-circle-top up-vote up-down-vote-btn @disabledClass" 
@@ -34,11 +36,18 @@
         // Add a delay to prevent issue of correct count not displaying
         await Task.Delay(50);
 
+        upDownVoteState.OnVoteChanged += HandleUpdatingVotesCount;
+
         totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
         voterHasVoted = await manageUpDownVotes.VoterHasVoted(VoterId, PostId, UniqueIdentifier);
 
         SetUpDownVoteVisibility();
 
+    }
+
+    public void Dispose()
+    {
+        upDownVoteState.OnVoteChanged -= HandleUpdatingVotesCount;
     }
 
     private async Task OnClickIncrement(int voteIncrement)
@@ -48,9 +57,7 @@
             var added = await manageUpDownVotes.AddPostUpDownVoteAsync(BuildNewPostVote(voteIncrement));
             if (added)
             {
-                totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
-                voterHasVoted = await manageUpDownVotes.VoterHasVoted(VoterId, PostId, UniqueIdentifier);
-                SetUpDownVoteVisibility();
+                upDownVoteState.RefreshVoteCount(PostId, UniqueIdentifier);
             }
         }
     }
@@ -81,5 +88,15 @@
             disabled = true;
             disabledClass = "disabled";
         }
+    }
+
+    public async void HandleUpdatingVotesCount(object sender, EventArgs args)
+    {
+        // It would be nice if this could eventually only update the single UpDownVote component that made the change
+        // rather than update all UpDownVote components (making a lot of unnecessary database calls).
+        totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
+        voterHasVoted = await manageUpDownVotes.VoterHasVoted(VoterId, PostId, UniqueIdentifier);
+        SetUpDownVoteVisibility();
+        await InvokeAsync(() => StateHasChanged());
     }
 }
