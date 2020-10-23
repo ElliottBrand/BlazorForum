@@ -14,7 +14,6 @@
 @inject IJSRuntime JSRuntime
 @inject IManageUsers manageUsers
 @inject ForumPostService forumPostService
-@implements IDisposable
 
 <ul class="breadcrumb blazorforum-breadcrumb">
     <li class="breadcrumb-item">
@@ -50,7 +49,7 @@ else
         <Topic ThisTopic="@topic" ForumUpDownVoteEnabled="@forumUpDownVoteEnabled" CurrentUserId="@CurrentUserId" />
     </section>
 
-    <Posts CurrentUserId="@CurrentUserId" Topic="@topic" ForumUpDownVoteEnabled="@forumUpDownVoteEnabled" Category="@category" ForumPostService="@forumPostService" IsSupportForum="isSupportForum" />
+    <Posts CurrentUserId="@CurrentUserId" Topic="@topic" ForumUpDownVoteEnabled="@forumUpDownVoteEnabled" Category="@category" IsSupportForum="@isSupportForum" />
 
     <TypingNotice TopicId="@id" CurrentUserId="@CurrentUserId" />
 }
@@ -76,14 +75,13 @@ else
     [Parameter] public string CurrentUserId { get; set; }
     Models.ForumCategory category;
     Models.ForumTopic topic;
-    bool forumUpDownVoteEnabled;
+    bool forumUpDownVoteEnabled = false;
     bool isSupportForum;
     protected TopicSubscriptionBtn topicSubscriptionBtn;
 
     protected override async Task OnInitializedAsync()
     {
         forumPostService.Id = id;
-        forumPostService.OnPosted += StateHasChanged;
 
         await LoadTopicAsync();
         SetHeadData();
@@ -96,11 +94,6 @@ else
         CurrentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
     }
 
-    public void Dispose()
-    {
-        forumPostService.OnPosted -= StateHasChanged;
-    }
-
     private async Task LoadTopicAsync()
     {
         topic = await manageForumTopics.GetForumTopicAsync(id);
@@ -111,17 +104,17 @@ else
         topic.UserName = user.UserName;
     }
 
+    // Fired from the PostForm component after a new post is added
+    public async void UpdatePostsAsync()
+    {
+        await forumPostService.RefreshPostsAsync();
+
+        topicSubscriptionBtn.RefreshButton();
+    }
+
     private void SetHeadData()
     {
         head.Title = topic.Title;
         head.Description = topic.TopicText;
-    }
-
-    public async void UpdatePostsAsync()
-    {
-        // TODO: Adjust to reload for all connected clients/circuits
-        await forumPostService.RefreshPostsAsync();
-
-        topicSubscriptionBtn.RefreshButton();
     }
 }

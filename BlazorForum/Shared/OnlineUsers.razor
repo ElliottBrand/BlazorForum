@@ -24,7 +24,8 @@
 
     public void HandleCircuitsChanged(object sender, EventArgs args)
     {
-        // You must use InvokeAsync here
+        // You must use InvokeAsync here to ensure race conditions don't occur
+        // by synchronizing thread execution per user connection.
         InvokeAsync(() => StateHasChanged());
     }
 }

@@ -1,8 +1,7 @@
 ﻿@using BlazorForum.Pages.Components.UpDownVote
-@inject IManageForums manageForums
 @inject IManageForumPosts managePosts
 
-<div class="forum-post-container @answerClass">
+<div class="forum-post-container @(ThisPost.IsAnswer && IsSupportForum ? "is-answer" : "")">
     @if (!_isEditorVisible && ForumUpDownVoteEnabled)
     {
         <UpDownVote PostId="@ThisPost.ForumPostId" UniqueIdentifier="ForumPost" PosterId="@ThisPost.UserId" VoterId="@CurrentUserId" IsAnswer="@ThisPost.IsAnswer" />
@@ -54,11 +53,6 @@
     private bool _isEditorVisible = false;
     string answerClass;
 
-    protected override void OnInitialized()
-    {
-        CheckAnswerClass(ThisPost.IsAnswer);
-    }
-
     private void HideThisEditor()
     {
         _isEditorVisible = false;
@@ -68,20 +62,7 @@
     async void StateChanged()
     {
         var post = await managePosts.GetForumPostAsync(ThisPost.ForumPostId);
-        var isAnswer = post.IsAnswer;
-        CheckAnswerClass(isAnswer);
+        ThisPost.IsAnswer = post.IsAnswer;
         StateHasChanged();
-    }
-
-    void CheckAnswerClass(bool isAnswer)
-    {
-        if (IsSupportForum && isAnswer)
-        {
-            answerClass = "is-answer";
-        }
-        else
-        {
-            answerClass = string.Empty;
-        }
     }
 }

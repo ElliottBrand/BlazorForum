@@ -1,12 +1,17 @@
 ﻿@inject IManageUpDownVotes manageUpDownVotes
-@inject Data.ApplicationDbContext context
 
 <section class="up-down-vote-container">
-    <button class="oi oi-arrow-circle-top up-vote up-down-vote-btn @disabledClass" disabled="@disabled" @onclick="(() => OnClickIncrement(1))" title="This post is helpful and respectful"></button>
+    <button class="oi oi-arrow-circle-top up-vote up-down-vote-btn @disabledClass" 
+            disabled="@disabled" 
+            @onclick="(() => OnClickIncrement(1))" 
+            title="This post is helpful and respectful"></button>
     <section class="up-down-vote-count">
         @totalCount
     </section>
-    <button class="oi oi-arrow-circle-bottom down-vote up-down-vote-btn @disabledClass" disabled="@disabled" @onclick="(() => OnClickIncrement(-1))" title="This post is unhelpful and/or disrespectful"></button>
+    <button class="oi oi-arrow-circle-bottom down-vote up-down-vote-btn @disabledClass" 
+            disabled="@disabled" 
+            @onclick="(() => OnClickIncrement(-1))" 
+            title="This post is unhelpful and/or disrespectful"></button>
 </section>
 
 @code {
@@ -19,26 +24,33 @@
     [Parameter] public string PosterId { get; set; }
     [Parameter] public string VoterId { get; set; }
     [Parameter] public bool IsAnswer { get; set; }
-    public int totalCount = 0;
+    int totalCount = 0;
+    bool voterHasVoted;
     bool disabled = true;
     string disabledClass = "disabled";
 
     protected override async Task OnInitializedAsync()
     {
-        totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
+        // Add a delay to prevent issue of correct count not displaying
+        await Task.Delay(50);
 
-        await SetUpDownVoteVisibility();
+        totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
+        voterHasVoted = await manageUpDownVotes.VoterHasVoted(VoterId, PostId, UniqueIdentifier);
+
+        SetUpDownVoteVisibility();
+
     }
 
     private async Task OnClickIncrement(int voteIncrement)
     {
-        if(VoterId != null)
+        if(VoterId != null && voterHasVoted == false)
         {
             var added = await manageUpDownVotes.AddPostUpDownVoteAsync(BuildNewPostVote(voteIncrement));
             if (added)
             {
                 totalCount = await manageUpDownVotes.GetPostUpDownVoteCountAsync(PostId, UniqueIdentifier);
-                await SetUpDownVoteVisibility();
+                voterHasVoted = await manageUpDownVotes.VoterHasVoted(VoterId, PostId, UniqueIdentifier);
+                SetUpDownVoteVisibility();
             }
         }
     }
@@ -57,9 +69,9 @@
         return newUpDownVote;
     }
 
-    private async Task SetUpDownVoteVisibility()
+    private void SetUpDownVoteVisibility()
     {
-        if (VoterId != null && PosterId != VoterId && await manageUpDownVotes.VoterHasVoted(VoterId, PostId, UniqueIdentifier) == false)
+        if (VoterId != null && PosterId != VoterId && voterHasVoted == false)
         {
             disabled = false;
             disabledClass = string.Empty;

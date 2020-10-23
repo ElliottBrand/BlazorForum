@@ -88,10 +88,10 @@ namespace BlazorForum
             services.AddTransient<IManageThemes, ManageThemes>();
             services.AddTransient<IManageConfiguration, ManageConfiguration>();
             services.AddTransient<IManagePages, ManagePages>();
-            services.AddTransient<IManageUpDownVotes, ManageUpDownVotes>();
+            services.AddSingleton<IManageUpDownVotes, ManageUpDownVotes>();
             services.AddTransient<IManageTopicSubscriptions, ManageTopicSubscriptions>();
             services.AddTransient<IManageUsers, ManageUsers>();
-            services.AddTransient<ForumPostService>();
+            services.AddSingleton<ForumPostService>();
             services.AddSingleton<CircuitHandler>(new CircuitHandlerService());
             services.AddBlazorModal();
             services.AddHeadBuilder();
