@@ -100,7 +100,8 @@ else
         if (topic == null || topic.IsApproved != true || topic.IsDeleted == true)
             navManager.NavigateTo("/");
 
-        var user = await userManager.FindByIdAsync(topic.UserId);
+        //var user = await userManager.FindByIdAsync(topic.UserId);
+        var user = await manageUsers.GetUserAsync(topic.UserId);
         topic.UserName = user.UserName;
     }
 

@@ -57,7 +57,7 @@
             var added = await manageUpDownVotes.AddPostUpDownVoteAsync(BuildNewPostVote(voteIncrement));
             if (added)
             {
-                upDownVoteState.RefreshVoteCount(PostId, UniqueIdentifier);
+                upDownVoteState.RefreshVoteCount();
             }
         }
     }
