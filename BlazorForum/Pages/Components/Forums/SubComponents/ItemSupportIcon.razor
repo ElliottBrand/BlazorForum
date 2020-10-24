@@ -1,10 +1,14 @@
 ﻿@if (Topic.HasAnswer && Topic.IsInSupportForum)
 {
-    <div style="float: left; padding-right: 0.5em;"><span class="oi oi-circle-check text-success" title="Has Answer"></span></div>
+    <div style="float: left; padding-right: 0.5em; font-size: 1.5em;">
+        <span class="fas fa-check-circle text-success" title="Has Answer"></span>
+    </div>
 }
 else if (Topic.IsInSupportForum)
 {
-    <div style="float: left; padding-right: 0.5em;"><span class="oi oi-flag text-orange" title="Needs Assistance"></span></div>
+    <div style="float: left; padding-right: 0.5em; font-size: 1.5em;">
+        <span class="fas fa-question-circle text-orange" title="Needs Assistance"></span>
+    </div>
 }
 
 @code {

@@ -2,7 +2,8 @@
   {
     "outputFileName": "wwwroot/css/blazorforum-styles.min.css",
     "inputFiles": [
-      "wwwroot/css/site.css"
+      "wwwroot/css/site.css",
+      "wwwroot/css/fa-addons.css"
     ]
   },
   {

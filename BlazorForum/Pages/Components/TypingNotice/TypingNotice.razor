@@ -2,7 +2,9 @@
 @inject IManageUsers _userManager 
 
 <section id="typingAlertSection">
-    <div id="@TopicId" class="@typingNoticeStyle topic-typing-container">Someone is typing...</div>
+    <div id="@TopicId" class="@typingNoticeStyle topic-typing-container">
+        <span class="pl-1 fas fa-comment-dots fa-pulse"></span> Someone is typing...
+    </div>
     <input id="typerid" hidden="hidden" value="@CurrentUserId" />
 </section>
 
