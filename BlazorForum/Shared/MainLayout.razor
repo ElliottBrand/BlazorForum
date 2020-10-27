@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager navManager
 @using BlazorForum.Pages.Components.Google
 
 <div class="main">
@@ -13,9 +14,17 @@
     <section class="content px-4">
         @Body
     </section>
-    <section class="container-fluid px-4 mt-2">
-        <OnlineUsers />
-    </section>
+    @* // Don't show current users display on profile pages *@
+    @if (!navManager.Uri.Contains("/profile/"))
+    {
+        <section class="container-fluid px-4 mt-2">
+            <div class="row">
+                <div class="col-12">
+                    <OnlineUsers />
+                </div>
+            </div>
+        </section>
+    }
     <footer class="blazorforum-footer">
         Powered by <a href="https://blazorforum.net" target="_blank">BlazorForum</a>
     </footer>

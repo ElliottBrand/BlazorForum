@@ -5,16 +5,56 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h4>@ViewData["Title"]</h4>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
 <div class="container">
     <div class="row">
-        <div class="col-12 col-lg-8 col-xl-6">
+        <div class="col-12">
+            <h4>@ViewData["Title"]</h4>
+            <partial name="_StatusMessage" model="Model.StatusMessage" />
             <form id="profile-form" method="post">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Username"></label>
                     <input asp-for="Username" class="form-control" disabled />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.DisplayName"></label>
+                    <input asp-for="Input.DisplayName" class="form-control" />
+                    <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Title"></label>
+                    <input asp-for="Input.Title" class="form-control" />
+                    <span asp-validation-for="Input.Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Location"></label>
+                    <input asp-for="Input.Location" class="form-control" />
+                    <span asp-validation-for="Input.Location" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.About"></label>
+                    <textarea asp-for="Input.About" class="form-control" hidden></textarea>
+                    <span asp-validation-for="Input.About" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.GitHub"></label>
+                    <input asp-for="Input.GitHub" class="form-control" />
+                    <span asp-validation-for="Input.GitHub" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Twitter"></label>
+                    <input asp-for="Input.Twitter" class="form-control" />
+                    <span asp-validation-for="Input.Twitter" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.LinkedIn"></label>
+                    <input asp-for="Input.LinkedIn" class="form-control" />
+                    <span asp-validation-for="Input.LinkedIn" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Website"></label>
+                    <input asp-for="Input.Website" class="form-control" />
+                    <span asp-validation-for="Input.Website" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.PhoneNumber"></label>
@@ -29,4 +69,19 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+<script src="~/scripts/js/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#Input_About'), {
+            link: {
+                addTargetToExternalLinks: true
+            }
+        })
+        .then(editor => {
+            ckeditor = editor;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
 }

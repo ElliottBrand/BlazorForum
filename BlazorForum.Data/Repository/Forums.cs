@@ -71,5 +71,21 @@ namespace BlazorForum.Data.Repository
             }
             return false;
         }
+
+        /// <summary>
+        /// Determines if any forums are set as support forums.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> SupportForumExistsAsync()
+        {
+            using var context = _dbFactory.CreateDbContext();
+            var forums = await context.Forums.ToListAsync();
+            foreach (var forum in forums)
+            {
+                if (forum.IsSupportForum == true)
+                    return true;
+            }
+            return false;
+        }
     }
 }

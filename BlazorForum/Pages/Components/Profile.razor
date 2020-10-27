@@ -1,0 +1,119 @@
+﻿@page "/profile/{UserName}"
+@using BlazorForum.Domain.Utilities.Formatting
+
+@inject HeadBuilderService head
+@inject UserManager<ApplicationUser> userManager
+@inject AuthenticationStateProvider authStateProvider
+@inject IManageUsers manageUsers
+@inject IManageForums manageForums
+
+<section class="profile-container @pageClass">
+    @if (user == null)
+    {
+        <div class="mb-2 loading-div">
+            <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
+        </div>
+    }
+    else
+    {
+        @if (isUsersProfile)
+        {
+            <div class="bg-veryDarkBlue mb-3 rounded p-2">
+                <a href="/Identity/Account/Manage" class="btn btn-light">Edit Profile</a>
+            </div>
+        }
+        <section class="profile-content-container">
+            <figure class="profile-avatar-container">
+                <img src="https://www.gravatar.com/avatar/@(md5HashedEmail)?d=identicon&s=200" />
+            </figure>
+            <section class="profile-content">
+                <div class="container-fluid p-0">
+                    <div class="row">
+                        <div class="col-12 col-md-8">
+                            <header>
+                                <h3 class="ml-md-4">@(!string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.UserName)</h3>
+                                <h4 class="ml-md-4">@user.Title</h4>
+                            </header>
+                            <div class="ml-md-4">
+                                @(!string.IsNullOrEmpty(user.About) ? (MarkupString)user.About : (MarkupString)"<span class=\"text-light-gray\">User hasn't entered any about text.</span>")
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="profile-stats-box">
+                                @if (supportForumExists)
+                                {
+                                    <div><span class="fas fa-check-circle"></span> Answers: @answerCount</div>
+                                    <div><span class="fas fa-question-circle"></span> Questions: @questionCount</div>
+                                }
+                                <div><span class="fa fa-arrow-alt-circle-up"></span> Post Votes: @postCount</div>
+                                <div class="@(!string.IsNullOrEmpty(user.Location) ? "" : "d-none")">
+                                    <span class="fa fa-map-marker-alt" style="padding: 0.12em;"></span> @user.Location
+                                </div>
+                                <div class="@(!string.IsNullOrEmpty(user.GitHub) ? "" : "d-none")">
+                                    <span class="fab fa-github"></span> @((MarkupString)Links.GetNetworkingLink("GitHub", user.GitHub))
+                                </div>
+                                <div class="@(!string.IsNullOrEmpty(user.Twitter) ? "" : "d-none")">
+                                    <span class="fab fa-twitter-square"></span> @((MarkupString)Links.GetNetworkingLink("Twitter", user.Twitter))
+                                </div>
+                                <div class="@(!string.IsNullOrEmpty(user.LinkedIn) ? "" : "d-none")">
+                                    <span class="fab fa-linkedin"></span> @((MarkupString)Links.GetNetworkingLink("LinkedIn", user.LinkedIn))
+                                </div>
+                                <div class="@(!string.IsNullOrEmpty(user.Website) ? "" : "d-none")">
+                                    <span class="fas fa-link"></span> @((MarkupString)Links.LinkifyURLString(user.Website))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </section>
+    }
+</section>
+
+<section class="no-user-profile-container @noUserClass">
+    <span>Sorry, the requested user profile doesn't seem to exist.</span>
+</section>
+
+
+@code {
+    ApplicationUser user;
+    [Parameter] public string UserName { get; set; }
+    string pageClass;
+    string noUserClass = "d-none";
+    string md5HashedEmail;
+    int answerCount;
+    int questionCount;
+    int postCount;
+    bool supportForumExists;
+    bool isUsersProfile = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await manageUsers.GetUserByUserNameAsync(UserName.ToString());
+
+        var currentUserId = await new Domain.Utilities.Membership.UserInfo(userManager, authStateProvider).GetUserId();
+        if (user.Id == currentUserId) isUsersProfile = true;
+
+        md5HashedEmail = Domain.Utilities.Cryptography.Hash.CreateMD5Hash(user.Email.ToLower()).ToLower();
+
+        answerCount = await manageUsers.GetUserPostAnswerCountAsync(user.Id);
+        questionCount = await manageUsers.GetUserTopicQuestionCountAsync(user.Id);
+        postCount = await manageUsers.GetUserPostVoteTotal(user.Id);
+        supportForumExists = await manageForums.SupportForumExistsAsync();
+
+        if (user == null)
+        {
+            pageClass = "d-none";
+            noUserClass = "";
+        }
+
+        SetHeadData();
+    }
+
+    private void SetHeadData()
+    {
+        head.Title = !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.UserName;
+        head.Description = user.About;
+    }
+}

@@ -15,6 +15,7 @@ namespace BlazorForum.Domain.Interfaces
         Task<bool> CreateForumAsync(Forum newForum);
         Task<bool> UpdateForumAsync(Forum editedForum);
         Task<bool> DeleteForumAsync(int forumId);
+        Task<bool> SupportForumExistsAsync();
     }
 
     public class ManageForums : IManageForums
@@ -39,5 +40,8 @@ namespace BlazorForum.Domain.Interfaces
 
         public async Task<bool> DeleteForumAsync(int forumId) =>
             await new Data.Repository.Forums(_dbFactory).DeleteForumAsync(forumId);
+
+        public async Task<bool> SupportForumExistsAsync() =>
+            await new Data.Repository.Forums(_dbFactory).SupportForumExistsAsync();
     }
 }

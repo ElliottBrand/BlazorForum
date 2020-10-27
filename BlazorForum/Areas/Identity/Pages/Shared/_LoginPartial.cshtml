@@ -6,7 +6,7 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="register-btn-container">
-        <a class="logged-in-user-text" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
+        <a class="logged-in-user-text" href="/profile/@UserManager.GetUserName(User)" title="Manage">Hello, @User.Identity.Name!</a>
     </div>
     <div class="login-btn-container">
         <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">

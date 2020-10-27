@@ -9,9 +9,22 @@ a, .btn-link {
     color: #0366d6;
 }
 
+a.post-user-link {
+    color: #464455;
+}
+
+a.topic-user-link {
+    color: #ae9add;
+}
+
 app {
     position: relative;
     flex-direction: column;
+}
+
+.bg-light-gray {
+    background-color: #e9ecef;
+    color: #495057;
 }
 
 .bg-veryDarkBlue {
@@ -96,6 +109,13 @@ app {
     border-top-right-radius: 0.25em;
     padding: 1em;
     color: #fff;
+}
+
+.forum-post-edit-time {
+    font-size: 0.8em;
+    width: 100%;
+    display: block;
+    color: #777;
 }
 
 .forum-post-time {
@@ -261,6 +281,21 @@ pre {
     overflow-x: auto;
 }
 
+.profile-avatar-container {
+    text-align: center;
+}
+
+.profile-content header {
+    text-align: center;
+}
+
+.profile-stats-box {
+    margin-top: 1em;
+    background-color: #e9ecef;
+    border-radius: 0.25em;
+    padding: 0.5em 1em;
+}
+
 .se-spin-icon {
     -webkit-animation: spin 4s infinite linear;
 }
@@ -268,6 +303,10 @@ pre {
 @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }
     100% { -webkit-transform: rotate(360deg); }
+}
+
+.text-light-gray {
+    color: #bbb;
 }
 
 .text-orange {
@@ -359,13 +398,6 @@ pre {
     color: red;
 }
 
-@media (min-width: 768px){
-    .navbar-expand-md .navbar-nav .nav-link {
-        padding-right: 0;
-        padding-left: 0;
-    }
-}
-
 @media (max-width: 767.98px) {
 
     .main .top-row:not(.auth) {
@@ -382,9 +414,16 @@ pre {
 }
 
 @media (min-width: 768px) {
+    .forum-post-edit-time {
+        width: inherit;
+        margin-left: 1em;
+        display: inline-block;
+    }
+
     .main .top-row {
         position: sticky;
         top: 0;
+        z-index:1001;
     }
 
     .main > div {
@@ -394,6 +433,11 @@ pre {
 
     .navbar-toggler {
         display: none;
+    }
+
+    .navbar-expand-md .navbar-nav .nav-link {
+        padding-right: 0;
+        padding-left: 0;
     }
 
     .nav-link {
@@ -413,6 +457,26 @@ pre {
             display: inline-block;
             padding: 0 0.5em;
         }
+
+    .profile-avatar-container {
+        text-align: inherit;
+    }
+
+    .profile-content-container {
+        display: flex;
+    }
+
+    .profile-content {
+        flex: 1;
+    }
+
+    .profile-content header {
+        text-align: inherit;
+    }
+
+    .profile-stats-box {
+        margin-top: 0;
+    }
 
     .top-row {
         flex-wrap: inherit;
