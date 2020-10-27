@@ -13,7 +13,15 @@ namespace BlazorForum.Domain.Interfaces
     {
         Task<ApplicationUser> GetUserAsync(string userId);
 
+        Task<ApplicationUser> GetUserByUserNameAsync(string username);
+
         Task<bool> IsInRoleAsync(string role, string userId);
+
+        Task<int> GetUserPostAnswerCountAsync(string userId);
+
+        Task<int> GetUserTopicQuestionCountAsync(string userId);
+
+        Task<int> GetUserPostVoteTotal(string userId);
     }
 
     public class ManageUsers : IManageUsers
@@ -28,7 +36,19 @@ namespace BlazorForum.Domain.Interfaces
         public async Task<ApplicationUser> GetUserAsync(string userId) =>
             await new Data.Repository.Users(_dbFactory).GetUserAsync(userId);
 
+        public async Task<ApplicationUser> GetUserByUserNameAsync(string username) =>
+            await new Data.Repository.Users(_dbFactory).GetUserByUserNameAsync(username);
+
         public async Task<bool> IsInRoleAsync(string role, string userId) =>
             await new Data.Repository.Users(_dbFactory).IsInRoleAsync(role, userId);
+
+        public async Task<int> GetUserPostAnswerCountAsync(string userId) =>
+            await new Data.Repository.Users(_dbFactory).GetUserPostAnswerCountAsync(userId);
+
+        public async Task<int> GetUserTopicQuestionCountAsync(string userId) =>
+            await new Data.Repository.Users(_dbFactory).GetUserTopicQuestionCountAsync(userId);
+
+        public async Task<int> GetUserPostVoteTotal(string userId) =>
+            await new Data.Repository.Users(_dbFactory).GetUserPostVoteTotal(userId);
     }
 }

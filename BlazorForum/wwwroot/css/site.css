@@ -14,6 +14,11 @@ app {
     flex-direction: column;
 }
 
+.bg-light-gray {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
 .bg-veryDarkBlue {
     background-color: rgb(5, 39, 103);
 }
@@ -261,6 +266,21 @@ pre {
     overflow-x: auto;
 }
 
+.profile-avatar-container {
+    text-align: center;
+}
+
+.profile-content header {
+    text-align: center;
+}
+
+.profile-stats-box {
+    margin-top: 1em;
+    background-color: #e9ecef;
+    border-radius: 0.25em;
+    padding: 0.5em 1em;
+}
+
 .se-spin-icon {
     -webkit-animation: spin 4s infinite linear;
 }
@@ -268,6 +288,10 @@ pre {
 @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }
     100% { -webkit-transform: rotate(360deg); }
+}
+
+.text-light-gray {
+    color: #bbb;
 }
 
 .text-orange {
@@ -359,13 +383,6 @@ pre {
     color: red;
 }
 
-@media (min-width: 768px){
-    .navbar-expand-md .navbar-nav .nav-link {
-        padding-right: 0;
-        padding-left: 0;
-    }
-}
-
 @media (max-width: 767.98px) {
 
     .main .top-row:not(.auth) {
@@ -396,6 +413,11 @@ pre {
         display: none;
     }
 
+    .navbar-expand-md .navbar-nav .nav-link {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
     .nav-link {
         text-align: center;
     }
@@ -413,6 +435,26 @@ pre {
             display: inline-block;
             padding: 0 0.5em;
         }
+
+    .profile-avatar-container {
+        text-align: inherit;
+    }
+
+    .profile-content-container {
+        display: flex;
+    }
+
+    .profile-content {
+        flex: 1;
+    }
+
+    .profile-content header {
+        text-align: inherit;
+    }
+
+    .profile-stats-box {
+        margin-top: 0;
+    }
 
     .top-row {
         flex-wrap: inherit;
