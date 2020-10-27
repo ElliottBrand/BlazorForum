@@ -54,7 +54,7 @@ else
                                   .FirstOrDefault().ChildCount : 0) )
                             <div class="topic-author">
                                 Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(topic.PostedDate)
-                                by @topic.UserName
+                                by <a class="post-user-link" href="/profile/@topic.UserName">@topic.UserName</a>
                             </div>
                         </div>
                     </div>

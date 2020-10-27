@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using BlazorForum.Models;
+using BlazorForum.Domain.Interfaces;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace BlazorForum.Areas.Identity.Pages.Account.Manage
 {
@@ -14,13 +17,16 @@ namespace BlazorForum.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IManageUsers _manageUsers;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IManageUsers manageUsers)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _manageUsers = manageUsers;
         }
 
         public string Username { get; set; }
@@ -29,25 +35,25 @@ namespace BlazorForum.Areas.Identity.Pages.Account.Manage
         public string StatusMessage { get; set; }
 
         [BindProperty]
-        public InputModel Input { get; set; }
-
-        public class InputModel
-        {
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
-        }
+        public ProfileInputModel Input { get; set; }
 
         private async Task LoadAsync(ApplicationUser user)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var appUser = await _manageUsers.GetUserAsync(user.Id);
 
-            Username = userName;
+            Username = appUser.UserName;
 
-            Input = new InputModel
+            Input = new ProfileInputModel
             {
-                PhoneNumber = phoneNumber
+                DisplayName = appUser.DisplayName,
+                Title = appUser.Title,
+                Location = appUser.Location,
+                About = appUser.About,
+                PhoneNumber = appUser.PhoneNumber,
+                GitHub = appUser.GitHub,
+                Twitter = appUser.Twitter,
+                LinkedIn = appUser.LinkedIn,
+                Website = appUser.Website
             };
         }
 
@@ -77,16 +83,23 @@ namespace BlazorForum.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
-                }
-            }
+            // Probably don't need this, but remove any scripts that may have somehow been added, just in case.
+            Input.About = Regex.Replace(Input.About, @"<script[^>]*>[\s\S]*?</script>", string.Empty);
+
+            user.DisplayName = Input.DisplayName;
+            user.Title = Input.Title;
+            user.Location = Input.Location;
+            user.About = Input.About;
+            user.GitHub = Input.GitHub;
+            user.Twitter = Input.Twitter;
+            user.LinkedIn = Input.LinkedIn;
+            user.Website = Input.Website;
+            user.PhoneNumber = Input.PhoneNumber;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                throw new InvalidOperationException($"Unexpected error occurred updating the profile.");
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

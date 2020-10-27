@@ -1,7 +1,9 @@
-﻿<AuthorizeView>
+﻿@inject UserManager<ApplicationUser> userManager 
+
+<AuthorizeView>
     <Authorized>
         <div class="register-btn-container">
-            <a class="logged-in-user-text" href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
+            <a class="logged-in-user-text" href="/profile/@context.User.Identity.Name">Hello, @context.User.Identity.Name!</a>
         </div>
         <div class="login-btn-container">
             <form method="post" action="Identity/Account/LogOut">

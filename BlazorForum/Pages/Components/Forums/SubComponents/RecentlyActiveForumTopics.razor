@@ -26,7 +26,7 @@ else
                     </h6>
                     <div class="topic-author">
                         @{ GetRepliedDate(topic); }
-                        Replied to @postedAgo
+                        <a class="post-user-link" href="/profile/@topic.UserName">@topic.UserName</a> replied @postedAgo
                     </div>
                 </div>
             </div>
@@ -48,6 +48,7 @@ else
         await CheckSupportForumStatus();
 
         postCountList = await new ForumTopicCountHelpers(manageForumPosts).GetTopicsPostCountListAsync(topics);
+        await new ForumUserHelpers(manageUsers).AddUserToTopicAsync(topics);
     }
 
     protected void GetRepliedDate(ForumTopic topic)

@@ -9,40 +9,39 @@
         <UpDownVote PostId="@ThisPost.ForumPostId" UniqueIdentifier="ForumPost" PosterId="@ThisPost.UserId" VoterId="@CurrentUserId" IsAnswer="@ThisPost.IsAnswer" />
     }
 
-    <div class="forum-post-content @(_isEditorVisible ? "w-100" : "")">
-        @if (_isEditorVisible == false)
-            @((MarkupString)ThisPost.PostText)
+<div class="forum-post-content @(_isEditorVisible ? "w-100" : "")">
+    @if (_isEditorVisible == false)
+        @((MarkupString)ThisPost.PostText)
 
-        @if (ThisPost.UserId == CurrentUserId)
+    @if (ThisPost.UserId == CurrentUserId)
+    {
+        if (_isEditorVisible == true)
         {
-            if (_isEditorVisible == true)
-            {
-                <PostForm OnPostUpdated="@(() => HideThisEditor())" CurrentUserId="@CurrentUserId" PostToEdit="@ThisPost" OnCancel="@(() => HideThisEditor())"></PostForm>
-            }
-            else
-            {
-                <button class="btn btn-sm btn-blazorforum mb-2 mr-1" type="button" @onclick="@(() => _isEditorVisible = true)">Edit</button>
-            }
+            <PostForm OnPostUpdated="@(() => HideThisEditor())" CurrentUserId="@CurrentUserId" PostToEdit="@ThisPost" OnCancel="@(() => HideThisEditor())"></PostForm>
         }
-
-        <PostAnswerBtn IsSupportForum="@IsSupportForum" IsAnswer="@ThisPost.IsAnswer" CurrentUserId="@CurrentUserId" TopicAuthorId="@TopicAuthorId" PostId="@ThisPost.ForumPostId" OnChange="StateChanged" />
-
-        @if (_isEditorVisible == false)
+        else
         {
+            <button class="btn btn-sm btn-blazorforum mb-2 mr-1" type="button" @onclick="@(() => _isEditorVisible = true)">Edit</button>
+            <PostAnswerBtn IsSupportForum="@IsSupportForum" IsAnswer="@ThisPost.IsAnswer" CurrentUserId="@CurrentUserId" TopicAuthorId="@TopicAuthorId" PostId="@ThisPost.ForumPostId" OnChange="StateChanged" />
+        }
+    }
+
+    @if (_isEditorVisible == false)
+    {
         <div>
             <span class="forum-post-time">
                 Posted @DateTimeFormatting.RelativeDateAgo(ThisPost.PostedDate)
-                by @ThisPost.UserName
+                by <a class="post-user-link" href="/profile/@ThisPost.UserName">@ThisPost.UserName</a>
             </span>
             @if (ThisPost.EditedDate != null)
             {
-                <span class="forum-post-time ml-3">
+                <span class="forum-post-edit-time">
                     Edited @DateTimeFormatting.RelativeDateAgo(Convert.ToDateTime(ThisPost.EditedDate))
                 </span>
             }
         </div>
-        }
-    </div>
+    }
+</div>
 </div>
 
 @code {

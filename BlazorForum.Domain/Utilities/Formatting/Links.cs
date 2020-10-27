@@ -17,18 +17,22 @@ namespace BlazorForum.Domain.Utilities.Formatting
         /// <returns></returns>
         public static string GetNetworkingLink(string network, string userHandleOrLink)
         {
-            if (userHandleOrLink.StartsWith("http://") || userHandleOrLink.StartsWith("https://"))
-                return LinkifyURLString(userHandleOrLink, userHandleOrLink);
-
-            switch (network)
+            if(!string.IsNullOrEmpty(network) && !string.IsNullOrEmpty(userHandleOrLink))
             {
-                case "GitHub":
-                    return LinkifyURLString("https://github.com/" + userHandleOrLink, userHandleOrLink);
-                case "Twitter":
-                    return LinkifyURLString("https://twitter.com/" + userHandleOrLink, userHandleOrLink);
-                case "LinkedIn":
-                    return LinkifyURLString("https://linkedin.com/in/" + userHandleOrLink, userHandleOrLink);
+                if (userHandleOrLink.StartsWith("http://") || userHandleOrLink.StartsWith("https://"))
+                    return LinkifyURLString(userHandleOrLink, userHandleOrLink);
+
+                switch (network)
+                {
+                    case "GitHub":
+                        return LinkifyURLString("https://github.com/" + userHandleOrLink, userHandleOrLink);
+                    case "Twitter":
+                        return LinkifyURLString("https://twitter.com/" + userHandleOrLink, userHandleOrLink);
+                    case "LinkedIn":
+                        return LinkifyURLString("https://linkedin.com/in/" + userHandleOrLink, userHandleOrLink);
+                }
             }
+
             return null;
         }
 
@@ -40,6 +44,9 @@ namespace BlazorForum.Domain.Utilities.Formatting
         /// <returns></returns>
         public static string LinkifyURLString(string url, string linkText = null)
         {
+            if (string.IsNullOrEmpty(url))
+                return null;
+
             if (linkText == null) linkText = url;
 
             if (!url.StartsWith("http://") && !url.StartsWith("https://"))

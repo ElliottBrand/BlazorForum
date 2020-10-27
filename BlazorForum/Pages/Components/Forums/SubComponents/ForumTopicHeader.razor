@@ -2,7 +2,7 @@
     <h3>@Topic.Title</h3>
     <div class="forum-post-time d-inline-block">
         Posted @Domain.Utilities.Formatting.DateTimeFormatting.RelativeDateAgo(Topic.PostedDate)
-        by @Topic.UserName
+        by <a class="topic-user-link" href="/profile/@Topic.UserName">@Topic.UserName</a>
     </div>
     @if (Topic.EditedDate != null)
     {
