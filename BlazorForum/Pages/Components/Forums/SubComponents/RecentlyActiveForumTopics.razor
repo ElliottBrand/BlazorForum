@@ -26,7 +26,7 @@ else
                     </h6>
                     <div class="topic-author">
                         @{ var postedData = GetReplierData(topic); }
-                        <a class="post-user-link" href="/profile/@topic.UserName">@postedData[0]</a> replied @postedData[1]
+                        <a class="post-user-link" href="/profile/@postedData[0]">@postedData[0]</a> replied @postedData[1]
                     </div>
                 </div>
             </div>
