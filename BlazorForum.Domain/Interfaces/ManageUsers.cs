@@ -13,6 +13,8 @@ namespace BlazorForum.Domain.Interfaces
     {
         Task<ApplicationUser> GetUserAsync(string userId);
 
+        ApplicationUser GetUser(string userId);
+
         Task<ApplicationUser> GetUserByUserNameAsync(string username);
 
         Task<bool> IsInRoleAsync(string role, string userId);
@@ -35,6 +37,9 @@ namespace BlazorForum.Domain.Interfaces
 
         public async Task<ApplicationUser> GetUserAsync(string userId) =>
             await new Data.Repository.Users(_dbFactory).GetUserAsync(userId);
+
+        public ApplicationUser GetUser(string userId) =>
+            new Data.Repository.Users(_dbFactory).GetUser(userId);
 
         public async Task<ApplicationUser> GetUserByUserNameAsync(string username) =>
             await new Data.Repository.Users(_dbFactory).GetUserByUserNameAsync(username);

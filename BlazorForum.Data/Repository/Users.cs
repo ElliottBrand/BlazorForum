@@ -24,6 +24,11 @@ namespace BlazorForum.Data.Repository
             return await context.Users.SingleAsync(p => p.Id == userId);
         }
 
+        public ApplicationUser GetUser(string userId)
+        {
+            using var context = _dbFactory.CreateDbContext();
+            return context.Users.Single(p => p.Id == userId);
+        }
         public async Task<ApplicationUser> GetUserByUserNameAsync(string username)
         {
             using var context = _dbFactory.CreateDbContext();
