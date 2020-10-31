@@ -1,4 +1,6 @@
 ﻿@inject UserManager<ApplicationUser> userManager 
+@inject NavigationManager navigationManager 
+@implements IDisposable
 
 <AuthorizeView>
     <Authorized>
@@ -16,7 +18,24 @@
             <a href="Identity/Account/Register" class="btn btn-sm btn-light">Register</a>
         </div>
         <div class="login-btn-container">
-            <a href="Identity/Account/Login" class="btn btn-sm btn-light">Log in</a>
+            <a href="Identity/Account/Login?returnURL=/@navigationManager.ToBaseRelativePath(navigationManager.Uri)" class="btn btn-sm btn-light">Log in</a>
         </div>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    protected override void OnInitialized()
+    {
+        navigationManager.LocationChanged += UpdateReturnUrl;
+    }
+
+    public void Dispose()
+    {
+        navigationManager.LocationChanged -= UpdateReturnUrl;
+    }
+
+    void UpdateReturnUrl(object sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+}
