@@ -1,6 +1,7 @@
 ﻿using BlazorForum.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,6 @@ namespace BlazorForum.Tests.Domain.Services
 {
     public class EmailNotificationsServiceTests
     {
-
-        Mock<ILoggerFactory> mockLogger = new Mock<ILoggerFactory>();
         Mock<IManageForumTopics> mockManageForumTopics = new Mock<IManageForumTopics>();
         Mock<IManageUsers> mockManageUsers = new Mock<IManageUsers>();
         Mock<IManageTopicSubscriptions> mockManageTopicSubscriptions = new Mock<IManageTopicSubscriptions>();
@@ -36,7 +35,7 @@ namespace BlazorForum.Tests.Domain.Services
             mockEmailSender.Setup(p => p.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(""));
 
-            var response = await new BlazorForum.Domain.Services.EmailNotificationsService(mockManageForumTopics.Object, mockManageUsers.Object, mockEmailSender.Object, mockManageTopicSubscriptions.Object, mockLogger.Object)
+            var response = await new BlazorForum.Domain.Services.EmailNotificationsService(mockManageForumTopics.Object, mockManageUsers.Object, mockEmailSender.Object, mockManageTopicSubscriptions.Object, NullLoggerFactory.Instance)
                 .SendTopicReplyEmailNotificationAsync(55, "1", "some-url");
 
             Assert.IsType<bool>(response);
@@ -50,7 +49,7 @@ namespace BlazorForum.Tests.Domain.Services
             mockManageForumTopics.Setup(p => p.GetForumTopicAsync(It.IsAny<int>()))
                 .Callback(() => throw new Exception("Some Exception"));
 
-            var response = await new BlazorForum.Domain.Services.EmailNotificationsService(mockManageForumTopics.Object, mockManageUsers.Object , mockEmailSender.Object, mockManageTopicSubscriptions.Object, mockLogger.Object)
+            var response = await new BlazorForum.Domain.Services.EmailNotificationsService(mockManageForumTopics.Object, mockManageUsers.Object , mockEmailSender.Object, mockManageTopicSubscriptions.Object, NullLoggerFactory.Instance)
                 .SendTopicReplyEmailNotificationAsync(55, "1", "some-url");
 
             Assert.IsType<bool>(response);

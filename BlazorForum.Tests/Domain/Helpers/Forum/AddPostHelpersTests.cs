@@ -3,6 +3,7 @@ using BlazorForum.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,6 @@ namespace BlazorForum.Tests.Domain.Helpers.Forum
     public class AddPostHelpersTests
     {
         Mock<IHttpContextAccessor> mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-        Mock<ILoggerFactory> mockLogger = new Mock<ILoggerFactory>();
 
         public AddPostHelpersTests()
         {
@@ -35,7 +35,7 @@ namespace BlazorForum.Tests.Domain.Helpers.Forum
             mockEmailNotificationsService.Setup(p => p.SendTopicReplyEmailNotificationAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
 
-            var response = await new BlazorForum.Domain.Helpers.Forum.AddPostHelpers(mockManageTopicSubscriptions.Object, mockHttpContextAccessor.Object, mockEmailNotificationsService.Object, mockLogger.Object)
+            var response = await new BlazorForum.Domain.Helpers.Forum.AddPostHelpers(mockManageTopicSubscriptions.Object, mockHttpContextAccessor.Object, mockEmailNotificationsService.Object, NullLoggerFactory.Instance)
                 .AddSubscriptionAndSendEmailToSubscribersAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
 
             Assert.IsType<bool>(response);
@@ -53,7 +53,7 @@ namespace BlazorForum.Tests.Domain.Helpers.Forum
             mockEmailNotificationsService.Setup(p => p.SendTopicReplyEmailNotificationAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
 
-            var response = await new BlazorForum.Domain.Helpers.Forum.AddPostHelpers(mockManageTopicSubscriptions.Object, mockHttpContextAccessor.Object, mockEmailNotificationsService.Object, mockLogger.Object)
+            var response = await new BlazorForum.Domain.Helpers.Forum.AddPostHelpers(mockManageTopicSubscriptions.Object, mockHttpContextAccessor.Object, mockEmailNotificationsService.Object, NullLoggerFactory.Instance)
                 .AddSubscriptionAndSendEmailToSubscribersAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>());
 
             Assert.IsType<bool>(response);
