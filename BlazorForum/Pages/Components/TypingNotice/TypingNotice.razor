@@ -18,7 +18,7 @@
     private static string _currentTyperId { get; set; }
     private System.Timers.Timer _timer;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         typingAction += ShowHideTypingNoticeAsync;
         _topicId = TopicId;

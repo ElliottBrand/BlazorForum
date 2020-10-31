@@ -38,7 +38,7 @@
     private IList<ApplicationUser> _users;
     private IList<IdentityRole> _roles;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         head.Title = "Membership | Administration";
         _users = userManager.Users.OrderBy(p => p.UserName).ToList();
