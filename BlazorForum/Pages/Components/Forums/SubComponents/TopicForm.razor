@@ -119,7 +119,7 @@
         if (postedId != 0)
         {
             var newTopicSubscription = new TopicSubscription { ForumTopicId = postedId, Id = CurrentUserId };
-            var subscriptionAdded = await manageTopicSubscriptions.AddSubscriptionToTopicAsync(newTopicSubscription);
+            var subscriptionAdded = await manageTopicSubscriptions.SubscribeUserToTopicAsync(newTopicSubscription);
         }
     }
 

@@ -23,7 +23,7 @@ namespace BlazorForum.Data.Repository
             return await context.TopicSubscriptions.Where(p => p.ForumTopicId == topicId).ToListAsync();
         }
 
-        public async Task<bool> AddSubscriptionToTopicAsync(TopicSubscription newSubscription)
+        public async Task<bool> SubscribeUserToTopicAsync(TopicSubscription newSubscription)
         {
             using var context = _dbFactory.CreateDbContext();
             var subscriptions = context.TopicSubscriptions;

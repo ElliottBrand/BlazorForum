@@ -3,9 +3,9 @@
 @inject IJSRuntime jsRuntime
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject IManageForumTopics manageForumTopics
-@inject UserManager<ApplicationUser> userManager
-@inject Microsoft.AspNetCore.Identity.UI.Services.IEmailSender emailSender
+@inject IEmailNotificationsService emailNotificationsService
 @inject IManageTopicSubscriptions manageTopicSubscriptions
+@inject Microsoft.Extensions.Logging.ILoggerFactory loggerFactory 
 @implements IDisposable
 
     <EditForm EditContext="@_editContext" OnSubmit="AddNewPost">
@@ -109,8 +109,8 @@
 
         if (posted)
         {
-            await new Domain.Helpers.Forum.AddPostHelpers(manageTopicSubscriptions, manageForumTopics, httpContextAccessor, userManager, emailSender)
-                .AddSubscriptionAndSendEmailToSubscribers(TopicId, CurrentUserId, TopicSlug);
+            await new Domain.Helpers.Forum.AddPostHelpers(manageTopicSubscriptions, httpContextAccessor, emailNotificationsService, loggerFactory)
+                .AddSubscriptionAndSendEmailToSubscribersAsync(TopicId, CurrentUserId, TopicSlug);
 
             OnPostAdded?.Invoke();
         }

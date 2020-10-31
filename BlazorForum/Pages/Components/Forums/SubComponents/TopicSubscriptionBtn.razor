@@ -48,7 +48,7 @@
             Id = CurrentUserId,
             ForumTopicId = Id
         };
-        await manageTopicSubscriptions.AddSubscriptionToTopicAsync(newSubscription);
+        await manageTopicSubscriptions.SubscribeUserToTopicAsync(newSubscription);
         await CheckIfUserIsSubscribed();
     }
 }
