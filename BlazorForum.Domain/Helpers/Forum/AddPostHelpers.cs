@@ -1,13 +1,8 @@
 ﻿using BlazorForum.Domain.Interfaces;
 using BlazorForum.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BlazorForum.Domain.Helpers.Forum
