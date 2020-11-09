@@ -1,11 +1,8 @@
 ﻿using BlazorForum.Domain.Interfaces;
 using BlazorForum.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BlazorForum.Domain.Helpers.Forum
@@ -13,35 +10,36 @@ namespace BlazorForum.Domain.Helpers.Forum
     public class AddPostHelpers
     {
         private readonly IManageTopicSubscriptions _manageTopicSubscriptions;
-        private readonly IManageForumTopics _manageForumTopics;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailNotificationsService _emailNotificationsService;
+        private readonly ILogger _logger;
 
-        public AddPostHelpers(IManageTopicSubscriptions manageTopicSubscriptions, IManageForumTopics manageForumTopics, IHttpContextAccessor httpContextAccessor,
-            UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public AddPostHelpers(IManageTopicSubscriptions manageTopicSubscriptions, IHttpContextAccessor httpContextAccessor, 
+            IEmailNotificationsService emailNotificationsService, ILoggerFactory loggerFactory)
         {
             _manageTopicSubscriptions = manageTopicSubscriptions;
-            _manageForumTopics = manageForumTopics;
             _httpContextAccessor = httpContextAccessor;
-            _userManager = userManager;
-            _emailSender = emailSender;
+            _emailNotificationsService = emailNotificationsService;
+            _logger = loggerFactory.CreateLogger("AddSendSubscriptionsCategory");
         }
 
-        public async Task AddSubscriptionAndSendEmailToSubscribers(int topicId, string currentUserId, string topicSlug)
+        public async Task<bool> AddSubscriptionAndSendEmailToSubscribersAsync(int topicId, string currentUserId, string topicSlug)
         {
             try
             {
                 var newTopicSubscription = new TopicSubscription { ForumTopicId = topicId, Id = currentUserId };
-                var subscriptionAdded = await _manageTopicSubscriptions.AddSubscriptionToTopicAsync(newTopicSubscription);
+                var subscriptionAdded = await _manageTopicSubscriptions.SubscribeUserToTopicAsync(newTopicSubscription);
 
                 string url = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + "/topic/" + topicId + "/" + topicSlug;
-                await new Utilities.ForumNotifications.EmailNotifications(_manageForumTopics, _userManager, _emailSender, _manageTopicSubscriptions)
-                    .SendTopicReplyEmailNotification(topicId, currentUserId, url);
+                await _emailNotificationsService.SendTopicReplyEmailNotificationAsync(topicId, currentUserId, url);
+
+                return true;
             }
             catch(Exception ex)
             {
+                _logger.LogWarning(ex.Message);
 
+                return false;
             }
         }
     }
