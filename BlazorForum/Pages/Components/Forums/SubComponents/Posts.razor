@@ -1,25 +1,26 @@
 ﻿@inject ForumPostService forumPostService
+@inject IJSRuntime jsRuntime
 
-@if (forumPostService.Posts == null)
+@if (posts == null)
 {
     <div class="mb-2 loading-div">
         <em><i class="oi oi-cog se-spin-icon"></i> @GeneralResources.Loading</em>
     </div>
 }
-else if (forumPostService.Posts.Count > 0)
+else if (posts.Count > 0)
 {
     <ul class="forum-post-ul">
-        @for (var i = 0; i < (forumPostService.Posts.Count); i++)
+        @for (var i = 0; i < (posts.Count); i++)
         {
             <li>
-                <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@ForumUpDownVoteEnabled" ThisPost="@forumPostService.Posts[i]" ForumId="@Category.ForumCategoryId" IsSupportForum="@IsSupportForum" TopicAuthorId="@Topic.UserId" />
+                <Post CurrentUserId="@CurrentUserId" ForumUpDownVoteEnabled="@ForumUpDownVoteEnabled" ThisPost="@posts[i]" ForumId="@Category.ForumCategoryId" IsSupportForum="@IsSupportForum" TopicAuthorId="@Topic.UserId" />
             </li>
         }
     </ul>
 }
 
 <div class="text-center">
-    <button class="btn btn-blazorforum @forumPostService.LoadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
+    <button class="btn btn-blazorforum @loadMoreVisibility" @onclick="LoadMorePostsAsync">@GeneralResources.LoadMore</button>
 </div>
 
 @code {
@@ -28,13 +29,20 @@ else if (forumPostService.Posts.Count > 0)
     [Parameter] public bool ForumUpDownVoteEnabled { get; set; }
     [Parameter] public bool IsSupportForum { get; set; }
     [Parameter] public Models.ForumCategory Category { get; set; }
+    string loadMoreVisibility;
+    List<Models.ForumPost> posts = new List<Models.ForumPost>();
+    int maxCount = 10;
 
     protected override async Task OnInitializedAsync()
     {
-        forumPostService.Id = Topic.ForumTopicId;
         forumPostService.OnPosted += HandleUpdatingPosts;
 
-        await forumPostService.LoadPostsAsync();
+        await forumPostService.LoadPostsAsync(Topic.ForumTopicId);
+        forumPostService.PostsDictionary.TryGetValue(Topic.ForumTopicId, out posts);
+
+        SetLoadMoreButtonVisibility();
+
+        posts = posts.Take(maxCount).ToList();
     }
 
     public void Dispose()
@@ -44,12 +52,33 @@ else if (forumPostService.Posts.Count > 0)
 
     public async Task LoadMorePostsAsync()
     {
-        await forumPostService.LoadMorePostsAsync();
+        maxCount += 10;
+
+        forumPostService.PostsDictionary.TryGetValue(Topic.ForumTopicId, out posts);
+
+        SetLoadMoreButtonVisibility();
+
+        posts = posts.Take(maxCount).ToList();
+
         StateHasChanged();
     }
 
     public void HandleUpdatingPosts(object sender, EventArgs args)
     {
+        forumPostService.PostsDictionary.TryGetValue(Topic.ForumTopicId, out posts);
+
+        SetLoadMoreButtonVisibility();
+
+        posts = posts.Take(maxCount).ToList();
+
         InvokeAsync(() => StateHasChanged());
+    }
+
+    void SetLoadMoreButtonVisibility()
+    {
+        if (maxCount >= posts.Count)
+            loadMoreVisibility = "d-none";
+        else
+            loadMoreVisibility = "d-inline-block";
     }
 }

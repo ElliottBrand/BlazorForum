@@ -81,8 +81,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        forumPostService.Id = id;
-
         await LoadTopicAsync();
         SetHeadData();
 
@@ -100,7 +98,6 @@ else
         if (topic == null || topic.IsApproved != true || topic.IsDeleted == true)
             navManager.NavigateTo("/");
 
-        //var user = await userManager.FindByIdAsync(topic.UserId);
         var user = await manageUsers.GetUserAsync(topic.UserId);
         topic.UserName = user.UserName;
     }
@@ -108,7 +105,7 @@ else
     // Fired from the PostForm component after a new post is added
     public async void UpdatePostsAsync()
     {
-        await forumPostService.RefreshPostsAsync();
+        await forumPostService.RefreshPostsAsync(id);
 
         topicSubscriptionBtn.RefreshButton();
     }

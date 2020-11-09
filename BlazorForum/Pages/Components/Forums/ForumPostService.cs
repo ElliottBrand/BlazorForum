@@ -1,6 +1,7 @@
 ﻿using BlazorForum.Domain.Helpers.Forum;
 using BlazorForum.Domain.Interfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -22,50 +23,39 @@ namespace BlazorForum.Pages.Components.Forums
 
         public event EventHandler OnPosted;
         public event EventHandler OnAnswerStatusChanged;
-        public List<Models.ForumPost> Posts { get; private set; }
-        public int Id { get; set; }
-        public int MaxCount = 10;
-        public string LoadMoreVisibility;
+
+        // This needs to have posts cleared/removed somehow when no user is browsing a topic that has posts stored in the dictionary
+        public ConcurrentDictionary<int, List<Models.ForumPost>> PostsDictionary { get; set; } = new ConcurrentDictionary<int, List<Models.ForumPost>>();
 
         public virtual void NotifyStateChanged() => OnPosted?.Invoke(this, EventArgs.Empty);
         public virtual void NotifyAnswerStatusChanged() => OnAnswerStatusChanged?.Invoke(this, EventArgs.Empty);
 
-        public async Task LoadPostsAsync()
+        public async Task LoadPostsAsync(int id)
         {
-            Posts = await _manageForumPosts.GetApprovedForumPostsAsync(Id);
+            var posts = await _manageForumPosts.GetApprovedForumPostsAsync(id);
 
-            if (MaxCount >= Posts.Count)
-                LoadMoreVisibility = "d-none";
+            await new ForumUserHelpers(_manageUsers).AddUserToPostAsync(posts);
 
-            Posts = Posts.Take(MaxCount).ToList();
-            await new ForumUserHelpers(_manageUsers).AddUserToPostAsync(Posts);
+            List<Models.ForumPost> currentPosts;
+            var topicHasPosts = PostsDictionary.TryGetValue(id, out currentPosts);
+            if (topicHasPosts)
+                PostsDictionary.TryUpdate(id, posts, currentPosts);
+            else
+                PostsDictionary.TryAdd(id, posts);
         }
 
-        public async Task LoadMorePostsAsync()
+        public async Task RefreshPostsAsync(int id)
         {
-            MaxCount += 10;
-            Posts = await _manageForumPosts.GetApprovedForumPostsAsync(Id);
+            var posts = await _manageForumPosts.GetApprovedForumPostsAsync(id);
 
-            if (MaxCount >= Posts.Count)
-                LoadMoreVisibility = "d-none";
+            await new ForumUserHelpers(_manageUsers).AddUserToPostAsync(posts);
+
+            List<Models.ForumPost> currentPosts;
+            var topicHasPosts = PostsDictionary.TryGetValue(id, out currentPosts);
+            if (topicHasPosts)
+                PostsDictionary.TryUpdate(id, posts, currentPosts);
             else
-                LoadMoreVisibility = "d-inline-block";
-
-            Posts = Posts.Take(MaxCount).ToList();
-            await new ForumUserHelpers(_manageUsers).AddUserToPostAsync(Posts);
-        }
-
-        public async Task RefreshPostsAsync()
-        {
-            Posts = await _manageForumPosts.GetApprovedForumPostsAsync(Id);
-
-            if (MaxCount >= Posts.Count)
-                LoadMoreVisibility = "d-none";
-            else
-                LoadMoreVisibility = "d-inline-block";
-
-            Posts = Posts.Take(MaxCount).ToList();
-            await new ForumUserHelpers(_manageUsers).AddUserToPostAsync(Posts);
+                PostsDictionary.TryAdd(id, posts);
 
             NotifyStateChanged();
         }
