@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BlazorForum.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BlazorForum.Data.Repository
 {
@@ -37,16 +38,15 @@ namespace BlazorForum.Data.Repository
 
         public async Task<bool> IsInRoleAsync(string roleName, string userId)
         {
-            using var context = _dbFactory.CreateDbContext();
-            var roles = await context.UserRoles.Where(p => p.UserId == userId).ToListAsync();
-            foreach (var role in roles)
+            if(!string.IsNullOrEmpty(roleName) && !string.IsNullOrEmpty(userId))
             {
-                var roleId = role.RoleId;
-                var thisRole = await context.Roles.Where(p => p.Id == role.RoleId).FirstOrDefaultAsync();
-                if (thisRole.Name == roleName)
-                {
-                    return true;
-                }
+                using var context = _dbFactory.CreateDbContext();
+                var userstore = new UserStore<ApplicationUser>(context);
+                roleName = roleName.Normalize().ToUpper();
+
+                var user = await userstore.FindByIdAsync(userId);
+                var isInRole = await userstore.IsInRoleAsync(user, roleName);
+                return isInRole;
             }
             return false;
         }
